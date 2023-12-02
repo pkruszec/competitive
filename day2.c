@@ -1,3 +1,8 @@
+// = Advent of Code 2023 - day 2
+// :author: Paweł Kruszec
+// :email: pakruszec@gmail.com
+// :revdate: 2023-12-02
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
@@ -207,8 +212,6 @@ int main(void)
         uint32_t id;
         if (!sv_to_uint32_simple(idsv, 10, &id)) return 1;
         
-        // printf("line = \"%.*s\"\n", linesv.count, linesv.vals);
-        // printf("id = %u\n", id);
         
         size_t offset = idsv.count + 1;
         String_View line_without_idsv = {
@@ -226,8 +229,6 @@ int main(void)
             subsv = sv_trim_to_next_char(&worksv, ';');
             subsv = sv_trim_char_begin(subsv, ' ');
             
-            // printf("%.*s\n", subsv.count, subsv.vals);
-            
             size_t count_red = 0, count_green = 0, count_blue = 0;
             
             String_View count_and_color_sv = {0};
@@ -242,13 +243,10 @@ int main(void)
                 if (!extract_count_and_color(count_and_color_sv, &count, &color_sv)) return 1;
                 
                 if (sv_equal(color_sv, red)) {
-                    // printf("    - count = %zu, color = RED\n", count);
                     count_red += count;
                 } else if (sv_equal(color_sv, green)) {
-                    // printf("    - count = %zu, color = GREEN\n", count);
                     count_green += count;
                 } else if (sv_equal(color_sv, blue)) {
-                    // printf("    - count = %zu, color = BLUE\n", count);
                     count_blue += count;
                 }
                 
@@ -268,9 +266,6 @@ int main(void)
         }
         
         power_sum += max_red*max_green*max_blue;
-        
-        // printf("\n\nMAX: r:%zu g:%zu b:%zu\n", max_red, max_green, max_blue);
-        // break;
     }
     
     printf("sum: %zu\n", sum);
