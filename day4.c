@@ -152,9 +152,7 @@ int main(void)
     const String_View prefix = sv_lit("Card ");
     
     uint32_t winning_numbers[WINNING_MAX];
-    // uint32_t your_numbers[YOUR_MAX];
     size_t winning_count = 0;
-    // size_t your_count = 0;
     
     uint32_t copies[COPIES_MAX] = {0};
     
@@ -190,8 +188,6 @@ int main(void)
         String_View number_sv = {0};
         uint32_t number;
         
-        fprintf(stderr, "%.*s\n", sv_expand_for_printf(line_sv));
-        
         winning_count = 0;
         
         copy = winning_numbers_sv;
@@ -223,29 +219,16 @@ int main(void)
         
         sum += score;
         
-        // copies[id] = amount;
         
         copies[id]++;
-#if 1
         for (size_t i = id+1; i < id+amount+1; ++i) {
             if (i >= COPIES_MAX) return 3;
             copies[i] += copies[id];
-            // copies[i] *= 2;
-            // copies[i] *= ;
-            // copies[i] *= 2;
-            // copies[i] = (copies[i] == 0) ? 1 : (copies[i]*2);
-            fprintf(stderr, "%zu (copies = %u): %zu\n", id, copies[id], i);
         }
-#endif
-        
-        
     }
     
     for (size_t i = 0; i < COPIES_MAX; ++i) {
-        // sum_copies(i, copies, &copy_sum);
         copy_sum += copies[i];
-        // copy_sum += copies[i];
-        if (copies[i]) fprintf(stderr, "[%zu]: %u\n", i, copies[i]);
     }
     
     fprintf(stderr, "SUM: %zu\n", sum);
