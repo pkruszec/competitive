@@ -1,3 +1,8 @@
+// = Advent of Code 2023 - day 4
+// :author: Paweł Kruszec
+// :email: pakruszec@gmail.com
+// :revdate: 2023-12-04
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

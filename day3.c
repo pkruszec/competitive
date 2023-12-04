@@ -1,3 +1,8 @@
+// = Advent of Code 2023 - day 3
+// :author: Paweł Kruszec
+// :email: pakruszec@gmail.com
+// :revdate: 2023-12-03
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
