@@ -135,7 +135,17 @@ const char *sv_end(String_View data)
 
 #define LINE_MAX 256
 #define WINNING_MAX 64
-#define YOUR_MAX 64
+#define COPIES_MAX 256
+
+void sum_copies(size_t id, uint32_t *copies, size_t *copy_sum)
+{
+    if (copies[id] == 0) return;
+    
+    *copy_sum += copies[id];
+    for (size_t i = id+1; i <= id+copies[id]; ++i) {
+        sum_copies(i, copies, copy_sum);
+    }
+}
 
 int main(void)
 {
@@ -146,7 +156,10 @@ int main(void)
     size_t winning_count = 0;
     // size_t your_count = 0;
     
+    uint32_t copies[COPIES_MAX] = {0};
+    
     size_t sum = 0;
+    size_t copy_sum = 0;
     
     char line[LINE_MAX];
     while (fgets(line, LINE_MAX, stdin)) {
@@ -189,11 +202,9 @@ int main(void)
             
             if (winning_count >= WINNING_MAX) return 2;
             winning_numbers[winning_count++] = number;
-            
-            fprintf(stderr, "%u ", number);
         }
-        fprintf(stderr, "\n");
         
+        size_t amount = 0;
         size_t score = 0;
         
         copy = your_numbers_sv;
@@ -204,24 +215,41 @@ int main(void)
             
             for (size_t i = 0; i < winning_count; ++i) {
                 if (winning_numbers[i] == number) {
+                    ++amount;
                     score = (score == 0) ? 1 : score*2;
                 }
             }
-            
-            fprintf(stderr, "%u ", number);
         }
-        fprintf(stderr, "\n\n");
         
         sum += score;
         
-#if 0
-        fprintf(stderr, "   winning: %.*s\n", sv_expand_for_printf(winning_numbers_sv));
-        fprintf(stderr, "   your:    %.*s\n", sv_expand_for_printf(your_numbers_sv));
+        // copies[id] = amount;
+        
+        copies[id]++;
+#if 1
+        for (size_t i = id+1; i < id+amount+1; ++i) {
+            if (i >= COPIES_MAX) return 3;
+            copies[i] += copies[id];
+            // copies[i] *= 2;
+            // copies[i] *= ;
+            // copies[i] *= 2;
+            // copies[i] = (copies[i] == 0) ? 1 : (copies[i]*2);
+            fprintf(stderr, "%zu (copies = %u): %zu\n", id, copies[id], i);
+        }
 #endif
+        
         
     }
     
+    for (size_t i = 0; i < COPIES_MAX; ++i) {
+        // sum_copies(i, copies, &copy_sum);
+        copy_sum += copies[i];
+        // copy_sum += copies[i];
+        if (copies[i]) fprintf(stderr, "[%zu]: %u\n", i, copies[i]);
+    }
+    
     fprintf(stderr, "SUM: %zu\n", sum);
+    fprintf(stderr, "COPY SUM: %zu\n", copy_sum);
     
     return 0;
 }
