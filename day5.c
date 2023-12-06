@@ -191,8 +191,8 @@ typedef struct {
 } Map;
 
 typedef struct {
-    uint64_t id;
-    uint64_t value;
+    uint64_t begin;
+    uint64_t count;
 } Seed;
 
 Map *find_map_by_from(Map *maps, size_t map_count, String_View from)
@@ -242,8 +242,8 @@ int main(void)
     work_seeds_sv.vals  += seeds_prefix.count;
     work_seeds_sv.count -= seeds_prefix.count;
     
-    // Seed seeds[SEEDS_MAX];
-    Seed *seeds = malloc(SEEDS_MAX*sizeof(*seeds));
+    Seed seeds[SEEDS_MAX];
+    // Seed *seeds = malloc(SEEDS_MAX*sizeof(*seeds));
     size_t seed_count = 0;
     
     bool is_count = false;
@@ -252,7 +252,7 @@ int main(void)
     String_View num_sv = {0};
     
     // TODO: allow switching between part 1 and 2
-#if 1
+#if 0
     while (num_sv.vals < sv_end(work_seeds_sv)) {
         num_sv = sv_trim_to_next_char(&work_seeds_sv, ' ');
         if (num_sv.count < 1) continue;
@@ -265,7 +265,6 @@ int main(void)
     }
 #else 
     
-    uint64_t begin = 0;
     
     while (num_sv.vals < sv_end(work_seeds_sv)) {
         num_sv = sv_trim_to_next_char(&work_seeds_sv, ' ');
@@ -274,26 +273,18 @@ int main(void)
         assert(seed_count <= SEEDS_MAX);
         
         if (is_count) {
-            assert(seed_count+seed <= SEEDS_MAX);
-            for (size_t i = begin; i < begin+seed; ++i) {
-                seeds[seed_count].id = i;
-                seeds[seed_count].value = i;
-                seed_count++;
-            }
+            seeds[seed_count].count = seed;
+            seed_count++;
         } else {
-            begin = seed;
+            seeds[seed_count].begin = seed;
         }
-        
-        // seeds[seed_count].id = seed;
-        // seeds[seed_count].value = seed;
-        // seed_count++;
         
         is_count = !is_count;
     }
     
     printf("SEED COUNT: %zu\n", seed_count);
     for (size_t i = 0; i < seed_count; ++i) {
-        printf("%zu: %llu\n", i, seeds[i].value);
+        printf("%llu: %llu\n", seeds[i].begin, seeds[i].count);
     }
 #endif
     
@@ -385,9 +376,14 @@ int main(void)
     }
 #endif
     
+    uint64_t min = UINT64_MAX;
+    
+    Map *maps_ordered[MAPS_MAX];
+    
     map = find_map_by_from(maps, map_count, sv_lit("seed"));
     assert(map);
     
+    size_t i = 0;
     do {
 #if 0
         printf("-- found: (%.*s -> %.*s)\n", 
@@ -398,7 +394,6 @@ int main(void)
             Range *range = &map->ranges[j];
             printf("---- Range %zu (dst=%llu src=%llu count=%llu)\n", j, range->dst, range->src, range->count);
         }
-#endif
         
         for (size_t i = 0; i < seed_count; ++i) {
             Seed *seed = &seeds[i];
@@ -408,18 +403,37 @@ int main(void)
             seed->value = result;
         }
         printf("\n");
+#endif
+        
+        maps_ordered[i] = map;
         
         if (sv_equal(map->to, sv_lit("location"))) break;
         
         map = find_map_by_from(maps, map_count, map->to);
         assert(map);
+        ++i;
         
     } while (true);
     
-    uint64_t min = UINT64_MAX;
+    for (size_t i = 0; i < map_count; ++i) {
+        printf("-- found: (%.*s -> %.*s)\n", 
+               sv_expand_for_printf(maps_ordered[i]->from), 
+               sv_expand_for_printf(maps_ordered[i]->to));
+    }
+    
     for (size_t i = 0; i < seed_count; ++i) {
-        if (seeds[i].value < min) min = seeds[i].value;
-        printf("%llu: %llu\n", seeds[i].id, seeds[i].value);
+        printf("Processing seed %zu\n", i);
+        Seed *seed = &seeds[i];
+        for (size_t j = 0; j < seed->count; ++j) {
+            // if (j % 10000000 == 0) printf("%zu/%zu\n", j, seed->count);
+            uint64_t value = seed->begin+j;
+            for (size_t k = 0; k < map_count; ++k) {
+                value = map_seed_value(maps_ordered[k], value);
+            }
+            if (value < min) { 
+                min = value; 
+            }
+        }
     }
     
     printf("BEST: %llu\n", min);
