@@ -79,15 +79,12 @@ char get_best_card(char *cards)
         }
     }
     
-    printf("BEST: %c\n", cards_by_strength[max_i]);
     return cards_by_strength[max_i];
 }
 
 int get_hand_layout_strength(Hand *hand)
 {
     int count_j = 0;
-    
-    // printf("HAND BEFORE: %.*s\n", HAND_LEN, hand->cards);
     
     int counts[13] = {0};
     for (size_t i = 0; i < HAND_LEN; ++i) {
@@ -112,8 +109,6 @@ int get_hand_layout_strength(Hand *hand)
         counts[get_card_strength(hand->cards[i])]++;
     }
     
-    // printf("HAND AFTER: %.*s\n", HAND_LEN, hand->cards);
-    
     int count_1, count_2, count_3, count_4, count_5;
     count_1 = count_2 = count_3 = count_4 = count_5 = 0;
     
@@ -124,8 +119,6 @@ int get_hand_layout_strength(Hand *hand)
         if (counts[i] == 4) ++count_4;
         if (counts[i] == 5) ++count_5;
     }
-    
-    // printf("COUNTS: 1=%d 2=%d 3=%d 4=%d 5=%d\n", count_1, count_2, count_3, count_4, count_5);
     
     // Replacing back to jokers here, because later we return without any deinitialization,
     // but we don't use the values anymore because we have all the data stored within the counts array.
@@ -198,37 +191,6 @@ int get_hand_layout_strength(Hand *hand)
     if (count_2 == 2 && count_1 == 1) return HAND_TWO_PAIR;
     if (count_2 == 1 && count_1 == 3) return HAND_ONE_PAIR;
     if (count_1 == 5) return HAND_HIGH_CARD;
-    
-#if 0
-    //
-    // Check five of a kind.
-    //
-    for (size_t i = 0; i < ARRAY_COUNT(counts); ++i) {
-        if (counts[i] == HAND_LEN) return HAND_FIVE_OF_A_KIND;
-    }
-    
-    //
-    // Check four of a kind.
-    //
-    count_4 = 0;
-    count_1 = 0;
-    for (size_t i = 0; i < ARRAY_COUNT(counts); ++i) {
-        if (counts[i] == 4) ++count_4;
-        else if (counts[i] == 1) ++count_1;
-    }
-    if (count_4 == 1 && count_1 == 1) return HAND_FOUR_OF_A_KIND;
-    
-    //
-    // Check full house.
-    //
-    count_3 = 0;
-    count_2 = 0;
-    for (size_t i = 0; i < ARRAY_COUNT(counts); ++i) {
-        if (counts[i] == 3) ++count_3;
-        if (counts[i] == 2) ++count_2;
-    }
-    if (count_3 == 1 && count_2 == 1) return HAND_FULL_HOUSE;
-#endif
     
     assert(false && "Unreachable");
     return 0;
@@ -309,12 +271,6 @@ int main(void)
     // 250506580 -> right
     
     printf("SUM: %zu\n", sum);
-    
-#if 1
-    Hand a = {{'Q', 'J', 'J', 'Q', '2'}, 0};
-    printf("strength of a: %d\n", get_hand_layout_strength(&a));
-    printf("four of a kind: %d\n", HAND_FOUR_OF_A_KIND);
-#endif
     
     return 0;
 }
