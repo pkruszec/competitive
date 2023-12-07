@@ -2,6 +2,8 @@
 // :author: Paweł Kruszec
 // :email: pakruszec@gmail.com
 // :revdate: 2023-12-02
+//
+// This program calculates both part 1 and 2 solutions.
 
 #include <stdio.h>
 #include <stdlib.h>
