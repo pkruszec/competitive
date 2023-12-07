@@ -16,6 +16,7 @@
 
 typedef struct {
     char cards[HAND_LEN];
+    bool replaced[HAND_LEN];
     uint32_t bid;
 } Hand;
 
@@ -29,9 +30,20 @@ enum {
     HAND_FIVE_OF_A_KIND,
 };
 
-//#define PART2 1
+#define PART2 1
 
 #if PART2
+
+// cards_by_strength is only needed in part 2.
+int cards_by_strength[] = {
+    'J', 
+    '2', '3', '4', '5', '6', '7', '8', '9',
+    'T', 'Q', 'K', 'A',
+};
+
+//
+// Part 2 strength functions.
+// 
 
 int get_card_strength(char card)
 {
@@ -50,19 +62,57 @@ int get_card_strength(char card)
     return -1;
 }
 
+char get_best_card(char *cards)
+{
+    
+    int counts[13] = {0};
+    for (size_t i = 0; i < HAND_LEN; ++i) {
+        if (cards[i] != 'J') counts[get_card_strength(cards[i])]++;
+    }
+    
+    int max_i = -1;
+    int max_count = -1;
+    for (int i = 0; i < ARRAY_COUNT(counts); ++i) {
+        if (counts[i] > max_count) {
+            max_count = counts[i];
+            if (i > max_i) max_i = i;
+        }
+    }
+    
+    printf("BEST: %c\n", cards_by_strength[max_i]);
+    return cards_by_strength[max_i];
+}
+
 int get_hand_layout_strength(Hand *hand)
 {
     int count_j = 0;
     
+    // printf("HAND BEFORE: %.*s\n", HAND_LEN, hand->cards);
+    
     int counts[13] = {0};
     for (size_t i = 0; i < HAND_LEN; ++i) {
         if (hand->cards[i] == 'J') {
+            // TODO(pkruszec): Replace joker with the most beneficial card possible, without modifying the original hand.
+            // We need to increment the appropriate counts element.
+            // How to use the replaced cards when determining the next joker values?
+            // If we modify the hand values, we'll need to restore them.
+            // We could create another array of booleans, which stores whether the current value has been replaced or not.
+            // And at the end of the function just replace the replaced ones back to jokers and zero out the bool array.
+            //
+            // To get the most beneficial card possible, we need to either:
+            // * Check the most frequent card, and if there are conflicts, choose the one with the highest strength.
+            // * Check the strongest card, and if there are conflicts, choose the most frequent one.
+            char best_card = get_best_card(hand->cards);
+            hand->cards[i] = best_card;
+            hand->replaced[i] = true;
+            // counts[get_card_strength(best_card)]++;
             ++count_j;
-            break;
         }
         
         counts[get_card_strength(hand->cards[i])]++;
     }
+    
+    // printf("HAND AFTER: %.*s\n", HAND_LEN, hand->cards);
     
     int count_1, count_2, count_3, count_4, count_5;
     count_1 = count_2 = count_3 = count_4 = count_5 = 0;
@@ -74,6 +124,21 @@ int get_hand_layout_strength(Hand *hand)
         if (counts[i] == 4) ++count_4;
         if (counts[i] == 5) ++count_5;
     }
+    
+    // printf("COUNTS: 1=%d 2=%d 3=%d 4=%d 5=%d\n", count_1, count_2, count_3, count_4, count_5);
+    
+    // Replacing back to jokers here, because later we return without any deinitialization,
+    // but we don't use the values anymore because we have all the data stored within the counts array.
+    for (size_t i = 0; i < HAND_LEN; ++i) {
+        if (hand->replaced[i]) {
+            hand->cards[i] = 'J';
+        }
+    }
+    memset(hand->replaced, 0, sizeof(hand->replaced));
+    
+    //
+    // Decide what layout is this hand based on appropriate counts and return the strength.
+    //
     
     if (count_5 == 1) return HAND_FIVE_OF_A_KIND;
     if (count_4 == 1 && count_1 == 1) return HAND_FOUR_OF_A_KIND;
@@ -87,8 +152,11 @@ int get_hand_layout_strength(Hand *hand)
     return 0;
 }
 
-
 #else
+
+//
+// Part 1 strength functions.
+// 
 
 int get_card_strength(char card)
 {
@@ -236,14 +304,16 @@ int main(void)
     // 
     // PART 2:
     // 249480090 -> too low
-    //
+    // 250540180 -> too high
+    // 250827891 -> too high
+    // 250506580 -> right
     
     printf("SUM: %zu\n", sum);
     
-#if 0
-    Hand a = {{'3', '3', '3', '3', '2'}, 0};
-    Hand b = {{'2', 'A', 'A', 'A', 'A'}, 0};
-    printf("compare: %d\n", compare_hands(&a, &b));
+#if 1
+    Hand a = {{'Q', 'J', 'J', 'Q', '2'}, 0};
+    printf("strength of a: %d\n", get_hand_layout_strength(&a));
+    printf("four of a kind: %d\n", HAND_FOUR_OF_A_KIND);
 #endif
     
     return 0;
