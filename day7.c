@@ -1,3 +1,11 @@
+// = Advent of Code 2023 - day 7
+// :author: Paweł Kruszec
+// :email: pakruszec@gmail.com
+// :revdate: 2023-12-07
+//
+// Define PART2 if you want to run part 2.
+// 
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -30,9 +38,7 @@ enum {
     HAND_FIVE_OF_A_KIND,
 };
 
-#define PART2 1
-
-#if PART2
+#ifdef PART2
 
 // cards_by_strength is only needed in part 2.
 int cards_by_strength[] = {
@@ -70,6 +76,9 @@ char get_best_card(char *cards)
         if (cards[i] != 'J') counts[get_card_strength(cards[i])]++;
     }
     
+    // Choose the strongest most frequent card.
+    // Strength is determined by index, because the counts are ordered by strength, ascending.
+    
     int max_i = -1;
     int max_count = -1;
     for (int i = 0; i < ARRAY_COUNT(counts); ++i) {
@@ -89,7 +98,7 @@ int get_hand_layout_strength(Hand *hand)
     int counts[13] = {0};
     for (size_t i = 0; i < HAND_LEN; ++i) {
         if (hand->cards[i] == 'J') {
-            // TODO(pkruszec): Replace joker with the most beneficial card possible, without modifying the original hand.
+            // Replace joker with the most beneficial card possible, without modifying the original hand.
             // We need to increment the appropriate counts element.
             // How to use the replaced cards when determining the next joker values?
             // If we modify the hand values, we'll need to restore them.
