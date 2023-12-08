@@ -1,5 +1,8 @@
+/build
 *.txt
 *.exe
 *.obj
 *.pdb
 *.ilk
+*.out
+*.o
