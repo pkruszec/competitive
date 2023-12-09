@@ -46,6 +46,35 @@ bool sv_to_uint64_simple(String_View sv, unsigned int base, uint64_t *out_num)
     return true;
 }
 
+bool sv_to_int64_simple(String_View sv, unsigned int base, int64_t *out_num)
+{
+    if (out_num == NULL) return false;
+    if (sv.count < 1) return false;
+    if (base > 10) return false;
+    
+    int64_t mul = 1;
+    
+    if (sv.vals[0] == '-') {
+        sv.vals++;
+        sv.count--;
+        mul = -1;
+    }
+    
+    int64_t num = 0;
+    
+    for (size_t rev_i = 0; rev_i < sv.count; ++rev_i) {
+        size_t i = sv.count - rev_i - 1;
+        char c = sv.vals[i];
+        if (!isdigit(c)) return false;
+        int digit = c - '0';
+        num += mul * digit;
+        mul *= base;
+    }
+    
+    *out_num = num;
+    return true;
+}
+
 bool sv_equal(String_View a, String_View b)
 {
     if (a.count != b.count) return false;
