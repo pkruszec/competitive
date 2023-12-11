@@ -1,10 +1,17 @@
+#ifndef STRING_VIEW_C
+#define STRING_VIEW_C
+
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
 #include "string_view.h"
 
-bool sv_to_uint32_simple(String_View sv, unsigned int base, uint32_t *out_num)
+#ifndef SVDEF
+#define SVDEF
+#endif
+
+SVDEF bool sv_to_uint32_simple(String_View sv, unsigned int base, uint32_t *out_num)
 {
     if (out_num == NULL) return false;
     if (sv.count < 1) return false;
@@ -25,7 +32,7 @@ bool sv_to_uint32_simple(String_View sv, unsigned int base, uint32_t *out_num)
     return true;
 }
 
-bool sv_to_uint64_simple(String_View sv, unsigned int base, uint64_t *out_num)
+SVDEF bool sv_to_uint64_simple(String_View sv, unsigned int base, uint64_t *out_num)
 {
     if (out_num == NULL) return false;
     if (sv.count < 1) return false;
@@ -46,7 +53,7 @@ bool sv_to_uint64_simple(String_View sv, unsigned int base, uint64_t *out_num)
     return true;
 }
 
-bool sv_to_int64_simple(String_View sv, unsigned int base, int64_t *out_num)
+SVDEF bool sv_to_int64_simple(String_View sv, unsigned int base, int64_t *out_num)
 {
     if (out_num == NULL) return false;
     if (sv.count < 1) return false;
@@ -75,7 +82,7 @@ bool sv_to_int64_simple(String_View sv, unsigned int base, int64_t *out_num)
     return true;
 }
 
-bool sv_equal(String_View a, String_View b)
+SVDEF bool sv_equal(String_View a, String_View b)
 {
     if (a.count != b.count) return false;
     
@@ -99,7 +106,7 @@ bool sv_equal(String_View a, String_View b)
 //     // ...
 // }
 //
-String_View sv_trim_to_next_line(String_View *data)
+SVDEF String_View sv_trim_to_next_line(String_View *data)
 {
     String_View line = {0};
     line.vals = data->vals;
@@ -134,7 +141,7 @@ String_View sv_trim_to_next_line(String_View *data)
     return line;
 }
 
-String_View sv_trim_to_next_char(String_View *data, char c)
+SVDEF String_View sv_trim_to_next_char(String_View *data, char c)
 {
     String_View line = {0};
     line.vals = data->vals;
@@ -155,7 +162,7 @@ String_View sv_trim_to_next_char(String_View *data, char c)
     return line;
 }
 
-String_View sv_trim_char_begin(String_View data, char c)
+SVDEF String_View sv_trim_char_begin(String_View data, char c)
 {
     String_View new_data = data;
     
@@ -170,7 +177,7 @@ String_View sv_trim_char_begin(String_View data, char c)
     return new_data;
 }
 
-String_View sv_trim_char_end(String_View data, char c)
+SVDEF String_View sv_trim_char_end(String_View data, char c)
 {
     String_View new_data = data;
     
@@ -184,7 +191,9 @@ String_View sv_trim_char_end(String_View data, char c)
     return new_data;
 }
 
-const char *sv_end(String_View data)
+SVDEF const char *sv_end(String_View data)
 {
     return data.vals + data.count;
 }
+
+#endif // STRING_VIEW_C
