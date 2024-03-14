@@ -28,6 +28,11 @@ int fib_mod2(int s, int p)
 // -1 baked  11.635
 // '\n'      11.506
 
+/*
+p = 2 (4)
+
+*/
+
 int main(void)
 {
     std::ios_base::sync_with_stdio(false);
