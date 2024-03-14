@@ -7,11 +7,15 @@
 //     268435456, 536870912, 1073741824
 // };
 
+int biggest_power = 1073741823;
+
 int powers_of_2[31] = {
     0, 1, 3, 7, 15, 31, 63, 127, 255, 511, 1023, 2047, 4095, 8191, 16383, 32767, 
     65535, 131071, 262143, 524287, 1048575, 2097151, 4194303, 8388607, 16777215, 
     33554431, 67108863, 134217727, 268435455, 536870911, 1073741823
 };
+
+// int fib[1000000];
 
 /*
 int fib_mod2(int s, int p)
@@ -42,6 +46,20 @@ int main(void)
     int count = 0; // liczba przypadków testowych
     std::cin >> count;
 
+    int max = 1000000;
+    int *fib = new int[max];
+    fib[0] = 1;
+    int a = 0;
+    int b = 1;
+
+    for (int i = 1; i < max; ++i) {
+        int t = a;
+        a = b;
+        b = (t+b) & biggest_power;
+        fib[i] = b;
+        // if (i < 10) std::cout << fib[i-1] << ",";
+    }
+
     for (int i = 0;
          i < count;
          ++i)
@@ -50,6 +68,8 @@ int main(void)
         int p = 0; // wynik musi być podany modulo 2^p
         std::cin >> s >> p;
 
+        std::cout << (fib[s] & powers_of_2[p]) << '\n';
+/*
         int a = 0;
         int b = 1;
 
@@ -62,6 +82,8 @@ int main(void)
         }
 
         std::cout << b << '\n';
+
+*/
     }
 
     return 0;

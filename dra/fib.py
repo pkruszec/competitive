@@ -7,4 +7,4 @@ def fib(n):
         b = t+b
     return b
 
-print(fib(1000000))
+print(fib(4))
