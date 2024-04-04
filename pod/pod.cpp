@@ -39,7 +39,12 @@ int main(int num_args, char **args) {
         data[i] = current;
         if (current > max) max = current;
     }
-    
+
+    //
+    // TODO: Liczenie z prawej i z lewej, wybrać wartość najmniejszą
+    // TODO: Jako początkowy s ustawić max(max, suma/num_num_parts)
+    //
+
     int num_divs = num_parts - 1;
 
     int s = max;
