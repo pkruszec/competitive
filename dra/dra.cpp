@@ -1,5 +1,9 @@
 #include <iostream>
 
+// #define DRA_DEBUG
+
+// #include <intrin.h>
+
 // int powers_of_2[31] = {
 //     1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096, 8192, 
 //     16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 
@@ -36,55 +40,78 @@ int fib_mod2(int s, int p)
 p = 2 (4)
 
 */
+/*
+
+*/
 
 int main(void)
 {
     std::ios_base::sync_with_stdio(false);
     std::cin.tie(0);
     std::cout.tie(0);
-
+    
     int count = 0; // liczba przypadków testowych
     std::cin >> count;
-
-    int max = 1000000;
+    
+    int max = 1000001;
     int *fib = new int[max];
     fib[0] = 1;
-    int a = 0;
+    // int a = 0;
     int b = 1;
-
+    
+    // a -- poprzednie b -- fib[i-1]
+    
+#ifdef DRA_DEBUG
+    __int64 t0 = __rdtsc();
+#endif
+    
     for (int i = 1; i < max; ++i) {
-        int t = a;
-        a = b;
-        b = (t+b) & biggest_power;
+        int t = fib[i - 1];
+        //a = b;
         fib[i] = b;
+        b = (t+b) & biggest_power;
+        // b = (fib[i - 1] + b) & biggest_power;
+        // fib[i] = b;
         // if (i < 10) std::cout << fib[i-1] << ",";
     }
-
+    
+#ifdef DRA_DEBUG
+    __int64 t1 = __rdtsc();
+#endif
+    
     for (int i = 0;
          i < count;
          ++i)
     {
-        int s = 0; // s-ta liczba w ciągu fibonacciego
-        int p = 0; // wynik musi być podany modulo 2^p
+        int s; // s-ta liczba w ciągu fibonacciego
+        int p; // wynik musi być podany modulo 2^p
         std::cin >> s >> p;
-
+        
         std::cout << (fib[s] & powers_of_2[p]) << '\n';
-/*
-        int a = 0;
-        int b = 1;
-
-        int power = powers_of_2[p];// - 1;
-
-        for (int j = 0; j < s; ++j) {
-            int t = a;
-            a = b;
-            b = (t+b) & power;
-        }
-
-        std::cout << b << '\n';
-
-*/
+        /*
+                int a = 0;
+                int b = 1;
+        
+                int power = powers_of_2[p];// - 1;
+        
+                for (int j = 0; j < s; ++j) {
+                    int t = a;
+                    a = b;
+                    b = (t+b) & power;
+                }
+        
+                std::cout << b << '\n';
+        
+        */
     }
-
+    
+#ifdef DRA_DEBUG
+    __int64 t2 = __rdtsc();
+    
+    std::cerr << t1 - t0 << " ";
+    std::cerr << t2 - t1 << "\n";
+    std::cerr << "total: " << t2 - t0 << "\n";
+#endif
+    
     return 0;
 }
