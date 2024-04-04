@@ -32,15 +32,17 @@ int main(int num_args, char **args) {
 
     int *data = new int[count];
 
+    int max = 0;
     for (int i = 0; i < count; ++i) {
         int current;
         std::cin >> current;
         data[i] = current;
+        if (current > max) max = current;
     }
     
     int num_divs = num_parts - 1;
 
-    int s = 1;
+    int s = max;
     while (true) {
         int sum = 0;
         int divs_made = 0;
@@ -49,8 +51,8 @@ int main(int num_args, char **args) {
             sum += data[i];
             if (sum > s) {
                 divs_made++;
-                sum = data[i];
 
+                sum = data[i];
                 if (sum > s) {
                     divs_made++;
                 }
