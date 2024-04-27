@@ -1,6 +1,10 @@
+/build
 *.exe
 *.raddbg
 *.ilk
 *.obj
 *.pdb
 *.rdbg
+*.o
+*.out
+*.ilk
