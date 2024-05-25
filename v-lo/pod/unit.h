@@ -27,7 +27,6 @@ Configuration:
 # endif
 #endif
 
-// TODO: A better version
 #ifndef UnitMemset
 # include <string.h>
 # define UnitMemset(ptr, value, size) memset(ptr, value, size)
@@ -37,6 +36,7 @@ Configuration:
 # define UnitMax(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
+// TODO: Own version without strcmp's ordering
 #ifndef UnitStringsEqual
 # include <string.h>
 # define UnitStringsEqual(a, b) (strcmp(a, b) == 0)
@@ -92,8 +92,8 @@ Configuration:
 
 typedef struct {
     const char *name;
-    unit_int64 old_value;
     unit_int64 new_value;
+    unit_int64 first_value;
 } Unit_Bench_Result;
 
 typedef struct {
@@ -284,8 +284,7 @@ UNITDEF void unit_bench_print_results_and_reset(Unit_Bench *b)
             if (searched) {
                 Unit_Bench_Result *res = searched;
                 res->new_value = test->result;
-                mult = (double)res->old_value / (double)res->new_value;
-                res->old_value = res->new_value;
+                mult = (double)res->first_value / (double)res->new_value;
                 value = res->new_value;
             } else {
                 // NOTE: This relies on the arena's contiguousness.
@@ -294,8 +293,8 @@ UNITDEF void unit_bench_print_results_and_reset(Unit_Bench *b)
                 if (!b->results) b->results = res;
 
                 res->name = test->name;
-                res->new_value = test->result;
-                res->old_value = res->new_value;
+                res->first_value = test->result;
+                res->new_value = res->first_value;
                 value = res->new_value;
                 b->result_count++;
             }

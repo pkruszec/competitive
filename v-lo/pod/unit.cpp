@@ -54,19 +54,20 @@ static Read_File_Result read_entire_text_file(const char *path)
     return result;
 }
 
-#define TestPodSimple(num_parts, expected, ...) \
-    do { \
-        int data[] = {__VA_ARGS__}; \
-        size_t cnt = UnitArrayCount(data); \
-        int result = pod(data, cnt, num_parts, get_max(data, cnt)); \
-        ExpectEqual(expected, result, "%d"); \
-    } while (0)
+// #define TestPodSimple(num_parts, expected, ...) \
+//     do { \
+//         int data[] = {__VA_ARGS__}; \
+//         size_t cnt = UnitArrayCount(data); \
+//         int result = pod(data, cnt, num_parts, get_max(data, cnt)); \
+//         ExpectEqual(expected, result, "%d"); \
+//     } while (0)
 
 typedef struct {
     int *data;
     int cnt;
     int num_parts;
     int max;
+    unit_int64 sum;
 } Pod_Input;
 
 #define PodReadFile(filename, input) \
@@ -76,6 +77,7 @@ typedef struct {
         int pos = 0; \
         int cnt = 0; \
         int num_parts = 0; \
+        unit_int64 sum = 0; \
         sscanf(file.ptr, "%d%d%n", &cnt, &num_parts, &pos); \
         file.ptr += pos; \
         int max = -1; \
@@ -83,19 +85,21 @@ typedef struct {
         for (int i = 0; i < cnt; ++i) { \
             sscanf(file.ptr, "%d%n", &data[i], &pos); \
             if (data[i] > max) max = data[i]; \
+            sum += data[i]; \
             file.ptr += pos; \
         } \
         (input)->data = data; \
         (input)->cnt = cnt; \
         (input)->num_parts = num_parts; \
         (input)->max = max; \
+        (input)->sum = sum; \
     } while (0)
 
 #define TestFile(filename, expected, fn) \
     do { \
         Pod_Input input = {}; \
         PodReadFile(filename, &input); \
-        int result = fn(input.data, input.cnt, input.num_parts, input.max); \
+        int result = fn(input.data, input.cnt, input.num_parts, input.max, input.sum); \
         ExpectEqual(expected, result, "%d"); \
         free(input.data); \
     } while (0)
@@ -108,7 +112,7 @@ typedef struct {
         PodReadFile(filename, &input); \
         unit_bench_test(bench, filename); \
         for (int i = 0; i < (count); ++i) { \
-            int result = fn(input.data, input.cnt, input.num_parts, input.max); \
+            int result = fn(input.data, input.cnt, input.num_parts, input.max, input.sum); \
         } \
         unit_bench_end_test(bench); \
         free(input.data); \
@@ -122,75 +126,52 @@ typedef struct {
 
 int main(void)
 {
-    /*
-    TestPodSimple(
-        4, 11,
-        1, 5, 3, 2, 4, 7, 1, 2, 8, 6
-    );
-
-    TestPodSimple(
-        6, 8,
-        4, 2, 8, 3, 5, 6, 1, 7
-    );
-
-    TestPodSimple(
-        4, 15,
-        8, 5, 10, 1, 3, 4, 9, 7, 6, 2
-    );
-    */
-
-    // TODO: Make a benchmarking system that keeps track of groups and tests
-    // e.g.
-    /*
-
-    Unit_Bench bench;
-    unit_bench_init(&bench);
-
-    unit_bench_group(&bench, "pod");
-
-    // This could be abstracted into a user macro.
-    unit_bench_test(&bench, "test1.txt");
-    TestPodFile("test1.txt", 11);
-    unit_bench_end_test(&bench);
-
-    unit_bench_test(&bench, "test1.txt");
-    TestPodFile("test2.txt", 8);
-    unit_bench_end_test(&bench);
-
-    unit_bench_end_group(&bench);
-
-    unit_bench_print_results(&bench);
-    unit_bench_reset(&bench);
-
-    */
-
     UnitLog("\nTEST GROUP: pod\n\n");
 #define X(f, e) TestFile(f, e, pod);
     TestAndBenchSet
 #undef X
 
-    UnitLog("\nTEST GROUP: pod2\n\n");
-#define X(f, e) TestFile(f, e, pod2);
+    UnitLog("\nTEST GROUP: pod_rtl\n\n");
+#define X(f, e) TestFile(f, e, pod_rtl);
+    TestAndBenchSet
+#undef X
+
+    UnitLog("\nTEST GROUP: pod_bigger_first_s\n\n");
+#define X(f, e) TestFile(f, e, pod_bigger_first_s);
     TestAndBenchSet
 #undef X
 
     Unit_Bench bench;
     unit_bench_init(&bench);
 
-    unit_bench_group(&bench, "pod");
+    //
+    // pod
+    //
 
+    unit_bench_group(&bench, "pod");
 #define X(f, e) BenchFile(&bench, f, pod, N);
     TestAndBenchSet
 #undef X
-
     unit_bench_end_group(&bench);
 
-    unit_bench_group(&bench, "pod2");
+    //
+    // pod_rtl
+    //
 
-#define X(f, e) BenchFile(&bench, f, pod2, N);
+    unit_bench_group(&bench, "pod_rtl");
+#define X(f, e) BenchFile(&bench, f, pod_rtl, N);
     TestAndBenchSet
 #undef X
+    unit_bench_end_group(&bench);
 
+    //
+    // pod_bigger_first_s
+    //
+
+    unit_bench_group(&bench, "pod_bigger_first_s");
+#define X(f, e) BenchFile(&bench, f, pod_bigger_first_s, N);
+    TestAndBenchSet
+#undef X
     unit_bench_end_group(&bench);
 
     unit_bench_print_results_and_reset(&bench);
