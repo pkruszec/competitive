@@ -31,7 +31,7 @@ static Read_File_Result read_entire_text_file(const char *path)
 
     FILE *f = fopen(path, "r");
 
-    // NOTE: This indentation is intentional!
+    // NOTE: This code structure is intentional!
     if (f) {
         fseek(f, 0, SEEK_END);
         long size = ftell(f);
@@ -62,8 +62,31 @@ static Read_File_Result read_entire_text_file(const char *path)
         ExpectEqual(expected, result, "%d"); \
     } while (0)
 
+
+#define TestPodFile(filename, expected) \
+    do { \
+        Read_File_Result file = read_entire_text_file(filename); \
+        if (file.size < 0) return 1; \
+        int pos = 0; \
+        int cnt = 0; \
+        int num_parts = 0; \
+        sscanf(file.ptr, "%d%d%n", &cnt, &num_parts, &pos); \
+        file.ptr += pos; \
+        int max = -1; \
+        int *data = (int *)malloc(sizeof(*data) * cnt); \
+        for (int i = 0; i < cnt; ++i) { \
+            sscanf(file.ptr, "%d%n", &data[i], &pos); \
+            if (data[i] > max) max = data[i]; \
+            file.ptr += pos; \
+        } \
+        int result = pod(data, cnt, num_parts, max); \
+        ExpectEqual(expected, result, "%d"); \
+    } while (0)
+
+
 int main(void)
 {
+    /*
     TestPodSimple(
         4, 11,
         1, 5, 3, 2, 4, 7, 1, 2, 8, 6
@@ -78,26 +101,12 @@ int main(void)
         4, 15,
         8, 5, 10, 1, 3, 4, 9, 7, 6, 2
     );
+    */
 
-    {
-        // NOTE: This must be zero-terminated!!!
-        Read_File_Result file = read_entire_text_file("test4.txt");
-        if (file.size < 0) return 1;
-
-        int pos = 0;
-        int cnt = 0;
-        int num_parts = 0;
-        sscanf(file.ptr, "%d%d%n", &cnt, &num_parts, &pos);
-        file.ptr += pos;
-
-        int *data = (int *)malloc(sizeof(*data) * cnt);
-        for (int i = 0; i < cnt; ++i) {
-            sscanf(file.ptr, "%d%n", &data[i], &pos);
-            file.ptr += pos;
-        }
-    }
-
-    
+    TestPodFile("test1.txt", 11);
+    TestPodFile("test2.txt", 8);
+    TestPodFile("test3.txt", 15);
+    TestPodFile("test4.txt", 159);
 
     // Expect Less, Greater, etc.
     // Template C++ Versions?

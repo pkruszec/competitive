@@ -49,7 +49,7 @@
 #define ExpectEqual(exp, got, fmt) \
     do { \
         if ((exp) == (got)) { \
-            UnitLogPassed(#got " == " #exp "\n"); \
+            UnitLogPassed(#got " == " #exp " (" fmt ")" "\n", exp); \
         } else { \
             UnitLogFailed("Expected " fmt ", got " fmt "\n", exp, got); \
         } \
