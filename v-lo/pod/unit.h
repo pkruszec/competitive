@@ -210,6 +210,7 @@ UNITDEF void unit_bench_end_group(Unit_Bench *b)
     b->current_group = 0;
 }
 
+// TODO: Add an iteration count to further differentiate the tests
 UNITDEF void unit_bench_test(Unit_Bench *b, const char *name)
 {
     if (!b->current_group) {

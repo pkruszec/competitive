@@ -2,7 +2,7 @@
 if not exist build mkdir build
 
 if "%1" == "unit" (
-    clang++ -std=c++20 -g -o build\unit.exe unit.cpp
+    clang++ -std=c++20 -O0 -g -o build\unit.exe unit.cpp
 
     echo ==========================
     echo Unit Tests Output

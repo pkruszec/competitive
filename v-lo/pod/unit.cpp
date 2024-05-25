@@ -104,7 +104,8 @@ typedef struct {
         free(input.data); \
     } while (0)
 
-#define N 10000
+#define N_SMALL 1000
+#define N_BIG   10
 
 #define BenchFile(bench, filename, fn, count) \
     do { \
@@ -119,25 +120,26 @@ typedef struct {
     } while (0)
 
 #define TestAndBenchSet \
-    X("test1.txt", 11) \
-    X("test2.txt", 8) \
-    X("test3.txt", 15) \
-    X("test4.txt", 159)
+    X("test1.txt", 11, N_SMALL) \
+    X("test2.txt", 8, N_SMALL) \
+    X("test3.txt", 15, N_SMALL) \
+    X("test4.txt", 159, N_SMALL) \
+    X("test_1000_12_rng.txt", 8573, N_BIG)
 
 int main(void)
 {
     UnitLog("\nTEST GROUP: pod\n\n");
-#define X(f, e) TestFile(f, e, pod);
+#define X(f, e, n) TestFile(f, e, pod);
     TestAndBenchSet
 #undef X
 
     UnitLog("\nTEST GROUP: pod_rtl\n\n");
-#define X(f, e) TestFile(f, e, pod_rtl);
+#define X(f, e, n) TestFile(f, e, pod_rtl);
     TestAndBenchSet
 #undef X
 
     UnitLog("\nTEST GROUP: pod_bigger_first_s\n\n");
-#define X(f, e) TestFile(f, e, pod_bigger_first_s);
+#define X(f, e, n) TestFile(f, e, pod_bigger_first_s);
     TestAndBenchSet
 #undef X
 
@@ -149,7 +151,7 @@ int main(void)
     //
 
     unit_bench_group(&bench, "pod");
-#define X(f, e) BenchFile(&bench, f, pod, N);
+#define X(f, e, n) BenchFile(&bench, f, pod, n);
     TestAndBenchSet
 #undef X
     unit_bench_end_group(&bench);
@@ -159,7 +161,7 @@ int main(void)
     //
 
     unit_bench_group(&bench, "pod_rtl");
-#define X(f, e) BenchFile(&bench, f, pod_rtl, N);
+#define X(f, e, n) BenchFile(&bench, f, pod_rtl, n);
     TestAndBenchSet
 #undef X
     unit_bench_end_group(&bench);
@@ -169,7 +171,7 @@ int main(void)
     //
 
     unit_bench_group(&bench, "pod_bigger_first_s");
-#define X(f, e) BenchFile(&bench, f, pod_bigger_first_s, N);
+#define X(f, e, n) BenchFile(&bench, f, pod_bigger_first_s, n);
     TestAndBenchSet
 #undef X
     unit_bench_end_group(&bench);
