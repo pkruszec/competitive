@@ -1,3 +1,9 @@
+/*
+
+Configuration:
+. UNIT_LOG_PASSED -- if defined, logs tests that passed
+*/
+
 #ifndef UNIT_H
 #define UNIT_H
 

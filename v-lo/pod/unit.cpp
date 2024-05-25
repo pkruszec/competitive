@@ -1,7 +1,7 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <stdlib.h>
 
-#define UNIT_LOG_PASSED
+// #define UNIT_LOG_PASSED
 #define UNIT_IMPLEMENTATION
 #include "unit.h"
 
@@ -91,28 +91,34 @@ typedef struct {
         (input)->max = max; \
     } while (0)
 
-#define TestPodFile(filename, expected) \
+#define TestFile(filename, expected, fn) \
     do { \
         Pod_Input input = {}; \
         PodReadFile(filename, &input); \
-        int result = pod(input.data, input.cnt, input.num_parts, input.max); \
+        int result = fn(input.data, input.cnt, input.num_parts, input.max); \
         ExpectEqual(expected, result, "%d"); \
         free(input.data); \
     } while (0)
 
-#define N 1000
+#define N 10000
 
-#define BenchPodFile(bench, filename, count) \
+#define BenchFile(bench, filename, fn, count) \
     do { \
         Pod_Input input = {}; \
         PodReadFile(filename, &input); \
         unit_bench_test(bench, filename); \
         for (int i = 0; i < (count); ++i) { \
-            int result = pod(input.data, input.cnt, input.num_parts, input.max); \
+            int result = fn(input.data, input.cnt, input.num_parts, input.max); \
         } \
         unit_bench_end_test(bench); \
         free(input.data); \
     } while (0)
+
+#define TestAndBenchSet \
+    X("test1.txt", 11) \
+    X("test2.txt", 8) \
+    X("test3.txt", 15) \
+    X("test4.txt", 159)
 
 int main(void)
 {
@@ -158,29 +164,32 @@ int main(void)
 
     */
 
-    TestPodFile("test1.txt", 11);
-    TestPodFile("test2.txt", 8);
-    TestPodFile("test3.txt", 15);
-    TestPodFile("test4.txt", 159);
+    UnitLog("\nTEST GROUP: pod\n\n");
+#define X(f, e) TestFile(f, e, pod);
+    TestAndBenchSet
+#undef X
+
+    UnitLog("\nTEST GROUP: pod2\n\n");
+#define X(f, e) TestFile(f, e, pod2);
+    TestAndBenchSet
+#undef X
 
     Unit_Bench bench;
     unit_bench_init(&bench);
 
     unit_bench_group(&bench, "pod");
 
-    BenchPodFile(&bench, "test1.txt", N);
-    BenchPodFile(&bench, "test2.txt", N);
-    BenchPodFile(&bench, "test3.txt", N);
-    BenchPodFile(&bench, "test4.txt", N);
+#define X(f, e) BenchFile(&bench, f, pod, N);
+    TestAndBenchSet
+#undef X
 
     unit_bench_end_group(&bench);
 
     unit_bench_group(&bench, "pod2");
 
-    BenchPodFile(&bench, "test1.txt", N);
-    BenchPodFile(&bench, "test2.txt", N);
-    BenchPodFile(&bench, "test3.txt", N);
-    BenchPodFile(&bench, "test4.txt", N);
+#define X(f, e) BenchFile(&bench, f, pod2, N);
+    TestAndBenchSet
+#undef X
 
     unit_bench_end_group(&bench);
 

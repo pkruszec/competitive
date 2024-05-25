@@ -50,6 +50,11 @@ static int pod(int *data, int count, int num_parts, int max)
     return s;
 }
 
+static int pod2(int *data, int count, int num_parts, int max)
+{
+    return 0;
+}
+
 #ifndef UNIT_TESTING
 
 int main(int num_args, char **args) {
