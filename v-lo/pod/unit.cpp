@@ -62,8 +62,14 @@ static Read_File_Result read_entire_text_file(const char *path)
         ExpectEqual(expected, result, "%d"); \
     } while (0)
 
+typedef struct {
+    int *data;
+    int cnt;
+    int num_parts;
+    int max;
+} Pod_Input;
 
-#define TestPodFile(filename, expected) \
+#define PodReadFile(filename, input) \
     do { \
         Read_File_Result file = read_entire_text_file(filename); \
         if (file.size < 0) return 1; \
@@ -79,10 +85,34 @@ static Read_File_Result read_entire_text_file(const char *path)
             if (data[i] > max) max = data[i]; \
             file.ptr += pos; \
         } \
-        int result = pod(data, cnt, num_parts, max); \
-        ExpectEqual(expected, result, "%d"); \
+        (input)->data = data; \
+        (input)->cnt = cnt; \
+        (input)->num_parts = num_parts; \
+        (input)->max = max; \
     } while (0)
 
+#define TestPodFile(filename, expected) \
+    do { \
+        Pod_Input input = {}; \
+        PodReadFile(filename, &input); \
+        int result = pod(input.data, input.cnt, input.num_parts, input.max); \
+        ExpectEqual(expected, result, "%d"); \
+        free(input.data); \
+    } while (0)
+
+#define N 1000
+
+#define BenchPodFile(bench, filename, count) \
+    do { \
+        Pod_Input input = {}; \
+        PodReadFile(filename, &input); \
+        unit_bench_test(bench, filename); \
+        for (int i = 0; i < (count); ++i) { \
+            int result = pod(input.data, input.cnt, input.num_parts, input.max); \
+        } \
+        unit_bench_end_test(bench); \
+        free(input.data); \
+    } while (0)
 
 int main(void)
 {
@@ -103,10 +133,58 @@ int main(void)
     );
     */
 
+    // TODO: Make a benchmarking system that keeps track of groups and tests
+    // e.g.
+    /*
+
+    Unit_Bench bench;
+    unit_bench_init(&bench);
+
+    unit_bench_group(&bench, "pod");
+
+    // This could be abstracted into a user macro.
+    unit_bench_test(&bench, "test1.txt");
+    TestPodFile("test1.txt", 11);
+    unit_bench_end_test(&bench);
+
+    unit_bench_test(&bench, "test1.txt");
+    TestPodFile("test2.txt", 8);
+    unit_bench_end_test(&bench);
+
+    unit_bench_end_group(&bench);
+
+    unit_bench_print_results(&bench);
+    unit_bench_reset(&bench);
+
+    */
+
     TestPodFile("test1.txt", 11);
     TestPodFile("test2.txt", 8);
     TestPodFile("test3.txt", 15);
     TestPodFile("test4.txt", 159);
+
+    Unit_Bench bench;
+    unit_bench_init(&bench);
+
+    unit_bench_group(&bench, "pod");
+
+    BenchPodFile(&bench, "test1.txt", N);
+    BenchPodFile(&bench, "test2.txt", N);
+    BenchPodFile(&bench, "test3.txt", N);
+    BenchPodFile(&bench, "test4.txt", N);
+
+    unit_bench_end_group(&bench);
+
+    unit_bench_group(&bench, "pod2");
+
+    BenchPodFile(&bench, "test1.txt", N);
+    BenchPodFile(&bench, "test2.txt", N);
+    BenchPodFile(&bench, "test3.txt", N);
+    BenchPodFile(&bench, "test4.txt", N);
+
+    unit_bench_end_group(&bench);
+
+    unit_bench_print_results_and_reset(&bench);
 
     // Expect Less, Greater, etc.
     // Template C++ Versions?
