@@ -1,11 +1,22 @@
-/*
+/* unit.h - simple unit testing & benchmarking library
 
-Configuration:
-. UNIT_LOG_PASSED -- if defined, logs tests that passed
+   Do this:
+      #define UNIT_IMPLEMENTATION
+   before you include this file in *one* C or C++ file to create the implementation.
+
+   REPLACEMENTS
+      UnitAlloc, UnitRealloc, UnitFree - memory allocation API
+
+   CONFIGURATION:
+      UNIT_LOG_PASSED - if defined, logs tests that passed
 */
 
 #ifndef UNIT_H
 #define UNIT_H
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 //
 // Utilities
@@ -28,18 +39,15 @@ Configuration:
 #endif
 
 #ifndef UnitMemset
-# include <string.h>
-# define UnitMemset(ptr, value, size) memset(ptr, value, size)
+# define UnitMemset(ptr, value, size) unit__memset(ptr, value, size)
 #endif
 
 #ifndef UnitMax
 # define UnitMax(a, b) ((a) > (b) ? (a) : (b))
 #endif
 
-// TODO: Own version without strcmp's ordering
 #ifndef UnitStringsEqual
-# include <string.h>
-# define UnitStringsEqual(a, b) (strcmp(a, b) == 0)
+# define UnitStringsEqual(a, b) unit__strings_equal(a, b)
 #endif
 
 #ifndef UnitAlloc
@@ -135,6 +143,8 @@ UNITDEF void unit_bench_print_results_and_reset(Unit_Bench *b);
 // Expects
 //
 
+// TODO: Namespace this stuff!
+
 #define Expect(x) \
     do { \
         if (x) { \
@@ -156,6 +166,32 @@ UNITDEF void unit_bench_print_results_and_reset(Unit_Bench *b);
 #endif /* UNIT_H */
 
 #ifdef UNIT_IMPLEMENTATION
+
+UNITDEF void *unit__memset(void *ptr, unsigned char value, int size)
+{
+    unsigned char *pos = (unsigned char *)ptr;
+    while (size >= 0) {
+        *pos = value;
+        pos++;
+        size--;
+    }
+    return ptr;
+}
+
+UNITDEF int unit__strings_equal(const char *a, const char *b)
+{
+    while (1) {
+        if ((*a == 0) && (*b == 0)) return 1;
+        else if ((*a) == 0 || (*b == 0)) return 0;
+
+        if ((*a) != (*b)) return 0;
+
+        a++;
+        b++;
+    }
+
+    return 0;
+}
 
 UNITDEF void unit_bench_init(Unit_Bench *b)
 {
@@ -315,3 +351,7 @@ UNITDEF void unit_bench_print_results_and_reset(Unit_Bench *b)
 }
 
 #endif /* UNIT_IMPLEMENTATION */
+
+#ifdef __cplusplus
+}
+#endif
