@@ -1,5 +1,6 @@
 #include <iostream>
 #include <fstream>
+#include <stdint.h>
 
 #define Max(a, b) ((a) > (b) ? (a) : (b))
 
@@ -11,7 +12,7 @@
 // 1. Podejście testowe (wynik: 0)
 //
 
-static int pod(int *data, int count, int num_parts, int max, int)
+static int pod(int *data, int count, int num_parts, int max, int64_t)
 {    
     //
     // TODO: Liczenie z prawej i z lewej, wybrać wartość najmniejszą
@@ -52,7 +53,7 @@ static int pod(int *data, int count, int num_parts, int max, int)
     return s;
 }
 
-static int pod_bigger_first_s(int *data, int count, int num_parts, int max, int sum)
+static int pod_bigger_first_s(int *data, int count, int num_parts, int max, int64_t sum)
 {
     //
     // TODO: Liczenie z prawej i z lewej, wybrać wartość najmniejszą
@@ -93,7 +94,7 @@ static int pod_bigger_first_s(int *data, int count, int num_parts, int max, int 
     return s;
 }
 
-static int pod_rtl(int *data, int count, int num_parts, int max, int)
+static int pod_rtl(int *data, int count, int num_parts, int max, int64_t)
 {
     int num_divs = num_parts - 1;
     int s = max;
@@ -182,15 +183,17 @@ int main(int num_args, char **args) {
     
     int *data = new int[count];
 
+    int64_t sum = 0;
     int max = 0;
     for (int i = 0; i < count; ++i) {
         int current;
         std::cin >> current;
         data[i] = current;
         if (current > max) max = current;
+        sum += current;
     }
         
-    int s = pod(data, count, num_parts, max);
+    int s = pod_bigger_first_s(data, count, num_parts, max, sum);
     std::cout << s;
 
     return 0;
