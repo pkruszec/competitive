@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 // #define UNIT_LOG_PASSED
+#define UNIT_BENCH_INDENT 25
 #define UNIT_IMPLEMENTATION
 #include "unit.h"
 
@@ -124,7 +125,10 @@ typedef struct {
     X("test2.txt", 8, N_SMALL) \
     X("test3.txt", 15, N_SMALL) \
     X("test4.txt", 159, N_SMALL) \
-    X("test_1000_12_rng.txt", 8573, N_BIG)
+    X("test_1000_12_rng.txt", 8573, N_BIG) \
+    X("test_1000_50_same.txt", 840, N_SMALL) \
+    X("test_1000_100_rng.txt", 1060, N_BIG) \
+    X("test_1000_1_rng.txt", 101596, N_BIG)
 
 int main(void)
 {
@@ -160,11 +164,11 @@ int main(void)
     // pod_rtl
     //
 
-    unit_bench_group(&bench, "pod_rtl");
-#define X(f, e, n) BenchFile(&bench, f, pod_rtl, n);
-    TestAndBenchSet
-#undef X
-    unit_bench_end_group(&bench);
+//     unit_bench_group(&bench, "pod_rtl");
+// #define X(f, e, n) BenchFile(&bench, f, pod_rtl, n);
+//     TestAndBenchSet
+// #undef X
+//     unit_bench_end_group(&bench);
 
     //
     // pod_bigger_first_s

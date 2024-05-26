@@ -186,11 +186,9 @@ int main(int num_args, char **args) {
     int64_t sum = 0;
     int max = 0;
     for (int i = 0; i < count; ++i) {
-        int current;
-        std::cin >> current;
-        data[i] = current;
-        if (current > max) max = current;
-        sum += current;
+        std::cin >> data[i];
+        if (data[i] > max) max = data[i];
+        sum += data[i];
     }
         
     int s = pod_bigger_first_s(data, count, num_parts, max, sum);

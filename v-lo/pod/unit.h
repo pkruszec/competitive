@@ -94,6 +94,10 @@ extern "C" {
 # define UNIT_BENCH_PERF_COUNT_DIVISOR 1000
 #endif
 
+#ifndef UNIT_BENCH_INDENT
+# define UNIT_BENCH_INDENT 20
+#endif
+
 #ifndef UnitBenchPerfCount
 # define UnitBenchPerfCount() __rdtsc()
 #endif
@@ -295,7 +299,7 @@ UNITDEF void unit_bench_print_results_and_reset(Unit_Bench *b)
 {
     UnitLog("\nBENCHMARK\n");
 
-    int indent = 20;
+    int indent = UNIT_BENCH_INDENT;
 
     unsigned char *pos = (unsigned char *)b->first_group;
     for (unsigned int i = 0; i < b->group_count; ++i) {
