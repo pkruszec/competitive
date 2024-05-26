@@ -311,7 +311,7 @@ UNITDEF void unit_bench_print_results_and_reset(Unit_Bench *b)
             "  %*s | %*s | %*s\n",
             indent, "Name",
             indent, "Count",
-            indent, "Comparison w/ Prev"
+            indent, "Comparison w/ First"
         );
 
         for (unsigned int j = 0; j < group->test_count; ++j) {
