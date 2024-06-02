@@ -8,7 +8,7 @@
 
 #define UNIT_TESTING
 #include "pod.cpp"
-#include "jacus.cpp"
+#include "binary.cpp"
 
 static int get_max(int *data, int count)
 {
@@ -148,8 +148,8 @@ int main(void)
     TestAndBenchSet
 #undef X
 
-    UnitLog("\nTEST GROUP: najmniejszaSuma\n\n");
-#define X(f, e, n) TestFile(f, e, najmniejszaSuma);
+    UnitLog("\nTEST GROUP: pod_binary\n\n");
+#define X(f, e, n) TestFile(f, e, pod_binary);
     TestAndBenchSet
 #undef X
 
@@ -159,6 +159,16 @@ int main(void)
 
     Unit_Bench bench;
     unit_bench_init(&bench);
+
+    //
+    // pod_bigger_first_s
+    //
+
+    unit_bench_group(&bench, "pod_bigger_first_s");
+#define X(f, e, n) BenchFile(&bench, f, pod_bigger_first_s, n);
+    TestAndBenchSet
+#undef X
+    unit_bench_end_group(&bench);
 
     //
     // pod
@@ -181,21 +191,11 @@ int main(void)
 //     unit_bench_end_group(&bench);
 
     //
-    // pod_bigger_first_s
+    // pod_binary
     //
 
-    unit_bench_group(&bench, "pod_bigger_first_s");
-#define X(f, e, n) BenchFile(&bench, f, pod_bigger_first_s, n);
-    TestAndBenchSet
-#undef X
-    unit_bench_end_group(&bench);
-
-    //
-    // najmniejszaSuma
-    //
-
-    unit_bench_group(&bench, "najmniejszaSuma");
-#define X(f, e, n) BenchFile(&bench, f, najmniejszaSuma, n);
+    unit_bench_group(&bench, "pod_binary");
+#define X(f, e, n) BenchFile(&bench, f, pod_binary, n);
     TestAndBenchSet
 #undef X
     unit_bench_end_group(&bench);    
