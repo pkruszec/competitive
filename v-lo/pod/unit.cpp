@@ -8,6 +8,7 @@
 
 #define UNIT_TESTING
 #include "pod.cpp"
+#include "jacus.cpp"
 
 static int get_max(int *data, int count)
 {
@@ -147,6 +148,15 @@ int main(void)
     TestAndBenchSet
 #undef X
 
+    UnitLog("\nTEST GROUP: najmniejszaSuma\n\n");
+#define X(f, e, n) TestFile(f, e, najmniejszaSuma);
+    TestAndBenchSet
+#undef X
+
+    //
+    // BEGIN BENCHMARK
+    //
+
     Unit_Bench bench;
     unit_bench_init(&bench);
 
@@ -179,6 +189,20 @@ int main(void)
     TestAndBenchSet
 #undef X
     unit_bench_end_group(&bench);
+
+    //
+    // najmniejszaSuma
+    //
+
+    unit_bench_group(&bench, "najmniejszaSuma");
+#define X(f, e, n) BenchFile(&bench, f, najmniejszaSuma, n);
+    TestAndBenchSet
+#undef X
+    unit_bench_end_group(&bench);    
+
+    //
+    // END BENCHMARK
+    //
 
     unit_bench_print_results_and_reset(&bench);
 
