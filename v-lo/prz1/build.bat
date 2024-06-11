@@ -2,10 +2,21 @@
 
 if not exist build mkdir build
 
-pushd build
-    call clang++ -std=c++20 -D PRZ1_REDIRECT=1 -g -o prz1.exe ..\prz1.cpp
-popd
+set arg=%1
+set common=-std=c++17 -g
 
-call build\prz1.exe test1.txt && echo:
-call build\prz1.exe test2.txt && echo:
-call build\prz1.exe test3.txt && echo:
+if "%arg%" == "ship" (
+    pushd build
+        call clang++ %common% -D PRZ1_REDIRECT=1 -o prz1.exe ..\prz1.cpp
+    popd
+
+    call build\prz1.exe test1.txt && echo:
+    call build\prz1.exe test2.txt && echo:
+    call build\prz1.exe test3.txt && echo:
+) else (
+    pushd build
+        call clang++ %common% -o unit.exe ..\unit.cpp
+    popd
+
+    call build\unit.exe
+)
