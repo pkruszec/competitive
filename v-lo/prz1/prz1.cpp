@@ -32,7 +32,7 @@ static int *prz1_last_max_op(int n, int m, std::istream &input)
 {
     int last = n + 1;
     int *arr = new int[n]();
-    int *ops = new int[m]();
+    int *ops = new int[m];
 
     int max = 0;
     int max_from_button = 0;
@@ -58,9 +58,12 @@ static int *prz1_last_max_op(int n, int m, std::istream &input)
 
         if (k == last) {
             max_from_button = max;
-            if (i < idx-1) arr[ops[i+1] - 1] = max_from_button;
         } else {
-            arr[k-1]++;
+            if (arr[k-1] > max_from_button) {
+                arr[k-1]++;
+            } else {
+                arr[k-1] = max_from_button + 1;
+            }            
 
             if (arr[k-1] > max) {
                 max = arr[k-1];
@@ -86,7 +89,9 @@ static int *prz1_last_max_op(int n, int m, std::istream &input)
     // if ((idx != m-1)) { 
     // }
 
+#if UNIT_TESTING
     delete[] ops;
+#endif
     return arr;
 }
 
