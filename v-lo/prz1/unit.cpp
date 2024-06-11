@@ -1,5 +1,7 @@
-#include <fstream>
 #include <stdio.h>
+#include <string.h>
+
+#include <fstream>
 
 #define UNIT_IMPLEMENTATION
 #include "unit.h"
@@ -30,6 +32,26 @@ static Test tests[] = {
     TEST("test1"),
     TEST("test2"),
     TEST("test3"),
+    TEST("testpy_1"),
+    TEST("testpy_2"),
+    TEST("testpy_3"),
+    TEST("testpy_4"),
+    TEST("testpy_5"),
+    TEST("testpy_6"),
+    TEST("testpy_7"),
+    TEST("testpy_8"),
+    TEST("testpy_9"),
+    TEST("testpy_10"),
+    TEST("testpy_11"),
+    TEST("testpy_12"),
+    TEST("testpy_13"),
+    TEST("testpy_14"),
+    TEST("testpy_15"),
+    TEST("testpy_16"),
+    TEST("testpy_17"),
+    TEST("testpy_18"),
+    TEST("testpy_19"),
+    TEST("testpy_20"),
 };
 
 #define RUN_TEST(test, fn) \
@@ -70,6 +92,8 @@ static Test tests[] = {
             } \
             printf("\n"); \
         } \
+        delete[] arr;\
+        delete[] exp;\
     } while (0)
 
 #define RUN_TESTS(arr, fn) \
@@ -81,8 +105,37 @@ static Test tests[] = {
         printf("\n"); \
     } while (0)
 
-int main(void)
+static void run_stable(const char *path)
 {
+    std::ifstream in(path);
+
+    int n, m;
+    in >> n >> m;
+
+    int *arr = prz1_stable(n, m, in);
+    for (int i = 0; i < n; ++i) {
+        printf("%d ", arr[i]);
+    }
+    printf("\n");
+    delete[] arr;
+}
+
+int main(int argc, char **argv)
+{
+
+    if (argc > 1) {
+        char *action = argv[1];
+
+        if (strcmp(action, "stable") == 0) {
+            if (argc < 3) return 1;
+
+            char *path = argv[2];
+
+            run_stable(path);
+        }
+        return 0;
+    }
+
     // Stable Check
     RUN_TESTS(tests_stable, prz1_stable);
 

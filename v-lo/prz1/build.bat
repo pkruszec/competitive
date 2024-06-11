@@ -18,5 +18,5 @@ if "%arg%" == "ship" (
         call clang++ %common% -o unit.exe ..\unit.cpp
     popd
 
-    call build\unit.exe
+    call build\unit.exe %*
 )

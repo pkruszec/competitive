@@ -32,13 +32,13 @@ static int *prz1_last_max_op(int n, int m, std::istream &input)
 {
     int last = n + 1;
     int *arr = new int[n]();
-
     int *ops = new int[m]();
 
     int max = 0;
     int max_from_button = 0;
 
     int idx = -1;
+    bool idx_set = false;
 
     for (int i = 0; i < m; ++i) {
         int k;
@@ -49,6 +49,9 @@ static int *prz1_last_max_op(int n, int m, std::istream &input)
             idx = i;
         }
     }
+
+    if (idx < 0) idx = 0;
+    else idx_set = true;
 
     for (int i = 0; i < idx; ++i) {
         int k = ops[i];
@@ -67,23 +70,33 @@ static int *prz1_last_max_op(int n, int m, std::istream &input)
 
     max_from_button = max;
 
-    for (int i = 0; i < n; ++i) {
-        arr[i] = max_from_button;
-    }
-
-    if (idx < 0) idx = 0;
-    if ((idx != m-1)) {
-        for (int i = idx+1; i < m; ++i) {
-            arr[ops[i] - 1]++;
+    if (idx_set) {
+        for (int i = 0; i < n; ++i) {
+            arr[i] = max_from_button;
         }
     }
 
+    if (!idx_set) idx = 0;
+    else idx++;
+
+    for (int i = idx; i < m; ++i) {
+        arr[ops[i] - 1]++;
+    }
+
+    // if ((idx != m-1)) { 
+    // }
+
+    delete[] ops;
     return arr;
 }
 
 #if !UNIT_TESTING
 int main(int argc, char **argv)
 {
+    std::ios_base::sync_with_stdio(false);
+    std::cin.tie(0);
+    std::cout.tie(0);
+
 #if PRZ1_REDIRECT
     char const *filename = 0;
     if (argc < 2) {
