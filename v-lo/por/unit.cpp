@@ -1,5 +1,6 @@
 #include <fstream>
 
+#define UNIT_BENCH_INDENT 25
 #define UNIT_IMPLEMENTATION
 #include "unit.h"
 
@@ -73,7 +74,21 @@ static void td_open_and_parse(const char *path, Test_Data *td)
         printf("\n"); \
     } while (0)
 
+#define COUNT 20000
 
+#define RUN_BENCHES(bench, arr, fn) \
+    do { \
+        Test_Data td; \
+        for (size_t i = 0; i < ARRAY_LEN(arr); ++i) { \
+            td_open_and_parse((arr)[i].path, &td); \
+            unit_bench_test(bench, (arr)[i].path); \
+            for (size_t k = 0; k < COUNT; ++k) { \
+                int res = RUN_FN(fn, &td); \
+            } \
+            unit_bench_end_test(bench); \
+            delete[] td.nodes; \
+        } \
+    } while (0)
 
 int main(int argc, char **argv)
 {
@@ -88,6 +103,17 @@ int main(int argc, char **argv)
 
     RUN_TESTS(tests_man, por_stable);
     RUN_TESTS(tests, por);
+
+    Unit_Bench bench;
+    unit_bench_init(&bench);
+
+    {
+        unit_bench_group(&bench, "por");
+        RUN_BENCHES(&bench, tests, por);
+        unit_bench_end_group(&bench);
+    }
+
+    unit_bench_print_results_and_reset(&bench);
 
     return 0;
 }
