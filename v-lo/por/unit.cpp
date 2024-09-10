@@ -1,3 +1,5 @@
+#include <string.h>
+
 #include <fstream>
 
 #define UNIT_BENCH_INDENT 25
@@ -74,7 +76,7 @@ static void td_open_and_parse(const char *path, Test_Data *td)
         printf("\n"); \
     } while (0)
 
-#define COUNT 20000
+#define COUNT 50000
 
 #define RUN_BENCHES(bench, arr, fn) \
     do { \
@@ -97,6 +99,7 @@ int main(int argc, char **argv)
         Test_Data td;
         td_open_and_parse(path, &td);
         int res = RUN_FN(por_stable, &td);
+        fprintf(stderr, "%zu, %zu %zu\n", td.count, td.sum_targets, td.sum_amounts);
         printf("%d\n", res);
         return 0;
     }
@@ -106,6 +109,12 @@ int main(int argc, char **argv)
 
     Unit_Bench bench;
     unit_bench_init(&bench);
+
+    {
+        unit_bench_group(&bench, "por_stable");
+        RUN_BENCHES(&bench, tests, por_stable);
+        unit_bench_end_group(&bench);
+    }
 
     {
         unit_bench_group(&bench, "por");
