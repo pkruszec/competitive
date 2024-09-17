@@ -1,0 +1,7 @@
+3
+5
+kajak
+4
+anna
+9
+palindrom
