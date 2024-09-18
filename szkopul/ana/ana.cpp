@@ -1,3 +1,8 @@
+//
+// Anagramy
+// https://szkopul.edu.pl/problemset/problem/Aq-3LEQBYOdbiqQXvn3TJ0Id/site/
+//
+
 #include <iostream>
 #include <vector>
 #include <string>
