@@ -1,3 +1,10 @@
+//
+// Bezpieczeństwo minimalistyczne (bez)
+// https://szkopul.edu.pl/problemset/problem/aSbIC_LB4H-CGMYPEVue5jFw/site/
+//
+// not solved
+//
+
 #include <iostream>
 
 int main(void)
