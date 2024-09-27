@@ -127,29 +127,6 @@ int main(void)
     int min = INT_MAX;
     int max = INT_MAX;
 
-    /*
-    std::vector<int> nbors (n, 0);
-    for (auto &edge: e) {
-        nbors[edge.u]++;
-        nbors[edge.v]++;
-    }
-
-    std::vector<std::pair<int, int>> valid;
-    for (int i = 0; i < n; ++i) {
-        if (nbors[i] <= 0) continue;
-
-        valid.push_back(std::pair<int, int>(i, nbors[i]));
-    }
-
-    std::sort(valid.begin(), valid.end(), [](auto &p1, auto &p2) -> int { return p1.second < p2.second; });
-*/
-    /*
-    for (auto &vv: valid) {
-        std::cout << vv.first << ": " << vv.second << "   ";
-    }
-    std::cout << '\n';
-*/
-
     for (int i = 0; i < n; ++i) {
         memcpy(pt, p, n*sizeof(int));
 
@@ -165,25 +142,6 @@ int main(void)
         if (val < max) max = val;
         std::fill(vis.begin(), vis.end(), false);
     }
-    /*
-    for (int i = n-1; i >= 0; --i) {
-        memcpy(pt, p, n*sizeof(int));
-
-        int val = dfs(pt, vis, e, fire_min, i);
-        if (val > max) max = val;
-        std::fill(vis.begin(), vis.end(), false);
-    }
-    */
-
-    // int min = dfs(p, vis, e, fire_min, 0);
-
-    /*
-    int diff = sum_p - sum_b;
-    if (diff <= 0) {
-        std::cout << "NIE\n";
-        return 0;
-    }
-    */
 
     if (min == max) {
         std::cout << "NIE";
@@ -191,14 +149,6 @@ int main(void)
     }
 
     std::cout << min << " " << max << "\n";
-
-    /*
-    std::cout << sum_p << ", " << sum_b << "\n";
-
-    for (auto &x: e) {
-        std::cout << x.u << ", " << x.v << ", " << x.b << "\n";
-    }
-    */
 
     return 0;
 }
