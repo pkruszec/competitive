@@ -18,17 +18,57 @@ int main()
     int n;
     cin >> n;
 
+/*
+    if (n < 2) {
+        cout << "NIE\n";
+        return 0;
+    }
+*/
+
     // s are unique
     // z are unique
     // take advantage of this fact?
 
     // linked list?
-    vector<pair<int, int>> xs(n);
+    // vector<pair<int, int>> xs(n);
+
+    pair<int, int> fst(0, 0);
+    pair<int, int> snd(0, 0);
+
+    int fst_sm = 0;
+    int snd_sm = 0;
 
     for (int i = 0; i < n; ++i) {
-        cin >> xs[i].first >> xs[i].second;
+        int s, z;
+        cin >> s >> z;
+        int sm = s + z;
+
+        auto p = pair<int, int>(s, z);
+        if (sm > fst_sm) {
+            fst_sm = sm;
+            fst = p;
+        } else if (sm > snd_sm) {
+            snd_sm = sm;
+            snd = p;
+        }
     }
 
+    // cout << "FIRST : " << fst.first << "," << fst.second << "\n";
+    // cout << "SECOND: " << snd.first << "," << snd.second << "\n";
+
+    bool fst_gone = (fst.first < snd.first) || (fst.second < snd.second);
+    bool snd_gone = (snd.first < fst.first) || (snd.second < fst.second);
+
+    // cerr << "FIRST: " << fst.first << " " << fst.second << " gone? " << fst_gone << "\n";
+    // cerr << "SECND: " << snd.first << " " << snd.second << " gone? " << snd_gone << "\n";
+
+    if (fst_gone && snd_gone) {
+        cout << "TAK\n";
+    } else {
+        cout << "NIE\n";
+    }
+
+/*
     while (!xs.empty()) {
         if (xs.size() == 1) {
             cout << "NIE\n";
@@ -51,6 +91,7 @@ int main()
     }
 
     cout << "TAK\n";
+*/
 
 /*
     for (auto [s, z]: xs) {
