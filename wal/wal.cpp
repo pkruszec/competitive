@@ -44,22 +44,21 @@ int main()
         z += 1;
 #endif
 
+        pair<int, int> p(s, z);
+        if (p == fst_s || p == snd_s || p == fst_z || p == snd_z) continue;
+
         if (s > fst_s.first || (s == fst_s.first && z > fst_s.second)) {
             snd_s = fst_s;
-            fst_s.first = s;
-            fst_s.second = z;
+            fst_s = p;
         } else if (s > snd_s.first || (s == snd_s.first && z > snd_s.second)) {
-            snd_s.first = s;
-            snd_s.second = z;
+            snd_s = p;
         }
 
         if (z > fst_z.second || (z == fst_z.second && s > fst_z.first)) {
             snd_z = fst_z;
-            fst_z.first = s;
-            fst_z.second = z;
+            fst_z = p;
         } else if (z > snd_z.second || (z == snd_z.second && s > snd_z.first)) {
-            snd_z.first = s;
-            snd_z.second = z;
+            snd_z = p;
         }
     }
 
