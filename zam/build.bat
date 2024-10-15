@@ -1,6 +1,6 @@
 @echo off
 
-call clang++ zam.cpp -o zam.exe
+:: call clang++ zam.cpp -o zam.exe
 call zam.exe < input01.txt
 call zam.exe < input02.txt
 call zam.exe < input03.txt

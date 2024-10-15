@@ -1,21 +1,20 @@
-"""
-n = 500
-with open("input05.txt", "w", encoding="utf-8") as f:
-    f.write(f"{n}\n")
-    for i in range(n):
-        f.write(f"{i+1} {n-i}\n")
-"""
+import random
 
-n1 = 100000
-n2 = 100000
-n = n1+n2
+n = 10
 
-with open("input06.txt", "w", encoding="utf-8") as f:
-    f.write(f"{n}\n")
+for test in range(1, 11):
+    with open(f"test/test{test:02d}.txt", "w", encoding="utf-8") as f:
+        f.write(f"{n}\n")
+        s = [i for i in range(1, n+1)]
+        z = [i for i in range(1, n+1)]
+        for i in range(n):
+            idx = random.randint(0, len(s)-1)
+            cs = s[idx]
+            del s[idx]
 
-    for i in range(n1):
-        f.write(f"{i+1} {i+1}\n")
+            idx = random.randint(0, len(z)-1)
+            cz = z[idx]
+            del z[idx]
 
-    for i in range(n2):
-        x = (3*n//2) - i
-        f.write(f"{i+1} {x}\n")
+            f.write(f"{cs} {cz}\n")
+
