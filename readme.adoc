@@ -11,3 +11,13 @@ Zadania::
 * [ ] Bitada (bit)
 * [ ] Kasyno (kas)
 * [ ] Sprawiedliwy podział (spr)
+
+[comment]
+--
+
+== Walki robotów
+
+Czy istnieje ktoś, kogo nie można pokonać?
+Znaleźć największego kota, i zobaczyć czy ktoś jest silniejszy i czy ktoś jest zwinniejszy.
+
+--
