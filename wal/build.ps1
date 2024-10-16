@@ -16,19 +16,21 @@ function Run-BigTest {
         $expected = Get-Content -Raw $path
         $output = Get-Content -Raw $file.FullName | .\wal.exe
 
+        Write-Host $new
+
         if ($expected -ne $output) {
-            Write-Host "TEST FAILED:" $in $file $expected $output
+            Write-Host "------ TEST FAILED:" $in $file $expected $output
         }
         # $res = Get-Content -Raw $file.FullName | .\wal.exe
         # Write-Host $file.Name '->' $res
     }
 }
 
-# clang++ wal.cpp -DBIGTEST -std=c++20 -o wal.exe
-# Run-BigTest "bigtest/walrob/input1" "bigtest/walrob/output1"
+clang++ wal.cpp -DBIGTEST -std=c++20 -o wal.exe
+Run-BigTest "bigtest/walrob/input3" "bigtest/walrob/output3"
 
-clang++ wal.cpp -std=c++20 -o wal.exe
-Write-Host "=== MANUAL TEST OUTPUT ==="
-Run-Test-Folder "input"
-Write-Host "=== GENERATED TEST OUTPUT ==="
-Run-Test-Folder "test"
+# clang++ wal.cpp -std=c++20 -o wal.exe
+# Write-Host "=== MANUAL TEST OUTPUT ==="
+# Run-Test-Folder "input"
+# Write-Host "=== GENERATED TEST OUTPUT ==="
+# Run-Test-Folder "test"
