@@ -2,6 +2,11 @@
 #include <vector>
 #include <string>
 #include <algorithm>
+#include <stdint.h>
+
+#ifndef MEASURE
+# define MEASURE 0
+#endif
 
 using namespace std;
 
@@ -52,28 +57,34 @@ int main()
         return 0;
     }
 
-/*
-    if (k == n && b_count > 0) {
-        cout << "-1\n";
-        return 0;
-    }
-*/
+#if MEASURE
+    uint64_t get_time = 0;
+    uint64_t flip_time = 0;
+    int cmoves = 0;
+#endif
 
     while (1) {
-        // if (all_of(s.begin(), s.end(), [](auto c){return c == true;})) break;
-
         if (b_count == 0) break;
+
+#if MEASURE
+        uint64_t t0, t1;
+        t0 = __rdtsc();
+#endif
 
         int best_i = -1;
         int best_c = 0;
         for (int i = 0; i <= n-k; ++i) {
-            // if (s[i] != 0) continue;
             int c = left_b_count(i);
             if (c > best_c) {
                 best_c = c;
                 best_i = i;
             }
         }
+
+#if MEASURE
+        t1 = __rdtsc();
+        get_time += t1-t0;
+#endif
 
         if (best_i < 0) {
             cout << "-1\n";
@@ -86,18 +97,26 @@ int main()
         // cout << " ";
         // cout << " " << best_i << " (" << best_c << ")\n";
 
+#if MEASURE
+        t0 = __rdtsc();
+#endif
+
         flip(best_i);
         moves++;
 
-        // if (moves % 2500 == 0) cout << moves << "\n";
-        // cout << moves << "\n";
-    }
+#if MEASURE
+        t1 = __rdtsc();
+        flip_time += t1-t0;
+        cmoves++;
+        if (cmoves >= 1000) {
+            cout << moves << " get: " << get_time/cmoves << "/move flip: " << (double)flip_time/(double)(cmoves) << "/move \n";
+            flip_time = 0;
+            get_time = 0;
+            cmoves = 0;
+        }
+#endif
 
-    // for (auto c: s) {
-    //     cout << c;
-    // }
-    // cout << "\n";
-    // cout << "       ";
+    }
 
     cout << moves << "\n";
 

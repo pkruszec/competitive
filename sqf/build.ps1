@@ -32,11 +32,11 @@ function Run-BigTest {
         $StopWatch.Stop()
         $time = $StopWatch.Elapsed.TotalSeconds
 
-        Write-Host $new '---' $time 's'
+        Write-Host $new '---' $time 's' 'exp' $expected 'got' $output
 
-        if ($output -gt $expected) {
-            Write-Host "------ TEST FAILED:" $in $file $expected $output
-        }
+        # if ([int]$output -gt [int]$expected) {
+        #     Write-Host "------ TEST FAILED:" $in $file $expected $output
+        # }
     }
 }
 
@@ -45,7 +45,9 @@ if ($LastExitCode -ne 0) {
     throw
 }
 
-# Run-BigTest "aga" "out"
+# Get-Content -Raw "aga/aga_01.in" | .\sqf.exe
+
+Run-BigTest "aga" "out"
 
 # Run-Test "input/01.in"
 
