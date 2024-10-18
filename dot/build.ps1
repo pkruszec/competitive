@@ -1,6 +1,6 @@
 function Run-Test {
     param($path)
-    Get-Content -Raw $path | .\sqf.exe
+    Get-Content -Raw $path | .\dot.exe
 }
 
 function Run-Test-Folder {
@@ -9,7 +9,7 @@ function Run-Test-Folder {
 
         $StopWatch = new-object system.diagnostics.stopwatch
         $StopWatch.Start()
-        $res = Get-Content -Raw $file.FullName | .\sqf.exe
+        $res = Get-Content -Raw $file.FullName | .\dot.exe
         $StopWatch.Stop()
         $time = $StopWatch.Elapsed.TotalSeconds
 
@@ -28,31 +28,18 @@ function Run-BigTest {
 
         $StopWatch = new-object system.diagnostics.stopwatch
         $StopWatch.Start()
-        $output = Get-Content -Raw $file.FullName | .\sqf.exe
+        $output = Get-Content -Raw $file.FullName | .\dot.exe
         $StopWatch.Stop()
         $time = $StopWatch.Elapsed.TotalSeconds
 
         Write-Host $new '---' $time 's' 'exp' $expected 'got' $output
-
-        # if ([int]$output -gt [int]$expected) {
-        #     Write-Host "------ TEST FAILED:" $in $file $expected $output
-        # }
     }
 }
 
-# clang++ sqf.cpp -DMEASURE -O2 -o sqf.exe
-clang++ sqf.cpp -O2 -o sqf.exe
+clang++ dot.cpp -O2 -o dot.exe
 if ($LastExitCode -ne 0) {
     throw
 }
 
-# Get-Content -Raw "archive/aga_01.in" | .\sqf.exe
-
-# Run-BigTest "aga" "out"
-
-# Run-Test "input/01.in"
-
 Write-Host "=== MANUAL TEST RESULTS ==="
 Run-Test-Folder "input"
-Write-Host "=== GENERATED TEST RESULTS ==="
-Run-Test-Folder "test"

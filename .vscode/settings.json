@@ -7,6 +7,10 @@
         "format": "cpp",
         "initializer_list": "cpp",
         "xstring": "cpp",
-        "xutility": "cpp"
+        "xutility": "cpp",
+        "xloctime": "cpp",
+        "utility": "cpp",
+        "cstdlib": "cpp",
+        "iostream": "cpp"
     }
 }
