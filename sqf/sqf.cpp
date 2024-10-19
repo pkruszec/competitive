@@ -138,10 +138,14 @@ int main()
         t0 = __rdtsc();
 #endif
 
-        counts[best_i] = -counts[best_i];
-        int min_i = best_i+1;
+        // counts[best_i] = -counts[best_i];
+        
+        int min_i = best_i;
         int max_i = min(best_i+k, n-k);
+
         for (int i = min_i; i <= max_i; ++i) {
+            
+            #if 0
             int prev = counts[i-1];
             int absprev = abs(prev);
             int sgnprev = SGN(prev);
@@ -158,9 +162,10 @@ int main()
                 }
                 counts[i] = res * sgnprev;
             }
+            #endif
 
             //int pc = counts[i];
-            //counts[i] = left_b_count(i);
+            counts[i] = left_b_count(i);
         }
 
 #if MEASURE
