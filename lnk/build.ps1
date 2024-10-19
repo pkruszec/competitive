@@ -24,7 +24,7 @@ function Run-BigTest {
         $new =  [System.IO.Path]::ChangeExtension($name, '.out')
         $path = [System.IO.Path]::Combine($out, $new)
 
-        $expected = Get-Content -Raw $path
+        $expected = Get-Content $path
 
         $StopWatch = new-object system.diagnostics.stopwatch
         $StopWatch.Start()
@@ -41,5 +41,7 @@ if ($LastExitCode -ne 0) {
     throw
 }
 
-Write-Host "=== MANUAL TEST RESULTS ==="
-Run-Test-Folder "input"
+Run-BigTest "input" "output"
+
+# Write-Host "=== MANUAL TEST RESULTS ==="
+# Run-Test-Folder "input"

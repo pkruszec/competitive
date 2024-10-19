@@ -87,11 +87,11 @@ int main()
 #endif
 
     while (1) {
-        cout << "{";
-        for (auto c: counts) {
-            cout << c << " ";
-        }
-        cout << "}\n";
+        // cout << "{";
+        // for (auto c: counts) {
+        //     cout << c << " ";
+        // }
+        // cout << "}\n";
 
         if (b_count == 0) break;
 
@@ -149,6 +149,8 @@ int main()
             int idx = i-best_i;
 
             if (idx < absprev) {
+                // TODO: we should still count the left ones, but from the point where we can't 
+                // deduce it from the counts.
                 // affected by change 
                 int res = absprev - idx;
                 if (SGN(curr) == sgnprev && curr > res) {

@@ -48,11 +48,11 @@ if ($LastExitCode -ne 0) {
 
 # Get-Content -Raw "archive/aga_01.in" | .\sqf.exe
 
-# Run-BigTest "aga" "out"
+Run-BigTest "aga" "out"
 
 # Run-Test "input/01.in"
 
-Write-Host "=== MANUAL TEST RESULTS ==="
-Run-Test-Folder "input"
-Write-Host "=== GENERATED TEST RESULTS ==="
-Run-Test-Folder "test"
+# Write-Host "=== MANUAL TEST RESULTS ==="
+# Run-Test-Folder "input"
+# Write-Host "=== GENERATED TEST RESULTS ==="
+# Run-Test-Folder "test"
