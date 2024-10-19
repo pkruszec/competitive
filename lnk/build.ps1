@@ -33,6 +33,8 @@ function Run-BigTest {
         $time = $StopWatch.Elapsed.TotalSeconds
 
         Write-Host $new '---' $time 's' 'exp' $expected 'got' $output
+        if ($expected -ne $output) {
+        }
     }
 }
 

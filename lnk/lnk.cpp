@@ -54,17 +54,18 @@ int main()
     }
 
     // count all connections with 0 crosses
-    for (int i = 0; i < cross_counts.size(); ++i) {
-        if (cross_counts[i] == 0) {
-            links++;
-            visited[i] = true;
-        }
-    }
+    // for (int i = 0; i < cross_counts.size(); ++i) {
+    //     if (cross_counts[i] < 1) {
+    //         links++;
+    //         visited[i] = true;
+    //     }
+    // }
 
     for (auto &c: crosses) {
         int idx;
         int snd;
-        if (removed[c.first] || removed[c.second]) {
+
+        if (visited[c.first] && visited[c.second]) {
             continue;
         }
 
@@ -76,15 +77,42 @@ int main()
             snd = c.first;
         }
 
-        if (!visited[idx]) {
-            // cout << conn[idx].first << ";" << conn[idx].second << "(" << cross_counts[idx] << ")" << ">" << conn[snd].first << ";" << conn[snd].second << "(" << cross_counts[snd] << ")" << " ";
-            links++;
+        if (removed[idx]) {
+            cross_counts[snd]--;
+            visited[idx] = true;
+            continue;
         }
 
+        if (removed[snd]) {
+            cross_counts[idx]--;
+            visited[snd] = true;
+            continue;
+        }
+
+        //cout << conn[idx].first << ";" << conn[idx].second << "(" << cross_counts[idx] << ")" << ">" << conn[snd].first << ";" << conn[snd].second << "(" << cross_counts[snd] << ")" << " ";
+
+        // links++;
         cross_counts[idx]--;
-        cross_counts[snd]--;
+        cross_counts[snd] = INT_MAX;
+
         visited[idx] = true;
         removed[snd] = true;
+    }
+
+    // for (int i = 0; i < conn.size(); ++i) {
+    //     auto &p = conn[i];
+    //     cout << "(" << p.first << ", " << p.second << " -> " << cross_counts[i] << ")\n";
+    // }
+    // for (auto &p: crosses) {
+    //     cout << "{" << p.first << ", " << p.second << "}\n";
+    // }
+
+    // count all connections with 0 crosses
+    for (int i = 0; i < cross_counts.size(); ++i) {
+        if (cross_counts[i] < 1) {
+            links++;
+            visited[i] = true;
+        }
     }
 
 /*
