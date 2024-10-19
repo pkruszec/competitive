@@ -11,10 +11,14 @@ using namespace std;
 
 int main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+
     int n0, n1;
     cin >> n0 >> n1;
-    vector<int> v0(n0+1, 0);
-    vector<int> v1(n1+1, 0);
+    vector<int> v0(n0, 0);
+    vector<int> v1(n1, 0);
 
     for (int i = 0; i < n0; ++i) {
         cin >> v0[i];
@@ -25,112 +29,124 @@ int main()
     }
 
     int sm = 0;
+
+    vector<pair<int, int>> possible {};
+
+    for (int i = 0; i < n0; ++i) {
+        int current = v0[i];
+        int sgn = SGN(current);
+        if (current == 0) continue;
+
+        for (int j = 0; j < n1; ++j) {
+            if (SGN(v1[j]) == sgn) {
+                possible.push_back(pair<int, int>(i, j));
+            }
+        }
+    }
+
     int p0 = 0;
     int p1 = 0;
 
-    int mn = min(n0, n1);
-    for (int i = 0; i < mn; ++i) {
-        int x0 = v0[p0];
-        int x1 = v1[p1];
+    int64_t sm0 = 0;
 
-        int sg0 = SGN(x0);
-        int sg1 = SGN(x1);
+    while ((p0 < n0)) {
 
-        // cout << p0 << "," << p1 << "\n";
+        int64_t best_p1_product = INT64_MIN;
+        int64_t best_p1_value = INT64_MIN;
+        int64_t best_p1 = -1;
+        for (int i = 0; i < possible.size(); ++i) {
+            auto &p = possible[i];
 
-        /*if (sg0 == sg1) {
-            sm += x0*x1;
-            p0++;
-            p1++;
-        }
-        else */{
-            int f0 = -1;
-            int f1 = -1;
-            int m0 = 0;
-            int m1 = 0;
+            if (!(p.first == p0 && p.second >= p1)) continue;
 
-            for (int j = p0; j < n0; ++j) {
-                // if (j == p0) continue;
-                int x = v0[j];
-                int a = abs(x);
-                if (SGN(x) == sg1 && a > m0) {
-                    m0 = a;
-                    f0 = j;
+            int product = v0[p.first]*v1[p.second];
+            int64_t value = product;
+
+            for (int j = 0; j < possible.size(); ++j) {
+                if (i == j) continue;
+                auto &r = possible[j];
+                if (!(r.first > p.first && r.second < p.second)) continue;
+                value -= v0[r.first]*v1[r.second];
+
+                if (value <= best_p1_value) {
+                    break;
                 }
             }
 
-            for (int j = p1; j < n1; ++j) {
-                // if (j == p1) continue;
-                int x = v1[j];
-                int a = abs(x);
-                if (SGN(x) == sg0 && a > m1) {
-                    m1 = a;
-                    f1 = j;
-                }
+            if (value > best_p1_value) {
+                best_p1 = p.second;
+                best_p1_product = product;
+                best_p1_value = value;
             }
-
-            int mf0 = m0*(f0 >= 0);
-            int mf1 = m1*(f1 >= 0);
-
-            int vx0 = mf0*sg1 * x1;
-            int vx1 = mf1*sg0 * x0;
-
-            // if (f0 < 0 && f1 < 0) {
-            //     sm += x1*x0;
-            //     break;
-            // }
-
-            if (vx0 == 0 && vx1 == 0) {
-                p0++;
-                p1++;
-                continue;
-            }
-
-            int r0 = 3;
-            int r1 = 5;
-            bool fst = (vx0*r0 - (f0-p0)*r1) >= (vx1*r0 - (f1-p1)*r1);
-            if (f0 < 0) fst = false;
-
-            if (fst) {
-                sm += vx0;
-                p0 = f0+1;
-            } else {
-                sm += vx1;
-                p1 = f1+1;
-            }
-
-            // if (m0 > m1) {
-            //     p0 = f0;
-            //     sm += (v0[p0] * x1);
-
-            //     cout << x1 << ", " << v0[p0] << "\n";
-            // } else {
-            //     p1 = f1;
-            //     sm += (v1[p1] * x0);
-
-            //     cout << x0 << ", " << v1[p1] << "\n";
-            // }
         }
+
+        p0++;
+        if (best_p1 >= 0) {
+            sm0 += best_p1_product;
+            p1 = best_p1+1;
+        }
+
     }
+
+    p0 = 0;
+    p1 = 0;
+    int64_t sm1 = 0;
+
+    while ((p1 < n1)) {
+
+        int64_t best_p0_product = INT64_MIN;
+        int64_t best_p0_value = INT64_MIN;
+        int64_t best_p0 = -1;
+        for (int i = 0; i < possible.size(); ++i) {
+            auto &p = possible[i];
+
+            if (!(p.second == p1 && p.first >= p0)) continue;
+
+            int product = v0[p.first]*v1[p.second];
+            int64_t value = product;
+
+            for (int j = 0; j < possible.size(); ++j) {
+                if (i == j) continue;
+                auto &r = possible[j];
+                if (!(r.second > p.second && r.first < p.first)) continue;
+                value -= v0[r.first]*v1[r.second];
+
+                if (value <= best_p0_value) {
+                    break;
+                }
+            }
+
+            if (value > best_p0_value) {
+                best_p0 = p.first;
+                best_p0_product = product;
+                best_p0_value = value;
+            }
+        }
+
+        p1++;
+        if (best_p0 >= 0) {
+            sm1 += best_p0_product;
+            p0 = best_p0+1;
+        }
+
+    }
+
+    sm = max(sm0, sm1);
 
     if (sm == 0) {
         int min0 = INT_MAX;
         int min1 = INT_MAX;
         for (int i = 0; i < n0; ++i) {
-            if (v0[i] < min0) min0 = v0[i];
+            if (abs(v0[i]) < abs(min0)) min0 = v0[i];
         }
         for (int i = 0; i < n1; ++i) {
-            if (v1[i] < min1) min1 = v1[i];
+            if (abs(v1[i]) < abs(min1)) min1 = v1[i];
         }
 
         sm += min0*min1;
     }
 
     cout << sm << "\n";
-
-    // int c = 0;
-    // vector<int> d(min(n0, n1));
-    // cout << better << "\n";
 
     return 0;
 }

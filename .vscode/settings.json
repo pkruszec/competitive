@@ -11,6 +11,7 @@
         "xloctime": "cpp",
         "utility": "cpp",
         "cstdlib": "cpp",
-        "iostream": "cpp"
+        "iostream": "cpp",
+        "ios": "cpp"
     }
 }

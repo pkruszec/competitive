@@ -24,7 +24,7 @@ function Run-BigTest {
         $new =  [System.IO.Path]::ChangeExtension($name, '.out')
         $path = [System.IO.Path]::Combine($out, $new)
 
-        $expected = Get-Content -Raw $path
+        $expected = Get-Content $path
 
         $StopWatch = new-object system.diagnostics.stopwatch
         $StopWatch.Start()
@@ -33,6 +33,8 @@ function Run-BigTest {
         $time = $StopWatch.Elapsed.TotalSeconds
 
         Write-Host $new '---' $time 's' 'exp' $expected 'got' $output
+        if ($expected -ne $output) {
+        }
     }
 }
 
@@ -41,5 +43,6 @@ if ($LastExitCode -ne 0) {
     throw
 }
 
-Write-Host "=== MANUAL TEST RESULTS ==="
-Run-Test-Folder "input"
+
+# Run-Test "input/thousand01.in"
+Run-BigTest "input" "output"
