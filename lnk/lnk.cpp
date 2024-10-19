@@ -208,6 +208,7 @@ int main()
     }
 #endif
 
+    // cout << crosses.size() << " " << links << "\n";
     cout << links << "\n";
 
     return 0;

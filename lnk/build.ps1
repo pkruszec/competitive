@@ -32,13 +32,13 @@ function Run-BigTest {
         $StopWatch.Stop()
         $time = $StopWatch.Elapsed.TotalSeconds
 
-        Write-Host $new '---' $time 's' 'exp' $expected 'got' $output
         if ($expected -ne $output) {
+            Write-Host $new '---' $time 's' 'exp' $expected 'got' $output
         }
     }
 }
 
-clang++ lnk.cpp -O2 -o lnk.exe
+clang++ lnk.cpp -O0 -o lnk.exe
 if ($LastExitCode -ne 0) {
     throw
 }
