@@ -77,7 +77,7 @@ int main()
     }
 
     for (int i = 0; i <= n-k; ++i) {
-        counts[i] = left_count(i);
+        counts[i] = left_b_count(i);
     }
 
 #if MEASURE
