@@ -30,7 +30,11 @@ int main()
     int c = 0;
     int fst = 0;
 
-    // TODO: cin by chars and sum nines
+    // TODO: liczyć różnicę między 10^ilość cyfr n a n
+    // jeśli jest większa niż 1000000 (max) to ustawić na INT_MAX
+    // i porównać z liczbą cyfr
+    // jeśli mniejsza to 1 przycisk razy różnica
+    // jeśli większa to flip
 
     int nine_count = 0;
     for (int i = fst; i < s.size(); ++i) {
@@ -38,20 +42,13 @@ int main()
     }
 
     while (!got_it(s, fst)) {
-        // cout << s.substr(fst) << "\n";
+        cout << s.substr(fst) << "\n";
 
         char last = s[s.size() - 1];
         int lx = last - '0';
         if (lx == 0 || lx == 9) {
-            /*
-            if (lx == 9 && only_nines(s, fst)) {
-                c += 2;
-                break;
-            }
-            */
-
             if (lx == 9 && (nine_count == s.size() - fst)) {
-                c +=2 ;
+                c += 2;
                 break;
             }
 
