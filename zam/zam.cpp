@@ -1,8 +1,12 @@
 #include <iostream>
 #include <string>
+#include <limits.h>
+#include <stdint.h>
 //#include <string_view>
 
 using namespace std;
+
+int MAX = 1000000;
 
 bool got_it(string &s, int fst)
 {
@@ -27,6 +31,9 @@ int main()
     s.reserve(1024*1024*4);
     cin >> s;
 
+    string tmp;
+    tmp.reserve(1024);
+
     int c = 0;
     int fst = 0;
 
@@ -42,14 +49,69 @@ int main()
     }
 
     while (!got_it(s, fst)) {
-        cout << s.substr(fst) << "\n";
+        // cout << c << ": " << s.substr(fst) << "\n";
 
+        int digit_count = s.size() - fst;
+        
         char last = s[s.size() - 1];
         int lx = last - '0';
-        if (lx == 0 || lx == 9) {
+        // if (lx == 0 || lx == 9) {
+        if (1) {
             if (lx == 9 && (nine_count == s.size() - fst)) {
                 c += 2;
                 break;
+            }
+
+            // TODO: get last part without 9
+            // for example
+            // 999980
+            //     ^^
+            // and add to 99
+            //
+
+            int last_non_zero = 0;
+            tmp.clear();
+            for (int i = s.size() - 1; i >= fst; --i) {
+                if (s[i] == '9') break;
+                int value = '0' + ('9' - s[i]);
+                tmp.push_back(value);
+                if (value != '0') last_non_zero = tmp.size() - 1;
+                // TODO? probably not needed
+                // if (tmp.size() > digit_count) break;
+            }
+
+            // cout << tmp.substr(0, last_non_zero+1) << "\n";
+
+            int diff = 0;
+            int r = 1;
+            for (int i = 0; i <= last_non_zero; ++i) {
+                if (tmp[i] == '0')
+                    diff *= 10;
+                else
+                    diff += r * (tmp[i] - '0');
+                
+                if (diff > MAX || diff < 0) {
+                    diff = INT_MAX;
+                    break;
+                }
+                r *= 10;
+            }
+
+            // cout << diff << "\n";
+            if (diff != 0 && diff <= digit_count) {
+                c += diff;
+                nine_count += last_non_zero+1;
+                for (int i = 0; i < last_non_zero+1; ++i) {
+                    s[s.size() - 1 - i] = '9';
+                }
+                continue;
+            }
+
+            if (s[s.size() - 1] != '0' && s[s.size() - 1] != '9'/* && s[fst] >= s[s.size() - 1]*/) {
+                c += 9-lx;
+                s[s.size() - 1] = '9';
+                nine_count++;
+                continue;
             }
 
             s.push_back(s[fst]);
@@ -66,7 +128,6 @@ int main()
         } else {
             c += 9-lx;
             s[s.size() - 1] = '9';
-
             nine_count++;
         }
     }

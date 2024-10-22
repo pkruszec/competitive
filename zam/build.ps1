@@ -43,6 +43,7 @@ if ($LastExitCode -ne 0) {
     throw
 }
 
+# Run-Test "in/test_dumb_7.in"
 Run-BigTest "in" "out"
 
 # Write-Host "=== MANUAL TEST RESULTS ==="
