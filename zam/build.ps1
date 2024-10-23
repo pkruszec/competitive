@@ -32,9 +32,9 @@ function Run-BigTest {
         $StopWatch.Stop()
         $time = $StopWatch.Elapsed.TotalSeconds
 
-        if ($expected -ne $output) {
+        # if ($expected -ne $output) {
             Write-Host $new '---' $time 's' 'exp' $expected 'got' $output
-        }
+        # }
     }
 }
 
@@ -43,8 +43,10 @@ if ($LastExitCode -ne 0) {
     throw
 }
 
-# Run-Test "in/test_dumb_7.in"
+# Run-Test "input08.txt"
 Run-BigTest "in" "out"
+
+# Run-BigTest "in" "out"
 
 # Write-Host "=== MANUAL TEST RESULTS ==="
 # Run-Test-Folder "input"

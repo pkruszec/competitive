@@ -37,11 +37,7 @@ int main()
     int c = 0;
     int fst = 0;
 
-    // TODO: liczyć różnicę między 10^ilość cyfr n a n
-    // jeśli jest większa niż 1000000 (max) to ustawić na INT_MAX
-    // i porównać z liczbą cyfr
-    // jeśli mniejsza to 1 przycisk razy różnica
-    // jeśli większa to flip
+    // TODO: cut left 9's and add c?
 
     int nine_count = 0;
     for (int i = fst; i < s.size(); ++i) {
@@ -55,19 +51,12 @@ int main()
         
         char last = s[s.size() - 1];
         int lx = last - '0';
-        // if (lx == 0 || lx == 9) {
+
         if (1) {
             if (lx == 9 && (nine_count == s.size() - fst)) {
                 c += 2;
                 break;
             }
-
-            // TODO: get last part without 9
-            // for example
-            // 999980
-            //     ^^
-            // and add to 99
-            //
 
             int last_non_zero = 0;
             tmp.clear();
