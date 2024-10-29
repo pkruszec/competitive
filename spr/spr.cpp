@@ -67,7 +67,6 @@ int main()
     for (auto &x: ba) {
         cin >> x;
         full_sum_a += x;
-        if (x < min_a) min_a = x;
     }
     for (auto &x: bi) {
         cin >> x;
@@ -77,8 +76,8 @@ int main()
     sum_a = full_sum_i;
 
     sort(xs.begin(), xs.end(), [](auto a, auto b){
-            // return bi[a] > bi[b];
-            return bi[a] > bi[b] + ba[a] < ba[b];
+            return bi[a] > bi[b];
+            // return bi[a] > bi[b] + ba[a] < ba[b];
         });
 
     // for (auto x: xs) {
@@ -90,27 +89,27 @@ int main()
     int p = 0;
     while (true) {
         int min = INT_MAX;
-        int min_index = -1;
+        int best_index = -1;
 
         for (int i = p; i < xs.size(); ++i) {
             int x = xs[i];
             if (!owner[x]) {
-                min_index = x;
-                min = bi[x];
+                best_index = x;
+                // min = bi[x];
                 break;
             }
         }
 
-        /*
-        for (int i = 0; i < n; ++i) {
-            if (!owner[i] && ba[i] < min) {
-                min = ba[i];
-                min_index = i;
+        for (int i = xs.size() - 1; i >= p; --i) {
+            int x = xs[i];
+            if (!owner[x]) {
+                min = bi[x];
+                // min = bi[x];
+                break;
             }
         }
-        */
 
-        if (min_index < 0) {
+        if (best_index < 0) {
             cout << "BUG min_index < 0\n";
             return 0;
         }
@@ -121,10 +120,10 @@ int main()
 
         // cout << min_index << "\n";
 
-        sum_a -= bi[min_index];
-        sum_i += bi[min_index];
-        owner[min_index] = true;
-        p = min_index;
+        sum_a -= bi[best_index];
+        sum_i += bi[best_index];
+        owner[best_index] = true;
+        p = best_index;
 
         // for (auto x: owner) {
         //     cout << x << " ";

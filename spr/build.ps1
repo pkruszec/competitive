@@ -22,7 +22,7 @@ function Run-BigTest {
 
         $output = Get-Content -Raw $file.FullName | .\spr.exe
 
-        if ($output -eq "BUG baj jealous" -or $output -eq "BUG bit jealous" -or $output -eq "BUG min_index < 0") {
+        if ($output -eq "BUG baj jealous" -or $output -eq "BUG bit jealous" -or $output -eq "BUG best_index < 0") {
             Write-Host $name '---' 'got' $output
         }
     }
