@@ -21,12 +21,14 @@ function Run-BigTest {
         $expected = Get-Content $path
         $output = Get-Content -Raw $file.FullName | .\bit.exe
 
-        if ($expected -ne $output) {
             Write-Host $new '---' $time 's' 'exp' $expected 'got' $output
+        if ($expected -ne $output) {
         }
     }
 }
 
-clang++ bit.cpp -DBIGTEST -std=c++20 -o bit.exe
-Run-Test "in/01.in"
+clang++ bit.cpp -g -DBIGTEST -std=c++20 -o bit.exe
+# Run-Test "ocen/in/pk2.in"
+# Run-Test "ocen/in/bit2ocen.in"
 # Run-BigTest "in" "out"
+Run-BigTest "ocen/in" "ocen/out"

@@ -3,7 +3,8 @@
 
 using namespace std;
 
-int k;
+using Edges = vector<pair<int, int>>;
+using Tmp = vector<pair<int, int>>;
 
 struct Vertex {
     int parent;
@@ -11,7 +12,13 @@ struct Vertex {
     int children[2];
 };
 
-using Edges = vector<pair<int, int>>;
+int k;
+int match_count = 0;
+
+Edges src_edges;
+Edges dst_edges;
+vector<Vertex> src_tree;
+vector<Vertex> dst_tree;
 
 void make_tree(vector<Vertex> &tree, Edges &edges, int idx, int prev=0)
 {
@@ -44,81 +51,207 @@ void print_tree(vector<Vertex> &tree, int idx, int indent=0)
     }
 }
 
-// TODO: should we mod k here too?
-int match(vector<Vertex> &src_tree, vector<Vertex> &dst_tree, int src_index, int dst_index, int dst_prev=0)
+void make_src(vector<int> &src, vector<Vertex> &tree, int index)
 {
-    int match_count = 0;
+    Vertex &v = tree[index];
+    // src.push_back(v.count + (v.parent != 0));
+    src.push_back(v.count);
 
-    Vertex &src = src_tree[src_index];
-    Vertex &dst = dst_tree[dst_index];
+    for (int i = 0; i < v.count; ++i) {
+        make_src(src, tree, v.children[i]);
+    }
+}
 
-    if (src.count == 0) return 1;
+bool connected(vector<int> &src, Tmp &tmp, int i)
+{
+    if (i < 1) return true;
 
-    // cout << "  " << dst_index;
-    // if (src.count == 0) {
-    //     match_count++;
-    //     cout << "!";
-    // }
-    // cout << "\n";
+    auto current = tmp[i];
+    auto potential_mutual = pair<int, int> {};
+    auto potential_direct = tmp[i-1];
 
-    for (int i = 0; i < src.count; ++i) {
-        int src_child_index = src.children[i];
-        // Vertex &src_child = src_tree[src_child_index];
+    bool mut = false;
+    if (i >= 2) {
+        potential_mutual = tmp[i-2];
+        mut = (potential_mutual.second >= 2) && (src[i-2] >= 2);
+    }
 
-        if (dst.parent != 0 && dst.parent != dst_prev) {
-            match_count += match(src_tree, dst_tree, src_child_index, dst.parent, dst_index);
-        }
+    bool current_mutual = false;
 
-        for (int j = 0; j < dst.count; ++j) {
-            if (dst.children[j] == dst_prev) continue;
-            match_count += match(src_tree, dst_tree, src_child_index, dst.children[j], dst_index);
+    for (auto [a, b]: dst_edges) {
+        if (mut) {
+            if (a == current.first && b == potential_mutual.first) current_mutual = true;
+            if (b == current.first && a == potential_mutual.first) current_mutual = true;
+        } else {
+            if (a == current.first && b == potential_direct.first) return true;
+            if (b == current.first && a == potential_direct.first) return true;
         }
     }
 
-    return match_count;
+    for (auto [a, b]: dst_edges) {
+        if (current_mutual) {
+            if (a == potential_direct.first && b == potential_mutual.first) return true;
+            if (b == potential_direct.first && a == potential_mutual.first) return true;
+        }
+    }
+
+    // cout << "FALSE:" << i << "->" << (src[i-2]) << "\n";
+    return false;
+}
+
+Tmp check_dim1(vector<int> &src, Tmp tmp, vector<Vertex> &tree, int fst_index, int n, int prev=0, int snd_index=0)
+{
+    auto rec = [&](int index){
+        Vertex &v = tree[index];
+        bool parent_valid = v.parent != 0 && v.parent != prev;
+        bool fst_valid = v.count >= 1 && v.children[0] != prev;
+        bool snd_valid = v.count >= 2 && v.children[1] != prev;
+        int fst = v.children[0];
+        int snd = v.children[1];
+
+        if (fst_valid) {
+            check_dim1(src, tmp, tree, fst, n, index);
+        }
+        if (snd_valid) {
+            check_dim1(src, tmp, tree, snd, n, index);
+        }
+        if (parent_valid) {
+            check_dim1(src, tmp, tree, v.parent, n, index);
+        }
+
+        if (fst_valid && snd_valid) {
+            tmp=check_dim1(src, tmp, tree, fst, n, index, snd);
+            check_dim1(src, tmp, tree, snd, n, index, fst);
+        }
+
+        if (fst_valid && parent_valid) {
+            tmp=check_dim1(src, tmp, tree, fst, n, index, v.parent);
+            check_dim1(src, tmp, tree, v.parent, n, index, fst);
+        }
+
+        if (snd_valid && parent_valid) {
+            tmp=check_dim1(src, tmp, tree, snd, n, index, v.parent);
+            check_dim1(src, tmp, tree, v.parent, n, index, snd);
+        }
+    };
+
+    int fst_count = tree[fst_index].count + (tree[fst_index].parent != 0);
+    int snd_count = tree[snd_index].count + (tree[snd_index].parent != 0);
+
+    tmp.push_back(pair<int,int>(fst_index, tree[fst_index].count));
+    if (fst_count < src[tmp.size() - 1]) return tmp;
+    rec(fst_index);
+
+    /*
+    TODO: handle this
+
+         O
+        / \
+       /   \
+      O     O
+     / \   / \
+    O   O O   O
+    */
+
+    if (snd_index) {
+        tmp.push_back(pair<int,int>(snd_index, tree[snd_index].count));
+        if (snd_count < src[tmp.size() - 1]) return tmp;
+        rec(snd_index);
+    }
+
+    if (tmp.size() == n) {
+        bool eq = true;
+        for (int i = 0; i < n; i += 1) {
+            if (!connected(src, tmp, i)) {
+                eq = false;
+                break;
+            }
+        }
+#if 0
+        if (1) {
+            for (auto x: tmp) {
+                cout << x.first << " ";
+            }
+            cout << "\n";
+        }
+#endif
+        if (eq) match_count = (match_count+1) % k;
+        return tmp;
+    }
+
+    return tmp;
 }
 
 /*
-void match(int source_node, int selected)
+int match(vector<bool> src_vis,vector<Vertex> &src_tree, vector<Vertex> &dst_tree, int src_index, int dst_index, int dst_prev=0)
 {
-    for (int i = 1; i <= n-1; ++i) {
-        auto [a, b] = np[i];
-        int other;
-        if (a == source_node) {
-            other = b;
-        } else if (b == source_node) {
-            other = a;
+    Vertex &src = src_tree[src_index];
+    Vertex &dst = dst_tree[dst_index];
+
+    // src_vis[src_index] = true;
+
+    if (src.count == 0) {
+        cout << "!\n";
+        return 1;
+    }
+
+
+    if (dst.count == 0) return 0;
+
+    if (src.count == 2) {
+        int d0, d1;
+        if (dst.parent == 0 || dst.parent == dst_prev) {
+            if (dst.count != 2) return 0;
+            d0 = dst.children[0];
+            d1 = dst.children[1];
         } else {
-            continue;
+            if (dst.count != 1) return 0;
+            d0 = dst.parent;
+            d1 = dst.children[0];
         }
 
-        if (nvis[i]) continue;
-        nvis[i] = true;
-
-
-
+        int m0 = match(src_tree, dst_tree, src.children[0], d0, dst_index);
+        int m1 = match(src_tree, dst_tree, src.children[1], d1, dst_index);
+        return m0 + m1;
     }
 
-    cout << selected << "\n";
-}
-void dfs(int v)
-{
-    vis[v] = true;
-    for (auto &p: mp) {
-        auto [u, w] = p;
-        int o = 0;
-        if (u == v) {
-            o = w;
-        } else if (u == w) {
-            o = v;
-        } else continue;
+    if (src.count == 1) {
+        int d0, d1 = 0;
+        if (dst.parent == 0 || dst.parent == dst_prev) {
+            if (dst.count < 1) return 0;
+            d0 = dst.children[0];
+            if (dst.count == 2) d1 = dst.children[1];
+        } else {
+            if (dst.count < 1) return 0;
+            d0 = dst.parent;
+            d1 = dst.children[0];
+        }
 
-        if (visited[o]) continue;
-        visited[o] = true;
-
-
+        if (d1 == 0) return match(src_tree, dst_tree, src.children[0], d0, dst_index);
+        int m0 = match(src_tree, dst_tree, src.children[0], d0, dst_index);
+        int m1 = match(src_tree, dst_tree, src.children[1], d1, dst_index);
+        return m0 + m1;
     }
+
+    return 0;
 }
+*/
+
+/*
+IDEA: find all subgraphs of length n - their child counts, compare with src
+each one of those is a 1-dim array
+e.g.
+
+   2
+  / \
+ 1   0
+ |
+ 0
+
+2 1 0 0
+
+first root, then lefts and rights
+
 */
 
 int main()
@@ -130,15 +263,10 @@ int main()
     int n, m;
     cin >> n >> m >> k;
 
-    Edges src_edges;
-    Edges dst_edges;
-    vector<Vertex> src_tree;
-    vector<Vertex> dst_tree;
-
     src_tree.resize(n + 1, Vertex{});
     dst_tree.resize(m + 1, Vertex{});
 
-    src_edges.resize(m - 1);
+    src_edges.resize(n - 1);
     dst_edges.resize(m - 1);
 
     for (int i = 0; i < n-1; ++i) {
@@ -157,25 +285,27 @@ int main()
     // print_tree(src_tree, 1);
     // print_tree(dst_tree, 1);
 
-    int match_count = 0;
+    vector<int> src;
+    make_src(src, src_tree, 1);
+    
+    // cout << "SRC: ";
+    // for (auto x: src) {
+    //     cout << x << " ";
+    // } 
+    // cout << "\n";
+
+    Tmp tmp;
     for (int i = 1; i <= m; ++i) {
-        // cout << "match\n";
-        match_count = (match_count % k + match(src_tree, dst_tree, 1, i) % k) % k;
+        check_dim1(src, tmp, dst_tree, i, n);
     }
-    cout << match_count << "\n";
 
-    /*
-        notes:
-        - number of edges for each node <= 3
-        - for match, must be connected        
-    */
-
-    // for (int j = 1; j <= m; ++j) {
-    //     for (int i = 1; i <= n; ++i) nvis[i] = false;
+    // int match_count = 0;
+    // for (int i = 1; i <= m; ++i) {
+    //     cout << "match\n";
+    //     match_count = (match_count % k + match(/*src_vis, */src_tree, dst_tree, 1, i) % k) % k;
     // }
-
-
-    // match(1, 2);
+    
+    cout << match_count << "\n";
 
     return 0;
 }
