@@ -4,6 +4,10 @@
 #include <limits.h>
 #include <algorithm>
 
+#define NOT_SET (-1)
+#define BA 0
+#define BI 1
+
 using namespace std;
 
 using s64 = int64_t;
@@ -14,10 +18,11 @@ s64 full_sum_i = 0;
 s64 sum_a = 0;
 s64 sum_i = 0;
 s64 min_a = INT_MAX;
-vector<int> xs;
+vector<int> xs_a;
+vector<int> xs_i;
 vector<int> ba;
 vector<int> bi;
-vector<bool> owner;
+vector<char> owner;
 
 bool jealous(bool who)
 {
@@ -55,156 +60,86 @@ int main()
         return 0;
     }
 
-    xs.resize(n);
+    xs_a.resize(n);
+    xs_i.resize(n);
     ba.resize(n);
     bi.resize(n);
+    owner.resize(n, NOT_SET);
 
     for (int i = 0; i < n; ++i) {
-        xs[i] = i;
+        xs_a[i] = i;
+        xs_i[i] = i;
     }
 
     for (auto &x: ba) {
         cin >> x;
-        full_sum_a += x;
     }
     for (auto &x: bi) {
         cin >> x;
-        full_sum_i += x;
     }
 
-    owner.resize(n, false);
-    sum_a = full_sum_i;
-    sort(xs.begin(), xs.end(), [](auto a, auto b){
+    sort(xs_a.begin(), xs_a.end(), [](auto a, auto b){
+            return ba[a] > ba[b];
+        });
+
+    sort(xs_i.begin(), xs_i.end(), [](auto a, auto b){
             return bi[a] > bi[b];
         });
 
-    int p = 0;
+    int pa = 0;
+    int pi = 0;
+    bool i = false;
+    int set = 0;
+
     while (true) {
-        int min = INT_MAX;
-        int best_index = -1;
 
-        for (int i = p; i < xs.size(); ++i) {
-            int x = xs[i];
-            if (!owner[x]) {
-                best_index = x;
+        /*
+        cout << i << " " << pa << " " << pi << "\n";
+        for (auto &x: xs_a) {
+            if (owner[x] == NOT_SET) cout << "[";
+            cout << ba[x];
+            if (owner[x] == NOT_SET) cout << "]";
+            cout << " ";
+        } cout << "\n";
+        for (auto &x: xs_i) {
+            if (owner[x] == NOT_SET) cout << "[";
+            cout << bi[x];
+            if (owner[x] == NOT_SET) cout << "]";
+            cout << " ";
+        } cout << "\n";
+        */
+
+        int idx = -1;
+        int bst = -1;
+        vector<int> &xs = i ? xs_i : xs_a;
+        int fst = i ? pi : pa;
+        for (int j = fst; j < xs.size(); ++j) {
+            int x = xs[j];
+            if (owner[x] == NOT_SET) {
+                idx = x;
+                bst = j;
                 break;
             }
         }
 
-        for (int i = xs.size() - 1; i >= p; --i) {
-            int x = xs[i];
-            if (!owner[x]) {
-                min = bi[x];
-                break;
-            }
+#if 1
+        if (idx < 0) {
+            cout << "BUG idx < 0\n";
+            // return 0;
         }
-
-        if (best_index < 0) {
-            cout << "BUG best_index < 0\n";
-            return 0;
-        }
-
-        min_a = min;
-        if (sum_i >= (sum_a-min_a)) break;
-
-        sum_a -= bi[best_index];
-        sum_i += bi[best_index];
-        owner[best_index] = true;
-        p = best_index;
-    }
-
-#if 0
-    if (full_sum_a > full_sum_i) {
-        owner.resize(n, false);
-        sum_a = full_sum_i;
-        sort(xs.begin(), xs.end(), [](auto a, auto b){
-                return bi[a] > bi[b];
-            });
-
-        int p = 0;
-        while (true) {
-            int min = INT_MAX;
-            int best_index = -1;
-
-            for (int i = p; i < xs.size(); ++i) {
-                int x = xs[i];
-                if (!owner[x]) {
-                    best_index = x;
-                    break;
-                }
-            }
-
-            for (int i = xs.size() - 1; i >= p; --i) {
-                int x = xs[i];
-                if (!owner[x]) {
-                    min = bi[x];
-                    break;
-                }
-            }
-
-            if (best_index < 0) {
-                cout << "BUG best_index < 0\n";
-                return 0;
-            }
-
-            min_a = min;
-            if (sum_i >= (sum_a-min_a)) break;
-
-            sum_a -= bi[best_index];
-            sum_i += bi[best_index];
-            owner[best_index] = true;
-            p = best_index;
-        }
-    }
-    
-    else {
-        owner.resize(n, true);
-        sum_a = full_sum_a;
-        sort(xs.begin(), xs.end(), [](auto a, auto b){
-                return ba[a] > ba[b];
-            });
-
-        int p = 0;
-        while (true) {
-            int min = INT_MAX;
-            int best_index = -1;
-
-            for (int i = p; i < xs.size(); ++i) {
-                int x = xs[i];
-                if (owner[x]) {
-                    best_index = x;
-                    break;
-                }
-            }
-
-            for (int i = xs.size() - 1; i >= p; --i) {
-                int x = xs[i];
-                if (owner[x]) {
-                    min = ba[x];
-                    break;
-                }
-            }
-
-            if (best_index < 0) {
-                cout << "BUG best_index < 0\n";
-                return 0;
-            }
-
-            min_a = min;
-            if (sum_i >= (sum_a-min_a)) break;
-
-            sum_a -= ba[best_index];
-            sum_i += ba[best_index];
-            owner[best_index] = false;
-            p = best_index;
-        }
-    }
 #endif
 
-    if (jealous(0)) {
-        for (int i = 0; i < n; ++i) {
-            owner[i] = !owner[i];
+        owner[idx] = i;
+        set++;
+
+        if (i) {
+            pi = bst;
+        } else {
+            pa = bst;
         }
+
+        i = !i;
+        if (set >= n) break;
     }
 
 #if 1
@@ -219,7 +154,7 @@ int main()
 #endif
 
     for (auto x: owner) {
-        cout << x << " ";
+        cout << (int)x << " ";
     }
     cout << "\n";
 

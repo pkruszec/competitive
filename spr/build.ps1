@@ -33,5 +33,6 @@ clang++ spr.cpp -std=c++20 -o spr.exe
 Run-BigTest "in"
 Run-BigTest "C:\home\tmp\spr\testy"
 
+# Run-Test "in/spr0.in"
 # Run-Test "C:\home\tmp\spr\testy\spr1.in"
-# Run-Test "in/spr2ocen.in"
+# Run-Test "in/spr3ocen.in"
