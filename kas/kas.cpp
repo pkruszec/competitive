@@ -13,16 +13,17 @@ int main()
     cin.tie(0);
     cout.tie(0);
     */
-
+   
     long long n = DajN();
-    long long threshold = 7'500;
-    // long long threshold = 5'000;
+    long long start = n;
+    long long stop = 0;
+    long long threshold = 5000;
+    // long long threshold = 15000;
 
     while (true) {
-
         long long count = 0;
         long long guess = 0;
-        for (long long i = n; i >= 1;) {
+        for (long long i = start; i >= stop;) {
             // cout << DajX() << " -> " << i << "\n";
 
             if (count > threshold) {
@@ -31,6 +32,12 @@ int main()
             }
 
             long long result = Pytaj(i);
+
+            if (result < 5000) {
+                Szturchnij();
+                goto next;
+            }
+
             if (result == i) {
                 guess = result;
                 break;
@@ -44,29 +51,6 @@ int main()
             Szturchnij();
             continue;
         }
-
-        /*
-        long long this_multiplier_count = 0;
-        long long multiplier = 1;
-        long long guess = -1;
-        for (long long i = multiplier; i < n; i += multiplier) {
-            this_multiplier_count++;
-            int result = Pytaj(i);
-            cout << DajX() << " -> " << i << " " << result << "\n";
-
-            if (this_multiplier_count > n/1000) {
-                this_multiplier_count = 0;
-                Szturchnij();
-                goto next;
-            }
-
-            if (result == i) {
-                multiplier = i;
-            } else if (result < i) {
-                guess = i - multiplier;
-            }
-        }
-        */
 
         Odpowiedz(guess);
         next:;
