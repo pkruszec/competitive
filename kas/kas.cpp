@@ -1,8 +1,22 @@
 #include "kaslib.h"
 
 int main()
-{
+{   
+    #ifdef HOME
+    long long seed;
+    cin >> seed;
+    rng = mt19937_64(seed);
+    #endif
+
+    /*
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+    */
+
     long long n = DajN();
+    long long threshold = 7'500;
+    // long long threshold = 5'000;
 
     while (true) {
 
@@ -11,7 +25,7 @@ int main()
         for (long long i = n; i >= 1;) {
             // cout << DajX() << " -> " << i << "\n";
 
-            if (count > 100000) {
+            if (count > threshold) {
                 Szturchnij();
                 goto next;
             }

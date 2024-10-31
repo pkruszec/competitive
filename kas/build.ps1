@@ -16,15 +16,12 @@ function Run-BigTest {
     foreach ($file in Get-ChildItem($in)) {
 
         $name = [System.IO.Path]::GetFileName($file)
-        # $new =  [System.IO.Path]::ChangeExtension($name, '.out')
-        # $path = [System.IO.Path]::Combine($out, $new)
-        # $expected = Get-Content $path
-
         $output = Get-Content -Raw $file.FullName | .\kas.exe
 
-        Write-Host $name '---' 'got' $output
+        Write-Host $name $output
     }
 }
 
-clang++ kas.cpp -std=c++20 -o kas.exe
-.\kas.exe
+clang++ kas.cpp -DHOME -std=c++20 -o kas.exe
+
+Run-BigTest "in"
