@@ -18,9 +18,11 @@ int main()
     long long start = n;
     long long stop = 0;
     long long threshold = 5000;
+    long long min_result = 5000;
+    // long long threshold = 7500;
     // long long threshold = 15000;
 
-    while (true) {
+    while (true) {  
         long long count = 0;
         long long guess = 0;
         for (long long i = start; i >= stop;) {
@@ -33,7 +35,7 @@ int main()
 
             long long result = Pytaj(i);
 
-            if (result < 5000) {
+            if (result < min_result) {
                 Szturchnij();
                 goto next;
             }
