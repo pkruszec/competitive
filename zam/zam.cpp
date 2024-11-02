@@ -1,8 +1,13 @@
+//
+// Zamek cykliczny (zam)
+// Paweł Kruszec
+// not solved (35 pts)
+//
+
 #include <iostream>
 #include <string>
 #include <limits.h>
 #include <stdint.h>
-//#include <string_view>
 
 using namespace std;
 
@@ -36,13 +41,28 @@ int main()
 
     int c = 0;
 
-    // TODO: cut left 9's and add c?
-
+    //
+    // Count all the nines.
+    // This will be used later as a cache,
+    // so that we don't have to check all the digits to see if we are done.
+    //
     int nine_count = 0;
     for (int i = 0; i < s.size(); ++i) {
         if (s[i] == '9') nine_count++;
     }
 
+    //
+    // Try to find how much we have to increment the last non-nine digits to all nines.
+    // e.g.
+    // 999980 -> 19
+    // 999999 -> 0
+    // 992222 -> 7777
+    //
+    // The result will be stored in tmp[0..last_non_zero+1],
+    // starting from the least significant digit (backwards).
+    //
+    // If the last digit is 9, the result will be empty, which is equivalent in value to 0.
+    //
     int last_non_zero = 0;
     tmp.clear();
     for (int i = s.size() - 1; i >= 0; --i) {
@@ -54,6 +74,11 @@ int main()
 
     // cout << tmp.substr(0, last_non_zero+1) << "\n";
 
+    //
+    // Try to parse the result as an integer.
+    // If the result is too big to be represented, we set it to INT_MAX.
+    // This is because if it's that big, it is definitely not beneficial to increment.
+    //
     int diff = 0;
     int r = 1;
     for (int i = 0; i <= last_non_zero; ++i) {
@@ -69,6 +94,12 @@ int main()
         r *= 10;
     }
 
+    // cout << diff << "\n";
+
+    //
+    // If it's beneficial to increment the number to ...999,  do it.
+    // Just set the appropriate characters to nines and add diff to c.
+    //
     if (diff != 0 && diff <= s.size()) {
         c += diff;
         nine_count += last_non_zero+1;
@@ -77,9 +108,22 @@ int main()
         }
     }
 
-    // cout << diff << "\n";
+    cout << s << "\n";
 
+    //
+    // If the increments were sufficient to cover the entire number, skip this step.
+    // Otherwise, we have to do a little bit more calculation.
+    //
     if (nine_count != s.size()) {
+
+        //
+        // The first step here is to check if the number is 100000... (one and zeroes)
+        // If it is, we don't have to do anything else.
+        // TODO: It would be best to arrange the algorithm in such a way
+        //       that this step is not needed.
+        //       Maybe it doesn't matter though.
+        //
+
         int zero_count = 0;
         for (int i = 0; i < s.size(); ++i) {
             if (s[i] == '0') {
@@ -97,14 +141,21 @@ int main()
             return 0;
         }
 
-        /*
-        if (s[s.size() - 1] != '0') {
-            c += 9 - (s[s.size() - 1] - '0');
-            s[s.size() - 1] = '9';
-        }
-        */
-
         // TODO: Draw it out for different cases
+        //
+
+        //
+        // This is the part that we haven't figured out yet.
+        // We need to count:
+        // - how many increments we have to do
+        // - how many shifts we have to do
+        // Maybe it is not a bad idea to simulate this step.
+        // On this step, we are sure:
+        // - the number is not 999999999...
+        // - the number is not 1
+        // - the number is not 100000...
+        // because if it was, main() already returned.
+        // We don't know anything else about the number.
         //
 
         int idx = 0;
@@ -123,112 +174,9 @@ int main()
             else had_9_before_last = true;
 
             if (sc && s[i] != '0') idx++;
-
-            // if (s.size() < 100) cout << s[i];
         }
-        // cout << " (" << idx << ") ";
         c += idx;
-
-/*
-        bool got_not_nine = false;
-        for (int i = 0; i < s.size(); ++i) {
-            if (s[i] == '0') continue;
-            if (i == s.size() - 1) continue;
-            if (s[i] == '9') {
-                if (got_not_nine) break;
-            } else {
-                got_not_nine = true;
-            }
-            c++;
-        }
-*/
-
     }
-
-    // cout << s << "\n";
-
-
-#if 0
-    int fst = 0;
-    int nine_count = 0;
-    for (int i = fst; i < s.size(); ++i) {
-        if (s[i] == '9') nine_count++;
-    }
-    while (!got_it(s, fst)) {
-        int digit_count = s.size() - fst;
-        
-        char last = s[s.size() - 1];
-        int lx = last - '0';
-
-        if (1) {
-            if (lx == 9 && (nine_count == s.size() - fst)) {
-                c += 2;
-                break;
-            }
-
-            int last_non_zero = 0;
-            tmp.clear();
-            for (int i = s.size() - 1; i >= fst; --i) {
-                if (s[i] == '9') break;
-                int value = '0' + ('9' - s[i]);
-                tmp.push_back(value);
-                if (value != '0') last_non_zero = tmp.size() - 1;
-                // TODO? probably not needed
-                // if (tmp.size() > digit_count) break;
-            }
-
-            // cout << tmp.substr(0, last_non_zero+1) << "\n";
-
-            int diff = 0;
-            int r = 1;
-            for (int i = 0; i <= last_non_zero; ++i) {
-                if (tmp[i] == '0')
-                    diff *= 10;
-                else
-                    diff += r * (tmp[i] - '0');
-                
-                if (diff > MAX || diff < 0) {
-                    diff = INT_MAX;
-                    break;
-                }
-                r *= 10;
-            }
-
-            // cout << diff << "\n";
-            if (diff != 0 && diff <= digit_count) {
-                c += diff;
-                nine_count += last_non_zero+1;
-                for (int i = 0; i < last_non_zero+1; ++i) {
-                    s[s.size() - 1 - i] = '9';
-                }
-                continue;
-            }
-
-            if (s[s.size() - 1] != '0' && s[s.size() - 1] != '9'/* && s[fst] >= s[s.size() - 1]*/) {
-                c += 9-lx;
-                s[s.size() - 1] = '9';
-                nine_count++;
-                continue;
-            }
-
-            s.push_back(s[fst]);
-            c++;
-            fst++;
-
-            for (int i = fst; i < s.size(); ++i) {
-                if (s[i] != '0') {
-                    fst = i;
-                    break;
-                }
-            }
-
-        } else {
-            c += 9-lx;
-            s[s.size() - 1] = '9';
-            nine_count++;
-        }
-    }
-#endif
 
     c += 2;
     cout << c << '\n';

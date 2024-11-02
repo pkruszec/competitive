@@ -43,11 +43,8 @@ if ($LastExitCode -ne 0) {
     throw
 }
 
-# Run-Test "in/11.in"
-# Run-BigTest "c:/home/tmp/testy_small" "c:/home/tmp/testy_small_out"
-# Run-BigTest "c:/home/tmp/testy_in" "c:/home/tmp/testy_out"
-
-Run-BigTest "in" "out"
+Run-Test "in/03.in"
+# Run-BigTest "in" "out"
 
 # Write-Host "=== MANUAL TEST RESULTS ==="
 # Run-Test-Folder "input"
