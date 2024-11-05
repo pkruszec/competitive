@@ -46,7 +46,7 @@ function Run-BigTest {
     Write-Host "DONE" $in $counter
 }
 
-clang++ zam.cpp -O2 -o zam1.exe
+clang++ zam.cpp -O2 -o zam.exe
 if ($LastExitCode -ne 0) {
     throw
 }
@@ -54,11 +54,11 @@ if ($LastExitCode -ne 0) {
 # Run-Test "C:\home\tmp\testy_in\test0.in"
 # Run-Test "in/smallones.in"
 
-Start-Transcript -Path .\test.log
+# Start-Transcript -Path .\test.log
 Run-BigTest "in" "out"
 #Run-BigTest "c:/home/tmp/testy_small" "c:/home/tmp/testy_small_out"
-Run-BigTest "c:/home/tmp/testy_in" "c:/home/tmp/testy_out"
-Stop-Transcript
+# Run-BigTest "c:/home/tmp/testy_in" "c:/home/tmp/testy_out"
+# Stop-Transcript
 
 # Write-Host "=== MANUAL TEST RESULTS ==="
 # Run-Test-Folder "input"

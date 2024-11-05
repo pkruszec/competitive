@@ -43,8 +43,6 @@ bool inc(string &s, string &tmp, int &c, int &nine_count)
         int value = '0' + ('9' - s[i]);
         tmp.push_back(value);
         if (value != '0') last_non_zero = tmp.size() - 1;
-
-        if (i < s.size() - 12) return false;
     }
 
     int min_flip = 0;
