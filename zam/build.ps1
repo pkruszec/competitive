@@ -47,12 +47,13 @@ function Run-BigTest {
 }
 
 clang++ zam.cpp -O2 -o zam.exe
+# clang++ zam.cpp -DPROF -O2 -o zam.exe
 if ($LastExitCode -ne 0) {
     throw
 }
 
 # Run-Test "C:\home\tmp\testy_in\test0.in"
-# Run-Test "in/smallones.in"
+# Run-Test "in/big.in"
 
 # Start-Transcript -Path .\test.log
 Run-BigTest "in" "out"

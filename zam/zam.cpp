@@ -11,6 +11,50 @@
 
 using namespace std;
 
+#ifdef PROF
+#include <intrin.h>
+#include <iomanip>
+
+#define XLIST \
+    X(first_nine_counting)\
+    X(incrementing) \
+    X(zero_checks) \
+    X(simulate)
+
+#define X(n) uint64_t n = 0;
+XLIST
+#undef X
+
+uint64_t total = 0;
+uint64_t prof = 0;
+
+#define prof_begin()        \
+    do {                    \
+        prof = __rdtsc();  \
+    } while (0)
+
+#define prof_end(var)                              \
+    do {                                           \
+        uint64_t prof_end_tmp = __rdtsc() - prof;  \
+        total += prof_end_tmp;                     \
+        (var) += prof_end_tmp;                     \
+    } while (0)
+
+#define prof_summary() \
+    do { \
+        cout << "SUMMARY\n"; \
+        cout << "=======\n"; \
+        XLIST\
+        cout << "\n"; \
+        cout << setw(30) << "total: " << setw(10) << total << "\n"; \
+    } while (0)
+
+#else
+#define prof_begin()
+#define prof_end(var)
+#define prof_summary()
+#endif
+
 int MAX = 1000000;
 
 bool got_it(string &s, int fst)
@@ -105,6 +149,7 @@ int main()
 
     int c = 0;
 
+    prof_begin();
     //
     // Count all the nines.
     // This will be used later as a cache,
@@ -114,8 +159,11 @@ int main()
     for (int i = 0; i < s.size(); ++i) {
         if (s[i] == '9') nine_count++;
     }
+    prof_end(first_nine_counting);
 
+    prof_begin();
     inc(s, tmp, c, nine_count);
+    prof_end(incrementing);
 
     //
     // If the increments were sufficient to cover the entire number, skip this step.
@@ -130,6 +178,8 @@ int main()
         //       that this step is not needed.
         //       Maybe it doesn't matter though.
         //
+
+        prof_begin();
 
         int zero_count = 0;
         for (int i = 0; i < s.size(); ++i) {
@@ -147,6 +197,8 @@ int main()
             return 0;
         }
 
+        prof_end(zero_checks);
+
         //
         // This is the part that we haven't figured out yet.
         // We need to count:
@@ -160,6 +212,8 @@ int main()
         // because if it was, main() already returned.
         // We don't know anything else about the number.
         //
+
+        prof_begin();
 
         int fst = 0;
         while (!got_it(s, fst)) {
@@ -187,9 +241,16 @@ int main()
                 nine_count++;
             }
         }
+
+        prof_end(simulate);
     }
 
     c += 2;
+
+    #define X(n) cout << setw(30) << #n ": " << setw(10) << n << " " << setw(8) << (double)n * 100.0 / (double)total<< "%\n";
+    prof_summary();
+    #undef X
+
     cout << c << '\n';
 
     return 0;

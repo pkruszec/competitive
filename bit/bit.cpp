@@ -1,5 +1,6 @@
 #include <iostream>
 #include <vector>
+#include <assert.h>
 
 using namespace std;
 
@@ -20,7 +21,8 @@ Edges dst_edges;
 vector<Vertex> src_tree;
 vector<Vertex> dst_tree;
 
-void make_tree(vector<Vertex> &tree, Edges &edges, int idx, int prev=0)
+//vector<bool> vis;
+bool make_tree(vector<Vertex> &tree, Edges &edges, int idx, int prev=0)
 {
     Vertex &vtx = tree[idx];
     vtx.parent = prev;
@@ -34,9 +36,23 @@ void make_tree(vector<Vertex> &tree, Edges &edges, int idx, int prev=0)
         } else continue;
         if (other == prev) continue;
 
+#if 0
+        cout << idx << "->" << other << "\n";
+        if (vtx.count >= 2) {
+            cout << other << "  " << vtx.parent << " -> " << idx << " (" << vtx.children[0] << ", " << vtx.children[1] << ")\n";
+            assert(false);
+        }
+#endif
+
+        if (vtx.count >= 2) {
+            return false;
+        }
+
         vtx.children[vtx.count++] = other;
-        make_tree(tree, edges, other, idx);
+        if (!make_tree(tree, edges, other, idx)) return false;
     }
+
+    return true;
 }
 
 void print_tree(vector<Vertex> &tree, int idx, int indent=0)
@@ -62,6 +78,7 @@ void make_src(vector<int> &src, vector<Vertex> &tree, int index)
     }
 }
 
+#if 0
 bool connected(vector<int> &src, Tmp &tmp, int i)
 {
     if (i < 1) return true;
@@ -181,6 +198,7 @@ Tmp check_dim1(vector<int> &src, Tmp tmp, vector<Vertex> &tree, int fst_index, i
 
     return tmp;
 }
+#endif
 
 /*
 int match(vector<bool> src_vis,vector<Vertex> &src_tree, vector<Vertex> &dst_tree, int src_index, int dst_index, int dst_prev=0)
@@ -254,6 +272,81 @@ first root, then lefts and rights
 
 */
 
+int match(vector<Vertex> &src_tree, vector<Vertex> &dst_tree, int src_index, int dst_index)
+{
+    Vertex &src = src_tree[src_index];
+    Vertex &dst = dst_tree[dst_index];
+    
+    if (dst.count < src.count) {
+        // cout << "    " << dst_index << ": end" << "\n";
+        return -1;
+    }
+
+    int count = 1;
+
+    if (src.count == 1 && dst.count == 1) {
+        int v = match(src_tree, dst_tree, src.children[0], dst.children[0]);
+        if (v < 0) return -1;
+
+        if (v > count) count = v;
+        if (v == 0) count = 0;
+    }
+    else if (src.count == 1 && dst.count == 2) {
+        int v0 = match(src_tree, dst_tree, src.children[0], dst.children[0]);
+        int v1 = match(src_tree, dst_tree, src.children[0], dst.children[1]);
+        if (v0 < 0 && v1 < 0) return -1;
+
+        int v = v0 + v1;
+        // int v = ((v0 > 0) ? v0 : 0) + ((v1 > 0) ? v1 : 0);
+        // cout << dst_index << ":" << v << " x\n";
+
+        if (v > count) count = v;
+        if (v < 1) count = 0;
+    }
+    else if (src.count == 2 && dst.count == 2) {
+        int v0 = -1;
+        int v1 = -1;
+        int v2 = -1;
+        int v3 = -1;
+
+        v0 = match(src_tree, dst_tree, src.children[0], dst.children[0]);
+        if (v0 >= 0) v1 = match(src_tree, dst_tree, src.children[1], dst.children[1]);
+        v2 = match(src_tree, dst_tree, src.children[0], dst.children[1]);
+        if (v0 >= 0) v3 = match(src_tree, dst_tree, src.children[1], dst.children[0]);
+
+        int vg0 = -1;
+        int vg1 = -1;
+
+        if (!(v0 < 0 || v1 < 0)) {
+            vg0 = v0*v1;
+        }
+
+        if (!(v2 < 0 || v3 < 0)) {
+            vg1 = v2*v3;
+        }
+
+        if (vg0 < 0 && vg1 < 0) return -1;
+        if (vg0 < 0) vg0 = 0;
+        if (vg1 < 0) vg1 = 0;
+
+        int v = vg0 + vg1;
+
+        // cout << dst_index << "  " << v0 << ", "<< v1 << ", " << v2 << ", " << v3 << " -> " << v << "\n";
+
+        // int v = min(v0, v1);
+        if (v > count) count = v;
+        if (v < 1) count = 0;
+    }
+
+    // if (src_index == 1) {
+    //     match_count = (match_count + 1 + two) % k;
+    // }
+
+    // cout << "   " << dst_index << ": " << count << "\n";
+
+    return count;
+}
+
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -280,30 +373,28 @@ int main()
     }
 
     make_tree(src_tree, src_edges, 1);
-    make_tree(dst_tree, dst_edges, 1);
 
     // print_tree(src_tree, 1);
-    // print_tree(dst_tree, 1);
 
-    vector<int> src;
-    make_src(src, src_tree, 1);
-    
-    // cout << "SRC: ";
-    // for (auto x: src) {
-    //     cout << x << " ";
-    // } 
-    // cout << "\n";
+    for (int h = 1; h <= m; ++h) {
+        for (int i = 0; i <= m; ++i) {
+            dst_tree[i] = Vertex{};
+        }
 
-    Tmp tmp;
-    for (int i = 1; i <= m; ++i) {
-        check_dim1(src, tmp, dst_tree, i, n);
+        bool result = make_tree(dst_tree, dst_edges, h);
+        if (!result) continue;
+
+        // print_tree(dst_tree, h);
+
+        for (int i = 1; i <= m; ++i) {
+            int v = match(src_tree, dst_tree, 1, i);
+            if (v < 0) continue;
+            // cout << h << "." << i << " -> " << v << "\n"; 
+            match_count += v;
+        }
+
+        // cout << "after " << h << ":" << match_count << "\n";
     }
-
-    // int match_count = 0;
-    // for (int i = 1; i <= m; ++i) {
-    //     cout << "match\n";
-    //     match_count = (match_count % k + match(/*src_vis, */src_tree, dst_tree, 1, i) % k) % k;
-    // }
     
     cout << match_count << "\n";
 
