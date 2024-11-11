@@ -8,6 +8,7 @@ using Edges = vector<pair<int, int>>;
 using Tmp = vector<pair<int, int>>;
 
 struct Vertex {
+    int level;
     int parent;
     int count;
     int children[2];
@@ -22,10 +23,12 @@ vector<Vertex> src_tree;
 vector<Vertex> dst_tree;
 
 //vector<bool> vis;
-bool make_tree(vector<Vertex> &tree, Edges &edges, int idx, int prev=0)
+bool make_tree(vector<Vertex> &tree, Edges &edges, int idx, int &max_level, int prev=0)
 {
     Vertex &vtx = tree[idx];
     vtx.parent = prev;
+    vtx.level = tree[vtx.parent].level + 1;
+    if (vtx.level > max_level) max_level = vtx.level;
 
     for (auto &edge: edges) {
         int other;
@@ -49,7 +52,7 @@ bool make_tree(vector<Vertex> &tree, Edges &edges, int idx, int prev=0)
         }
 
         vtx.children[vtx.count++] = other;
-        if (!make_tree(tree, edges, other, idx)) return false;
+        if (!make_tree(tree, edges, other, max_level, idx)) return false;
     }
 
     return true;
@@ -60,7 +63,9 @@ void print_tree(vector<Vertex> &tree, int idx, int indent=0)
     auto &vtx = tree[idx];
 
     for (int i = 0; i < indent; ++i) cout << " ";
-    cout << idx << "\n";
+
+    cout << idx << " (" << vtx.level << ")\n";
+    // cout << idx << "\n";
 
     for (int i = 0; i < vtx.count; ++i) {
         print_tree(tree, vtx.children[i], indent + 2);
@@ -372,7 +377,8 @@ int main()
         cin >> p.first >> p.second;
     }
 
-    make_tree(src_tree, src_edges, 1);
+    int max_src_level = 0;
+    make_tree(src_tree, src_edges, 1, max_src_level);
 
     // print_tree(src_tree, 1);
 
@@ -381,15 +387,21 @@ int main()
             dst_tree[i] = Vertex{};
         }
 
-        bool result = make_tree(dst_tree, dst_edges, h);
+        int ignore;
+        bool result = make_tree(dst_tree, dst_edges, h, ignore);
         if (!result) continue;
 
         // print_tree(dst_tree, h);
 
+        // TODO: mod k everywhere
+
         for (int i = 1; i <= m; ++i) {
+            if (dst_tree[i].level >= max_src_level) continue;
+
             int v = match(src_tree, dst_tree, 1, i);
             if (v < 0) continue;
             // cout << h << "." << i << " -> " << v << "\n"; 
+            // match_count = (match_count+v) % k;
             match_count += v;
         }
 
