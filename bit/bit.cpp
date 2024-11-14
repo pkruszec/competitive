@@ -287,26 +287,33 @@ int match(vector<Vertex> &src_tree, vector<Vertex> &dst_tree, int src_index, int
         return -1;
     }
 
-    int count = 1;
+    // int count = 0;
 
-    if (src.count == 1 && dst.count == 1) {
+    if (src.count == 0) {
+        return 1%k;
+    }
+    else if (src.count == 1 && dst.count == 1) {
         int v = match(src_tree, dst_tree, src.children[0], dst.children[0]);
         if (v < 0) return -1;
 
-        if (v > count) count = v;
-        if (v == 0) count = 0;
+        return v;
+        // if (v > count) count = v;
+        // if (v < 1) count = 0;
     }
     else if (src.count == 1 && dst.count == 2) {
         int v0 = match(src_tree, dst_tree, src.children[0], dst.children[0]);
         int v1 = match(src_tree, dst_tree, src.children[0], dst.children[1]);
         if (v0 < 0 && v1 < 0) return -1;
 
-        int v = v0 + v1;
+        if (v0 < 0) return v1;
+        if (v1 < 0) return v0;
         // int v = ((v0 > 0) ? v0 : 0) + ((v1 > 0) ? v1 : 0);
         // cout << dst_index << ":" << v << " x\n";
 
-        if (v > count) count = v;
-        if (v < 1) count = 0;
+        int v = ((v0%k) + (v1%k)) % k;
+        return v;
+        // if (v > count) count = v;
+        // if (v < 1) count = 0;
     }
     else if (src.count == 2 && dst.count == 2) {
         int v0 = -1;
@@ -323,24 +330,25 @@ int match(vector<Vertex> &src_tree, vector<Vertex> &dst_tree, int src_index, int
         int vg1 = -1;
 
         if (!(v0 < 0 || v1 < 0)) {
-            vg0 = v0*v1;
+            vg0 = ((v0%k)*(v1%k)) % k;
         }
 
         if (!(v2 < 0 || v3 < 0)) {
-            vg1 = v2*v3;
+            vg1 = ((v2%k)*(v3%k)) % k;
         }
 
         if (vg0 < 0 && vg1 < 0) return -1;
         if (vg0 < 0) vg0 = 0;
         if (vg1 < 0) vg1 = 0;
 
-        int v = vg0 + vg1;
+        int v = ((vg0%k) + (vg1%k)) % k;
 
         // cout << dst_index << "  " << v0 << ", "<< v1 << ", " << v2 << ", " << v3 << " -> " << v << "\n";
 
         // int v = min(v0, v1);
-        if (v > count) count = v;
-        if (v < 1) count = 0;
+        // if (v > count) count = v;
+        // if (v < 1) count = 0;
+        return v;
     }
 
     // if (src_index == 1) {
@@ -349,7 +357,7 @@ int match(vector<Vertex> &src_tree, vector<Vertex> &dst_tree, int src_index, int
 
     // cout << "   " << dst_index << ": " << count << "\n";
 
-    return count;
+    return -1;
 }
 
 int main()
@@ -380,7 +388,7 @@ int main()
     int max_src_level = 0;
     make_tree(src_tree, src_edges, 1, max_src_level);
 
-    // print_tree(src_tree, 1);
+    print_tree(src_tree, 1);
 
     for (int h = 1; h <= m; ++h) {
         for (int i = 0; i <= m; ++i) {
@@ -391,24 +399,34 @@ int main()
         bool result = make_tree(dst_tree, dst_edges, h, ignore);
         if (!result) continue;
 
-        // print_tree(dst_tree, h);
+        print_tree(dst_tree, h);
 
-        // TODO: mod k everywhere
+        // int v = match(src_tree, dst_tree, 1, h);
+        // cout << h << "." << i << " -> " << v << "\n"; 
+        // if (v < 0) continue;
+        // match_count = (match_count+v) % k;
+        // match_count = ((match_count) + (v%k)) % k;
+
 
         for (int i = 1; i <= m; ++i) {
             if (dst_tree[i].level >= max_src_level) continue;
 
             int v = match(src_tree, dst_tree, 1, i);
+            cout << h << "." << i << " -> " << v << "\n"; 
             if (v < 0) continue;
-            // cout << h << "." << i << " -> " << v << "\n"; 
             // match_count = (match_count+v) % k;
-            match_count += v;
+            match_count = ((match_count) + (v%k)) % k;
         }
 
         // cout << "after " << h << ":" << match_count << "\n";
     }
     
+    if (match_count % 2 != 0) {
+        match_count = ((match_count) + 1) % k;
+    }
+
     cout << match_count << "\n";
 
     return 0;
 }
+
