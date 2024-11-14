@@ -32,9 +32,7 @@ clang++ bit.cpp -g -DBIGTEST -std=c++20 -o bit.exe
 # Run-Test "ocen/in/bit0.in"
 # Run-Test "ocen/in/bit1ocen.in"
 # Run-Test "ocen/in/bit2ocen.in"
-# Run-Test "ocen/in/bit3ocen.in"
+Run-Test "ocen/in/bit3ocen.in"
 # Run-Test "ocen/in/pk1.in"
-# Run-BigTest "in" "out"
 
-Run-Test "ocen/in/bit0.in"
 # Run-BigTest "ocen/in" "ocen/out"
