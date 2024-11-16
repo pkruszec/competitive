@@ -18,6 +18,10 @@ long long X;
 bool czy_zainicjalizowany = false;
 int wygrane = 0;
 
+long long miss_count = 0;
+long long hit_count = 0;
+long long ask_count = 0;
+
 long long wylosuj_liczbe() {
     return uniform_int_distribution<long long>(1, N)(rng);
 }
@@ -34,6 +38,11 @@ void inicjalizuj_interakcje() {
 
 void proba_zakonczenia() {
     if (!bajtalary) {
+        cout << "hit: " << hit_count
+             << " miss: " << miss_count
+             << " ask: " << ask_count
+             << " avg " << ((ask_count)/(hit_count+miss_count)) << "/b"
+             << " per " << ((ask_count+miss_count)/hit_count) << "/b ";
     	cout << "Liczba wygranych: " << to_string(wygrane) << endl;
     	exit(0);
     }
@@ -56,6 +65,7 @@ long long DajX() {
 }
 
 long long Pytaj(long long y) {
+    ask_count++;
     inicjalizuj_interakcje();
     assert(1 <= y && y <= N);
     zjedz_bajtalara();
@@ -64,6 +74,7 @@ long long Pytaj(long long y) {
 }
 
 void Szturchnij() {
+    miss_count++;
     inicjalizuj_interakcje();
     zjedz_bajtalara();
     X = wylosuj_liczbe();
@@ -71,6 +82,7 @@ void Szturchnij() {
 }
 
 void Odpowiedz(long long y) {
+    hit_count++;    
     inicjalizuj_interakcje();
     assert(1 <= y && y <= N);
     zjedz_bajtalara();
