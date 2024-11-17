@@ -13,7 +13,7 @@ struct Vertex {
     int level;
     int parent;
     int count;
-    int children[3];
+    int children[2];
 };
 
 struct Vis {
@@ -28,12 +28,11 @@ struct Path {
     // int n[2];
 };
 
-bool make_tree(vector<Vertex> &tree, Edges &edges, int idx, int &max_level, int prev=0)
+bool make_tree(vector<Vertex> &tree, Edges &edges, int idx, int prev=0)
 {
     Vertex &vtx = tree[idx];
     vtx.parent = prev;
     vtx.level = tree[vtx.parent].level + 1;
-    if (vtx.level > max_level) max_level = vtx.level;
 
     for (auto &edge: edges) {
         int other;
@@ -44,20 +43,12 @@ bool make_tree(vector<Vertex> &tree, Edges &edges, int idx, int &max_level, int 
         } else continue;
         if (other == prev) continue;
 
-#if 0
-        cout << idx << "->" << other << "\n";
         if (vtx.count >= 2) {
-            cout << other << "  " << vtx.parent << " -> " << idx << " (" << vtx.children[0] << ", " << vtx.children[1] << ")\n";
-            assert(false);
-        }
-#endif
-
-        if (vtx.count >= 3) {
             return false;
         }
 
         vtx.children[vtx.count++] = other;
-        if (!make_tree(tree, edges, other, max_level, idx)) return false;
+        if (!make_tree(tree, edges, other, idx)) return false;
     }
 
     return true;
@@ -69,37 +60,213 @@ void print_tree(vector<Vertex> &tree, int idx, int indent=0)
 
     for (int i = 0; i < indent; ++i) cout << " ";
 
-    cout << idx << " (" << vtx.level << ")\n";
-    // cout << idx << "\n";
+    // cout << idx << " (" << vtx.level << ")\n";
+    cout << idx << "\n";
 
     for (int i = 0; i < vtx.count; ++i) {
         print_tree(tree, vtx.children[i], indent + 2);
     }
 }
 
-void make_src(vector<int> &src, vector<Vertex> &tree, int index)
+void print_visited(vector<vector<bool>> &visited)
 {
-    Vertex &v = tree[index];
-    // src.push_back(v.count + (v.parent != 0));
-    src.push_back(v.count);
+    int bb = visited.size()-1;
 
-    for (int i = 0; i < v.count; ++i) {
-        make_src(src, tree, v.children[i]);
+    cout << "+>";
+    for (int i = 1; i <= bb; ++i) cout << i;
+    cout << "\n|\n";
+    for (int i = 1; i <= bb; ++i) {
+        cout << i << " ";
+        for (int j = 1; j <= bb; ++j) {
+            if (i == j) {
+                cout << "-";
+            } else {
+                cout << visited[i][j];
+            }
+        }
+        cout << "\n";
     }
 }
 
-void make_ends(vector<pair<int, int>> &ends, vector<Vertex> &tree, int index, int max_level=INT_MAX, int mult=0)
+int find_all(vector<vector<int>> &adj, vector<vector<bool>> &visited, vector<Vertex> &tree, vector<vector<int>> &paths,
+             vector<int> path, int d, int s, int p=0)
 {
-    auto &vtx = tree[index];
+    vector<int> &a = adj[d];
+    Vertex &v = tree[s];
 
-    if (vtx.count == 0 || vtx.level >= max_level) {
-        ends.push_back({vtx.level, mult});
+    int c[3];
+    int cc = 0;
+    for (auto x: a) {
+        if (x != p) c[cc++] = x;
     }
 
-    if (vtx.level >= max_level) return;
-    for (int i = 0; i < vtx.count; ++i) {
-        make_ends(ends, tree, vtx.children[i], max_level, mult + (vtx.count >= 2));
+    if (cc < v.count) return 0;
+    path.push_back(d);
+
+
+    /*
+    if (p != 0 && !visited[p][d] && !visited[d][p]) {
+        found_new = true;
+        visited[p][d] = true;
+        visited[d][p] = true;
     }
+    */
+
+    if (v.count == 0) {
+        /*
+        if (0){
+            cout << p << " -> " << d << "\n";
+            print_visited(visited);
+            cout << "\n";
+        }
+        */
+
+        for (auto &p: paths) {
+            bool eq = true;
+            bool eq_rev = true;
+            for (int i = 0; i < p.size(); ++i) {
+                if (path[i] != p[i]) {
+                    eq = false;
+                    break;
+                }
+            }
+            if (eq) return 0;
+
+            for (int i = 0; i < p.size(); ++i) {
+                if (path[i] != p[p.size() - 1 - i]) {
+                    eq_rev = false;
+                    break;
+                }
+            }
+            if (eq_rev) return 0;
+        }
+
+        // for (auto x: path) {
+        //     cout << x << " ";
+        // }
+        // cout << "\n";
+
+        paths.push_back(path);
+
+        return 1;
+    }
+
+
+    if (v.count == 1) {
+        int sm = 0;
+        for (int i = 0; i < cc; ++i) {
+            sm += find_all(adj, visited, tree, paths, path, c[i], v.children[0], d);
+        }
+        return sm;
+    }
+
+    if (cc == 2 && v.count == 2) {
+        path.push_back(c[1]);
+        int a = find_all(adj, visited, tree, paths, path, c[0], v.children[0], d);
+        path.pop_back();
+
+        path.push_back(c[0]);
+        int b = find_all(adj, visited, tree, paths, path, c[1], v.children[1], d);
+        path.pop_back();
+
+        path.push_back(c[0]);
+        int x = find_all(adj, visited, tree, paths, path, c[1], v.children[0], d);
+        path.pop_back();
+
+        path.push_back(c[1]);
+        int y = find_all(adj, visited, tree, paths, path, c[0], v.children[1], d);
+        path.pop_back();
+
+        return a*b + x*y;
+    }
+
+    if (cc == 3 && v.count == 2) {
+        path.push_back(c[1]);
+        int a = find_all(adj, visited, tree, paths, path, c[0], v.children[0], d);
+        path.pop_back();
+
+        path.push_back(c[0]);
+        int b = find_all(adj, visited, tree, paths, path, c[1], v.children[1], d);
+        path.pop_back();
+
+        path.push_back(c[2]);
+        int x = find_all(adj, visited, tree, paths, path, c[0], v.children[0], d);
+        path.pop_back();
+
+        path.push_back(c[0]);
+        int y = find_all(adj, visited, tree, paths, path, c[2], v.children[1], d);
+        path.pop_back();
+
+        path.push_back(c[2]);
+        int e = find_all(adj, visited, tree, paths, path, c[1], v.children[0], d);
+        path.pop_back();
+
+        path.push_back(c[1]);
+        int f = find_all(adj, visited, tree, paths, path, c[2], v.children[1], d);
+        path.pop_back();
+
+        path.push_back(c[0]);
+        int g = find_all(adj, visited, tree, paths, path, c[1], v.children[0], d);
+        path.pop_back();
+
+        path.push_back(c[1]);
+        int h = find_all(adj, visited, tree, paths, path, c[0], v.children[1], d);
+        path.pop_back();
+
+        path.push_back(c[0]);
+        int i = find_all(adj, visited, tree, paths, path, c[2], v.children[0], d);
+        path.pop_back();
+
+        path.push_back(c[2]);
+        int j = find_all(adj, visited, tree, paths, path, c[0], v.children[1], d);
+        path.pop_back();
+
+        path.push_back(c[1]);
+        int k = find_all(adj, visited, tree, paths, path, c[2], v.children[0], d);
+        path.pop_back();
+
+        path.push_back(c[2]);
+        int l = find_all(adj, visited, tree, paths, path, c[1], v.children[1], d);
+        path.pop_back();
+
+        return a*b + x*y + e*f + g*h + i*j + k*l;
+    }
+
+    return 0;
+}
+
+int find_rec(vector<Vertex> &tree, int s)
+{
+    Vertex &v = tree[s];
+    if (v.count == 0) {
+        return 1;
+    }
+    if (v.count == 1) {
+        return find_rec(tree, v.children[0]);
+    }
+
+    if (v.count == 2) {
+        int a = find_rec(tree, v.children[0]);
+        int b = find_rec(tree, v.children[1]);
+        int s = a*b * (a==b ? 2 : 1);
+        return s;
+    }
+
+    return 0;
+}
+
+int best_src(vector<int> &nbors)
+{
+    int src = 1;
+    int nc = 0;
+    for (int i = 1; i < nbors.size(); ++i) {
+        if (nbors[i] > nc) {
+            nc = nbors[i];
+            src = i;
+        }
+    }
+
+    return src;
 }
 
 int main()
@@ -108,7 +275,6 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    int match_count = 0;
     int k;
     int n, m;
     cin >> n >> m >> k;
@@ -116,125 +282,52 @@ int main()
     Edges src_edges;
     Edges dst_edges;
     vector<Vertex> src_tree;
-    vector<Vertex> dst_tree;
+
+    vector<int> nbors(n+1, 0);
+
+    vector<vector<int>> adj(m+1, vector<int>());
+    vector<vector<bool>> visited(m+1, vector<bool>(m+1, false));
 
     src_edges.resize(n - 1);
     src_tree.resize(n + 1, Vertex{});
     dst_edges.resize(m - 1);
-    dst_tree.resize(m + 1, Vertex{});
     
     for (int i = 0; i < n-1; ++i) {
         auto &p = src_edges[i];
         cin >> p.first >> p.second;
+
+        nbors[p.first]++;
+        nbors[p.second]++;
     }
     
     for (int i = 0; i < m-1; ++i) {
         auto &p = dst_edges[i];
         cin >> p.first >> p.second;
+
+        adj[p.first].push_back(p.second);
+        adj[p.second].push_back(p.first);
     }
 
-    int max_src_level = 0;
-    vector<pair<int, int>> src_ends;
-    vector<pair<int, int>> dst_ends;
-    make_tree(src_tree, src_edges, 1, max_src_level);
-    make_ends(src_ends, src_tree, 1);
-    // print_tree(src_tree, 1);
+    int src = best_src(nbors);
+    while (!make_tree(src_tree, src_edges, src)) {
+        for (auto &x: src_tree) x = Vertex{};
+        nbors[src]=-1;
+        src=best_src(nbors);
+    }
+    // print_tree(src_tree, src);
 
-    cout << "S" << " :: ";
-    for (auto x: src_ends) {
-        cout << x.first << "(" << x.second << ")" << " ";
-    }cout << "\n";
+    vector<vector<int>> paths;
 
-    for (int first = 1; first <= m; ++first) {
-        int max_dst_level = 0;
-        for (auto &x: dst_tree) x = {};
-        make_tree(dst_tree, dst_edges, first, max_dst_level);
-        if (max_dst_level < max_src_level) continue;
-        // print_tree(dst_tree, first);
-        dst_ends.clear();
-        make_ends(dst_ends, dst_tree, first, max_src_level);
-
-        cout << first << " :: ";
-        for (auto x: dst_ends) {
-            cout << x.first << "(" << x.second << ")" << " ";
-        }cout << "\n";
+    int f = 0;
+    for (int i = 1; i <= m; ++i) {
+        f += find_all(adj, visited, src_tree, paths, vector<int>(), i, src);
     }
 
-    #if 0
-    queue<Path> paths;
+    int r = find_rec(src_tree, src);
 
-    for (int first = 1; first <= m; ++first) {
-        paths.push(Path {first, 0, 1});
-
-        while (!paths.empty()) {
-            Path path = paths.front();
-            paths.pop();
-
-            vector<int> &adj = dst[path.v];
-            Vertex &src = src_tree[path.s];
-
-            int child_count = adj.size() - (path.p != 0);
-            int sc = src.count + (src.parent != 0);
-
-            if (child_count < sc) {
-                continue;
-            }
-
-            if (child_count == 0 && src.count == 0) {
-                match_count = (match_count+1) % k;
-            }
-
-            int c[3] = {};
-            int cc = 0;
-            for (int i = 0; i < adj.size(); ++i) {
-                int x = adj[i];
-                if (x == path.p) continue;
-                c[cc++] = x;
-            }
-
-            assert(cc == child_count);
-
-            if (sc == 1) {
-                for (int i = 0; i < cc; ++i) {
-                    paths.push(Path {c[i], path.v, src.children[0]});
-                }
-            }
-            else if (src.count == 2) {
-                if (cc == 2) {
-                    // cout << path.p << " -> "<< path.v << "\n";
-                    paths.push(Path {c[0], path.v, src.children[0]});
-                    paths.push(Path {c[1], path.v, src.children[1]});
-                } else if (cc == 3) {
-                    assert(false);
-                    // paths.push(Path {c[0], path.v, src.children[0]});
-                    // paths.push(Path {c[0], path.v, src.children[1]});
-                    // paths.push(Path {c[1], path.v, src.children[0]});
-                    // paths.push(Path {c[1], path.v, src.children[1]});
-                    // paths.push(Path {c[2], path.v, src.children[0]});
-                    // paths.push(Path {c[2], path.v, src.children[1]});
-                }
-            }
-        }
-
-        #if 0
-        for (int j = 0; j < dst[i].size(); ++j) {
-            bool &b = vis[i].v[j];
-            if (b) continue;
-            b = true;
-
-            int v = dst[i][j];
-            // cout << i << " -> " << v << "\n";
-
-        }
-        #endif
-    }
-
-    if (match_count % 2 != 0) {
-        match_count = (match_count+1) % k;
-    }
-    #endif
-
-    cout << match_count << "\n";
+    cout << (f*r) % k << "\n";
+    // cout << f << "\n";
+    // cout << r << "\n";
 
     return 0;
 }

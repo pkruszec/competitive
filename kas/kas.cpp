@@ -1,11 +1,6 @@
 #include <cmath>
 #include "kaslib.h"
 
-long long primes[] = {
-    236597890729009,
-    13007707,
-};
-
 bool is_interesting(long long x, long long thr)
 {
     if (x < thr) {
