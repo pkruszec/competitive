@@ -1,16 +1,16 @@
 [#readme]
 = XXXII Olimipiada Informatyczna
-:revdate: 2024-10-16
+:revdate: 2024-12-03
 :author: Paweł Kruszec
 :email: pakruszec@gmail.com
 
 Zadania::
 * [x] Usuwanie (usu) -- 2024-10-14, 100
 * [x] Walki robotów (wal) -- 2024-10-16, 100
-* [ ] Zamek cykliczny (zam) -- 2024-10-15, 35
-* [ ] Bitada (bit)
-* [ ] Kasyno (kas)
-* [ ] Sprawiedliwy podział (spr)
+* [x] Zamek cykliczny (zam) -- 2024-10-15, 35
+* [x] Bitada (bit) -- 0
+* [x] Kasyno (kas) -- 70 
+* [x] Sprawiedliwy podział (spr) -- 0
 
 [comment]
 --
