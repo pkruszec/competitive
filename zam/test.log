@@ -1,0 +1,386 @@
+﻿**********************
+Windows PowerShell transcript start
+Start time: 20241105202838
+Username: LAPTOP-RQ5ONS0V\pkrus
+RunAs User: LAPTOP-RQ5ONS0V\pkrus
+Configuration Name: 
+Machine: LAPTOP-RQ5ONS0V (Microsoft Windows NT 10.0.19045.0)
+Host Application: C:\WINDOWS\System32\WindowsPowerShell\v1.0\powershell.exe
+Process ID: 9748
+PSVersion: 5.1.19041.5007
+PSEdition: Desktop
+PSCompatibleVersions: 1.0, 2.0, 3.0, 4.0, 5.0, 5.1.19041.5007
+BuildVersion: 10.0.19041.5007
+CLRVersion: 4.0.30319.42000
+WSManStackVersion: 3.0
+PSRemotingProtocolVersion: 2.3
+SerializationVersion: 1.1.0.1
+**********************
+Transcript started, output file is .\test.log
+DONE in 29
+PS C:\home\src\oi-2024\zam> TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+>> TerminatingError(): "The pipeline has been stopped."
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+DONE in 29
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+01.out --- 0.0088248 s exp 44 got 44
+02.out --- 0.0195706 s exp 13 got 13
+03.out --- 0.0124423 s exp 488 got 488
+04.out --- 0.011304 s exp 17 got 17
+05.out --- 0.0104967 s exp 1 got 1
+06.out --- 0.0147023 s exp 6 got 6
+07.out --- 0.0308076 s exp 3 got 3
+10.out --- 0.0106798 s exp 6 got 6
+11.out --- 0.0089968 s exp 16 got 16
+12.out --- 0.0130462 s exp 3 got 3
+13.out --- 0.011949 s exp 8 got 8
+99.out --- 0.0106377 s exp 2 got 2
+big.out --- 0.0332606 s exp 4500002 got 4500002
+ones.out --- 0.0383667 s exp 9000001 got 9000001
+smallones.out --- 0.0112752 s exp 91 got 91
+test0.out --- 0.0111921 s exp 5221 got 5221
+test1.out --- 0.0134212 s exp 2325 got 2325
+test2.out --- 0.0156129 s exp 61434 got 61434
+test3.out --- 0.0267144 s exp 301682 got 301682
+test4.out --- 0.0218433 s exp 401056 got 401056
+test_dumb_0.out --- 0.0109273 s exp 102 got 102
+test_dumb_1.out --- 0.0121663 s exp 19 got 19
+test_dumb_3.out --- 0.0104759 s exp 16 got 16
+test_dumb_4.out --- 0.0115628 s exp 39 got 39
+test_dumb_5.out --- 0.0109748 s exp 568 got 568
+test_dumb_6.out --- 0.0118448 s exp 50 got 50
+test_dumb_7.out --- 0.0117169 s exp 250 got 250
+test_dumb_8.out --- 0.0131421 s exp 1 got 1
+test_dumb_9.out --- 0.0105844 s exp 16 got 16
+DONE in 29
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+DONE in 29
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+01.out --- 0.0092814 s exp 44 got 44
+02.out --- 0.0097482 s exp 13 got 13
+03.out --- 0.0095743 s exp 488 got 488
+04.out --- 0.0188108 s exp 17 got 17
+05.out --- 0.0102594 s exp 1 got 1
+06.out --- 0.0135461 s exp 6 got 6
+07.out --- 0.0522491 s exp 3 got 3
+10.out --- 0.0107953 s exp 6 got 6
+11.out --- 0.0098824 s exp 16 got 16
+12.out --- 0.0114491 s exp 3 got 3
+13.out --- 0.0114516 s exp 8 got 8
+99.out --- 0.0095688 s exp 2 got 2
+big.out --- 0.0436921 s exp 4500002 got 4500002
+ones.out --- 0.0451353 s exp 9000001 got 9000001
+smallones.out --- 0.0124282 s exp 91 got 91
+test0.out --- 0.010886 s exp 5221 got 5221
+test1.out --- 0.0144839 s exp 2325 got 2325
+test2.out --- 0.014968 s exp 61434 got 61434
+test3.out --- 0.0218849 s exp 301682 got 301682
+test4.out --- 0.0270417 s exp 401056 got 401056
+test_dumb_0.out --- 0.0153965 s exp 102 got 102
+test_dumb_1.out --- 0.0115994 s exp 19 got 19
+test_dumb_3.out --- 0.0127557 s exp 16 got 16
+test_dumb_4.out --- 0.0118273 s exp 39 got 39
+test_dumb_5.out --- 0.0102938 s exp 568 got 568
+test_dumb_6.out --- 0.0115147 s exp 50 got 50
+test_dumb_7.out --- 0.0084389 s exp 250 got 250
+test_dumb_8.out --- 0.0121244 s exp 1 got 1
+test_dumb_9.out --- 0.0095456 s exp 16 got 16
+DONE in 29
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+DONE in 29
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+02.out --- 0.0081813 s exp 13 got 14
+DONE in 29
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+DONE in 29
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+PS C:\home\src\oi-2024\zam> TerminatingError(): "ScriptHalted"
+>> TerminatingError(): "ScriptHalted"
+ScriptHalted
+ScriptHalted
+At C:\home\src\oi-2024\zam\build.ps1:52 char:5
++     throw
++     ~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], RuntimeException
+    + FullyQualifiedErrorId : ScriptHalted
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+
+PS C:\home\src\oi-2024\zam> .\build.ps1
+
+DONE in 29

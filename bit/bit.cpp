@@ -9,6 +9,8 @@ using namespace std;
 
 using Edges = vector<pair<int, int>>;
 
+int k;
+
 struct Vertex {
     int level;
     int parent;
@@ -151,11 +153,10 @@ int find_all(vector<vector<int>> &adj, vector<vector<bool>> &visited, vector<Ver
         return 1;
     }
 
-
     if (v.count == 1) {
         int sm = 0;
         for (int i = 0; i < cc; ++i) {
-            sm += find_all(adj, visited, tree, paths, path, c[i], v.children[0], d);
+            sm += find_all(adj, visited, tree, paths, path, c[i], v.children[0], d) % k;
         }
         return sm;
     }
@@ -177,7 +178,8 @@ int find_all(vector<vector<int>> &adj, vector<vector<bool>> &visited, vector<Ver
         int y = find_all(adj, visited, tree, paths, path, c[0], v.children[1], d);
         path.pop_back();
 
-        return a*b + x*y;
+        // return a*b + x*y;
+        return (((a%k)*(b%k))%k + ((x%k)*(y%k))%k) % k;
     }
 
     if (cc == 3 && v.count == 2) {
@@ -222,14 +224,17 @@ int find_all(vector<vector<int>> &adj, vector<vector<bool>> &visited, vector<Ver
         path.pop_back();
 
         path.push_back(c[1]);
-        int k = find_all(adj, visited, tree, paths, path, c[2], v.children[0], d);
+        int z = find_all(adj, visited, tree, paths, path, c[2], v.children[0], d);
         path.pop_back();
 
         path.push_back(c[2]);
         int l = find_all(adj, visited, tree, paths, path, c[1], v.children[1], d);
         path.pop_back();
 
-        return a*b + x*y + e*f + g*h + i*j + k*l;
+        // return a*b + x*y + e*f + g*h + i*j + z*l;
+        return ((((a%k)*(b%k))%k + ((x%k)*(y%k))%k) % k +
+               (((e%k)*(f%k))%k + ((g%k)*(h%k))%k) % k +
+               (((i%k)*(j%k))%k + ((z%k)*(l%k))%k) % k) % k;
     }
 
     return 0;
@@ -242,14 +247,14 @@ int find_rec(vector<Vertex> &tree, int s)
         return 1;
     }
     if (v.count == 1) {
-        return find_rec(tree, v.children[0]);
+        return find_rec(tree, v.children[0]) % k;
     }
 
     if (v.count == 2) {
         int a = find_rec(tree, v.children[0]);
         int b = find_rec(tree, v.children[1]);
-        int s = a*b * (a==b ? 2 : 1);
-        return s;
+        int s = (a%k)*(b%k) * (a==b ? 2 : 1)%k;
+        return s % k;
     }
 
     return 0;
@@ -275,7 +280,6 @@ int main()
     cin.tie(0);
     cout.tie(0);
 
-    int k;
     int n, m;
     cin >> n >> m >> k;
 
@@ -320,14 +324,12 @@ int main()
 
     int f = 0;
     for (int i = 1; i <= m; ++i) {
-        f += find_all(adj, visited, src_tree, paths, vector<int>(), i, src);
+        f += find_all(adj, visited, src_tree, paths, vector<int>(), i, src) % k;
     }
 
-    int r = find_rec(src_tree, src);
+    int r = find_rec(src_tree, src) % k;
 
     cout << (f*r) % k << "\n";
-    // cout << f << "\n";
-    // cout << r << "\n";
 
     return 0;
 }
