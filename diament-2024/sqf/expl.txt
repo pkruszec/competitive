@@ -1,0 +1,18 @@
+bbbwbwwb -> wwwwbwwb
+^^^         ^^^
+
+bbb  3  ->  www -3
+bbw  2  ->  www -3
+bwb  1  ->  wwb -2
+wbw -1  ->  wbw -1
+
+bbbwbwwb -> bbwbwwwb
+  ^^^         ^^^
+
+bwb  1  ->  wbw -1
+wbw -1  ->  bww  1
+bww  1  ->  www -3
+wwb -2  ->  wwb -2
+
+bb bbwb
+ww wwwb 2 + 2 + 1 = 3
