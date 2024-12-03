@@ -10,3 +10,4 @@ private
 *.o
 *.out
 *.ilk
+*.pyc
