@@ -1,0 +1,23 @@
+[#readme]
+= XXXII Olimipiada Informatyczna
+:revdate: 2024-10-16
+:author: Paweł Kruszec
+:email: pakruszec@gmail.com
+
+Zadania::
+* [x] Usuwanie (usu) -- 2024-10-14, 100
+* [x] Walki robotów (wal) -- 2024-10-16, 100
+* [ ] Zamek cykliczny (zam) -- 2024-10-15, 35
+* [ ] Bitada (bit)
+* [ ] Kasyno (kas)
+* [ ] Sprawiedliwy podział (spr)
+
+[comment]
+--
+
+== Walki robotów
+
+Czy istnieje ktoś, kogo nie można pokonać?
+Znaleźć największego kota, i zobaczyć czy ktoś jest silniejszy i czy ktoś jest zwinniejszy.
+
+--
