@@ -32,6 +32,10 @@ int main()
 
     vector<pair<int, int>> possible {};
 
+    // MEASURE
+    // uint64_t t0, t1;
+    // t0 = __rdtsc();
+
     for (int i = 0; i < n0; ++i) {
         int current = v0[i];
         int sgn = SGN(current);
@@ -44,10 +48,17 @@ int main()
         }
     }
 
+    // MEASURE
+    // t1 = __rdtsc();
+    // cout << t1-t0 << "\n";
+
     int p0 = 0;
     int p1 = 0;
 
     int64_t sm0 = 0;
+
+    // MEASURE
+    // t0 = __rdtsc();
 
     while ((p0 < n0)) {
 
@@ -88,9 +99,16 @@ int main()
 
     }
 
+    // MEASURE
+    // t1 = __rdtsc();
+    // cout << t1-t0 << "\n";
+
     p0 = 0;
     p1 = 0;
     int64_t sm1 = 0;
+
+    // MEASURE
+    // t0 = __rdtsc();
 
     while ((p1 < n1)) {
 
@@ -130,6 +148,10 @@ int main()
         }
 
     }
+
+    // MEASURE
+    // t1 = __rdtsc();
+    // cout << t1-t0 << "\n";
 
     sm = max(sm0, sm1);
 

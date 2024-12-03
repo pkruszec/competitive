@@ -54,6 +54,20 @@ static int left_count(int i)
     return d == 1 ? -c : c;
 }
 
+static int left_count_from(int i, int added)
+{
+    int mx = i+k;
+    int mn = i+added;
+    int c = 0;
+    int d = s[i];
+
+    for (int j = mn; j < mx; ++j) {
+        if (s[j] != d) break;
+        c++;
+    }
+    return d == 1 ? -c : c;
+}
+
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -77,7 +91,7 @@ int main()
     }
 
     for (int i = 0; i <= n-k; ++i) {
-        counts[i] = left_b_count(i);
+        counts[i] = left_count(i);
     }
 
 #if MEASURE
@@ -87,11 +101,17 @@ int main()
 #endif
 
     while (1) {
-        // cout << "{";
-        // for (auto c: counts) {
-        //     cout << c << " ";
-        // }
-        // cout << "}\n";
+        #if 0
+        cout << "{";
+        for (auto c: counts) {
+            cout << c << " ";
+        }
+        cout << "} ";
+        for (auto c: s) {
+            cout << c;
+        }
+        cout << "\n";
+        #endif
 
         if (b_count == 0) break;
 
@@ -138,34 +158,45 @@ int main()
         t0 = __rdtsc();
 #endif
 
-        // counts[best_i] = -counts[best_i];
-        
-        int min_i = best_i;
+        counts[best_i] = -counts[best_i];
+        int min_i = best_i+1;
         int max_i = min(best_i+k, n-k);
+ 
+        for (int i = max(0, best_i-k); i < best_i; ++i) {
+            counts[i] = left_count(i);
+        }
 
         for (int i = min_i; i <= max_i; ++i) {
-            
-            #if 0
+            if (i == best_i) continue;
+
             int prev = counts[i-1];
             int absprev = abs(prev);
             int sgnprev = SGN(prev);
             int curr = counts[i];
             int idx = i-best_i;
 
+            // cout << i << " " << idx << " " << absprev << "\n";
+
             if (idx < absprev) {
                 // TODO: we should still count the left ones, but from the point where we can't 
                 // deduce it from the counts.
                 // affected by change 
                 int res = absprev - idx;
-                if (SGN(curr) == sgnprev && curr > res) {
+                int lc = 0;
+                if (-SGN(curr) == sgnprev && curr >= res) {
                     res = abs(curr);
+                    int lc1 = left_count_from(i, res);
+                    if (SGN(lc1) == sgnprev) lc = lc1;
                 }
-                counts[i] = res * sgnprev;
+
+                // cout << i << " " << res << " " << lc << "\n";
+                counts[i] = res * sgnprev + lc;
+            } else {
+                counts[i] = left_count(i);
             }
-            #endif
 
             //int pc = counts[i];
-            counts[i] = left_b_count(i);
+            //counts[i] = left_b_count(i);
         }
 
 #if MEASURE

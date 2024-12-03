@@ -40,15 +40,15 @@ function Run-BigTest {
     }
 }
 
-# clang++ sqf.cpp -DMEASURE -O2 -o sqf.exe
-clang++ sqf.cpp -O2 -o sqf.exe
+clang++ sqf.cpp -DMEASURE -O2 -o sqf.exe
+# clang++ sqf.cpp -O2 -o sqf.exe
 if ($LastExitCode -ne 0) {
     throw
 }
 
-# Get-Content -Raw "archive/aga_01.in" | .\sqf.exe
+Get-Content -Raw "archive/aga_01.in" | .\sqf.exe
 
-Run-BigTest "aga" "out"
+# Run-BigTest "aga" "out"
 
 # Run-Test "input/01.in"
 
