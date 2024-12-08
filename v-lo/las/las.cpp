@@ -47,6 +47,30 @@ void check(int x, int y, int target)
     }
 }
 
+void clear(int x, int y)
+{
+    if (!vis[y][x]) return;
+
+    queue<pair<int, int>> q;
+    q.push({x, y});
+
+    while (!q.empty()) {
+        auto p = q.front();
+        q.pop();
+        vis[p.second][p.first] = false;
+
+        for (auto &dd: dir) {
+            int nx = dd.first + p.first;
+            int ny = dd.second + p.second;
+            if (!vis[ny][nx]) continue;
+            if (a[ny][nx] <= 0) continue;
+
+            vis[ny][nx] = false;
+            q.push({nx, ny});
+        }
+    }
+}
+
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -71,11 +95,12 @@ int main()
 
     for (auto &p: ps) {
         // TODO: reset using bfs?
-        for (int y = 0; y <= n+1; ++y) {
-            for (int x = 0; x <= n+1; ++x) {
-                vis[y][x] = false;
-            }
-        }
+        // for (int y = 0; y <= n+1; ++y) {
+        //     for (int x = 0; x <= n+1; ++x) {
+        //         vis[y][x] = false;
+        //     }
+        // }
+
         iter = 0;
         int i = p.second;
         int j = p.first;
@@ -84,5 +109,7 @@ int main()
             cout << a[i][j] << '\n';
             return 0;
         }
+
+        clear(j, i);
     }
 }

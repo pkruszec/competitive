@@ -1,9 +1,9 @@
 import random
 
-n = 200
-d = 100
+n = 1000
+d = 1000
 m = 1_000_000_000
-path = "04.in"
+path = "05.in"
 
 with open(path, "w", encoding="utf-8") as f:
     f.write(f"{n} {d}\n")

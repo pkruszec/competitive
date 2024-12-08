@@ -7,3 +7,4 @@ call las < 01.in
 call las < 02.in
 call las < 03.in
 call las < 04.in
+call las < 05.in
