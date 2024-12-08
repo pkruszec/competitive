@@ -19,7 +19,7 @@ int bfs(int x, int y)
     q.push(P(x, y));
     
     vis[y][x] = true;
-    dist[y][x] = 0;
+    dist[y][x] = 1;
     vector<P> dix = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
     
     int m = -1;
@@ -75,7 +75,7 @@ int main()
     
     int c = bfs(o.first, o.second);
     if (c >= 0)
-        cout << c + 1 << '\n';
+        cout << c << '\n';
     else
         cout << "NIE\n";
     
