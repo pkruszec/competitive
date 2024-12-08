@@ -112,4 +112,7 @@ int main()
 
         clear(j, i);
     }
+
+    // cout << "NIE\n";
+    return 0;
 }
