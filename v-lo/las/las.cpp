@@ -7,6 +7,17 @@
 
 using namespace std;
 
+#ifdef PERF
+uint64_t p0 = 0;
+uint64_t p1 = 0;
+
+# define PerfBegin() do {p0 = __rdtsc();} while (0)
+# define PerfEnd()   do {p1 = __rdtsc(); cout << "CycleCount: " << p1-p0 << "\n";} while (0)
+#else
+# define PerfBegin()
+# define PerfEnd()
+#endif
+
 int n, d;
 vector<vector<int>> a;
 
@@ -93,7 +104,11 @@ int main()
         return a[p0.second][p0.first] < a[p1.second][p1.first];
     });
 
+    int count = 0;
+
     for (auto &p: ps) {
+        count++;
+
         // TODO: reset using bfs?
         // for (int y = 0; y <= n+1; ++y) {
         //     for (int x = 0; x <= n+1; ++x) {
@@ -106,6 +121,7 @@ int main()
         int j = p.first;
         check(j, i, a[i][j]);
         if (iter >= d) {
+            cerr << count << "\n";
             cout << a[i][j] << '\n';
             return 0;
         }
