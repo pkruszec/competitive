@@ -8,6 +8,8 @@ using namespace std;
 using P = pair<int, int>;
 
 int width, height;
+vector<P> dix = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
 vector<vector<char>> g;
 vector<vector<bool>> vis;
 vector<vector<int>> dist;
@@ -20,7 +22,6 @@ int bfs(int x, int y)
     
     vis[y][x] = true;
     dist[y][x] = 1;
-    vector<P> dix = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
     
     int m = -1;
     while (!q.empty()) {
@@ -28,7 +29,7 @@ int bfs(int x, int y)
         // cout << px << "," << py << "\n";
         
         q.pop();
-        if (px == w.first && py == w.second) return m;
+        if (px == w.first && py == w.second) return dist[py][px];
         
         for (auto [dx, dy]: dix) {
             int nx = px + dx;
@@ -72,21 +73,27 @@ int main()
             }
         }
     }
-    
+
     int c = bfs(o.first, o.second);
+    
+    /*
+    for (int i = 1; i <= height; ++i) {
+        for (int j = 1; j <= width; ++j) {
+            if (dist[i][j] == 999) {
+                cout << setw(3) << "%";
+            } else {
+                cout << setw(3) << dist[i][j];
+            }
+        }
+        cout << "\n";
+    }
+    cout << "\n\n";
+    */
+
     if (c >= 0)
         cout << c << '\n';
     else
         cout << "NIE\n";
-    
-#if 0
-    for (int i = 0; i <= height+1; ++i) {
-        for (int j = 0; j <= width+1; ++j) {
-            cout << setw(4) << dist[i][j];
-        }
-        cout << "\n";
-    }
-#endif
     
     return 0;
 }

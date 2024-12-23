@@ -1,74 +1,72 @@
 #include <iostream>
 #include <vector>
+#include <queue>
 
 using namespace std;
 
 int n;
-int idx = 0;
 vector<vector<char>> k;
-vector<vector<int>> vis;
+// vector<vector<bool>> vis;
 
-int dfs(int x, int y)
+vector<pair<int, int>> dir {{-1, 0}, {1, 0}, {0, -1}, {0, 1}};
+
+int check(int x, int y)
 {
-    // cout << x << "," << y << "\n";
-    
-    int c = 0;
-    // TODO: vector bad here
-    vector<pair<int, int>> pairs {
-        {-1, 0}, {1, 0}, {0, -1}, {0, 1},
-    };
-    for (auto &p: pairs) {
-        int nx = x + p.first;
-        int ny = y + p.second;
-        
-        if(vis[ny][nx] > 0) continue;
-        vis[ny][nx]++;
-        
-        if (k[ny][nx] == '.') {
-            c += dfs(nx, ny);
-        } else {
-            // cout << k[ny][nx] << " " << nx << "," << ny << "\n";
-            c++;
+    vector<vector<bool>> vis(n + 2, vector<bool>(n + 2, false));
+
+    int iter = 0;
+    queue<pair<int, int>> q;
+    q.push({x, y});
+    vis[y][x] = true;
+
+    while (!q.empty()) {
+        auto p = q.front();
+        q.pop();
+
+        for (auto &dd: dir) {
+            int nx = dd.first + p.first;
+            int ny = dd.second + p.second;
+            if (vis[ny][nx]) continue;
+            if (k[ny][nx] == '#') {
+                //cout << nx << "," << ny << "\n";
+                iter++;
+                continue;
+            }
+
+            q.push({nx, ny});
+            vis[ny][nx] = true;
         }
-        
     }
-    
-    return c;
+
+    return iter;
 }
 
 int main()
 {
+    ios_base::sync_with_stdio(false);
+    cin.tie(0);
+    cout.tie(0);
+
     cin >> n;
     k.resize(n + 2, vector<char>(n + 2, '#'));
-    vis.resize(n + 2, vector<int>(n + 2, 0));
+    // vis.resize(n + 2, vector<bool>(n + 2, false));
     for (int i = 1; i <= n; ++i) {
         for (int j = 1; j <= n; ++j) {
             cin >> k[i][j];
         }
     }
-    
-#if 0
-    cout << dfs(2, 2) << "\n";
-    for (int i = 0; i <= n+1; ++i) {
-        for (int j = 0; j <= n+1; ++j) {
-            cout << (vis[i][j] ? k[i][j] : ' ');
-        }
-        cout << "\n";
-    }
-#endif
-    
-    for (idx = 0; idx < n; ++idx) {
+
+    for (int i = 0; i < n; ++i) {
         int x, y;
-        cin >> x >> y;
-        
-        for (int a = 0; a <= n+1; ++a) {
-            for (int b = 0; b <= n+1; ++b) {
-                vis[a][b] = 0;
-            }
-        }
-        
-        cout << dfs(y, x) << "\n";
+        cin >> y >> x;
+
+        // for (int i = 1; i < n+1; ++i) {
+        //     for (int j = 1; j < n+1; ++j) {
+        //         vis[i][j] = false;
+        //     }
+        // }
+
+        cout << check(x, y) << "\n";
     }
-    
     return 0;
 }
