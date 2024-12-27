@@ -29,6 +29,8 @@ int main()
         b[w-1][k-1] = c;
     }
 
+    b[0][0] = -999;
+
     for (int i = 0; i < n; ++i) {
         char op;
         cin >> op;
@@ -55,6 +57,11 @@ int main()
                 w--;
                 k--;
 
+                if (b[w][k] == -1) {
+                    cout << "-1\n";
+                    continue;
+                }
+
                 int c = eaten.size();
                 for (int j = 0; j < c; ++j) {
                     int i = pos.size() - 1 - j;
@@ -79,8 +86,8 @@ int main()
 
         if (b[head.second][head.first] >= 0) {
             eaten.push_back(b[head.second][head.first]);
-            b[head.second][head.first] = -1;
         }
+        b[head.second][head.first] = -999;
 
     }
 
