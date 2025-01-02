@@ -5,8 +5,10 @@ using namespace std;
 
 vector<pair<int, int>> edges;
 vector<int> status;
+vector<int> levels;
 vector<bool> visited;
 
+/*
 void fill(int v, int c=1)
 {
     if (visited[v]) return;
@@ -30,6 +32,7 @@ void fill(int v, int c=1)
         fill(w, nc);
     }
 }
+*/
 
 bool check(int v)
 {
@@ -57,6 +60,13 @@ bool check(int v)
     return k && s;
 }
 
+void set(int v, int w)
+{
+    if (status[v] != 0) return;
+    if (status[w] == 1) { status[v] = 2; return; }
+    status[v] = 1;
+}
+
 int main(void)
 {
     ios_base::sync_with_stdio(false);
@@ -66,44 +76,37 @@ int main(void)
     int n, m;
     cin >> n >> m;
 
-    if (m*2 < n) {
-        cout << "NIE\n";
-        return 0;
-    }
-
     status.resize(n+1, 0);
     visited.resize(n+1, 0);
+    levels.resize(n+1, 0);
     edges.resize(m + 1, pair<int, int>(0, 0));
 
-    for (int i = 1; i <= n; ++i) {
+    for (int i = 1; i <= m; ++i) {
         cin >> edges[i].first >> edges[i].second;
+
+        levels[edges[i].first]++;
+        levels[edges[i].second]++;
     }
 
     for (int i = 1; i <= n; ++i) {
-        if (!visited[i]) fill(i);
+        if (levels[i] == 0) {
+            cout << "NIE\n";
+            return 0;
+        }
     }
 
-    bool ok = true;
+    for (int i = 1; i <= m; ++i) {
+        int v = edges[i].first;
+        int w = edges[i].second;
 
-#if 1
+        set(v, w);
+        set(w, v);
+    }
+
+    cout << "TAK\n";
     for (int i = 1; i <= n; ++i) {
-        if (!check(i)) {
-            // cout << i << " doesn't have\n";
-            ok = false;
-            break;
-        }
-    }
-#endif
-
-    if (ok) {
-        cout << "TAK\n";
-        for (int i = 1; i <= n; ++i) {
-            int c = status[i];
-            char xs[] = "NKS";
-            cout << xs[c] << "\n";
-        }
-    } else {
-        cout << "NIE\n";
+        int s = status[i];
+        cout << "NKS"[s] << "\n";
     }
 
     return 0;
