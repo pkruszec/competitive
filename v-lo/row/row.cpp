@@ -3,6 +3,7 @@
 #include <vector>
 #include <queue>
 #include <unordered_map>
+#include <unordered_set>
 #include <stdint.h>
 
 using namespace std;
@@ -19,11 +20,21 @@ char var(char c)
     return c;
 }
 
-int count(vector<pair<char, int>> &V, vector<pair<int, int>> &E, vector<int> &visited, int start_v, int &ci)
+using Vertex = pair<char, int>;
+
+struct VH {
+    template <typename A, typename B>
+    size_t operator () (const pair<A, B> &v) const
+    {
+        return hash<A>()(v.first) ^ hash<B>()(v.second);
+    }
+};
+
+int count(vector<pair<Vertex, Vertex>> &E, unordered_map<Vertex, bool, VH> &visited, Vertex start_v, int &ci)
 {
     if (visited[start_v]) return 0;
 
-    queue<int> Q;
+    queue<Vertex> Q;
     Q.push(start_v);
     visited[start_v] = ci;
 
@@ -33,13 +44,13 @@ int count(vector<pair<char, int>> &V, vector<pair<int, int>> &E, vector<int> &vi
     bool has_1 = false;
 
     while (!Q.empty()) {
-        int v = Q.front();
+        auto v = Q.front();
         Q.pop();
 
-        if (V[v].first == '0') {
+        if (v.first == '0') {
             flag = true;
             has_0 = true;
-        } else if (V[v].first == '1') {
+        } else if (v.first == '1') {
             flag = true;
             has_1 = true;
         }
@@ -49,7 +60,7 @@ int count(vector<pair<char, int>> &V, vector<pair<int, int>> &E, vector<int> &vi
         }
 
         for (auto &[a, b]: E) {
-            int w;
+            Vertex w;
             if (a == v) {
                 w = b;
             } else if (b == v) {
@@ -116,6 +127,7 @@ void print_pow2(int x)
     cout << "\n";
 }
 
+#if 0
 void print_dot_graph(vector<pair<char, int>> &V, vector<pair<int, int>> &E)
 {
     cout << "graph {\n";
@@ -134,6 +146,7 @@ void print_dot_graph(vector<pair<char, int>> &V, vector<pair<int, int>> &E)
     }
     cout << "}\n";
 }
+#endif
 
 int main(void)
 {
@@ -223,47 +236,45 @@ int main(void)
             }
         }
 
-        unordered_map<char, int> Or;
         unordered_map<char, int> Ol;
-        vector<pair<char, int>> V;
-        vector<pair<int, int>> E;
+        unordered_map<char, int> Or;
+        vector<pair<Vertex, Vertex>> E;
 
-        auto push_vertex = [&](unordered_map<char, int> &O, char c) -> int {
-            if (c == '0' || c == '1') {
-                for (int i = 0; i < V.size(); ++i) {
-                    if (V[i].first == c) return i;
-                }
-                V.push_back(pair<int, int>(c, 0));
-            } else {
-
-                // O[c] += 1;
-                // int o = O[c];
-
-                int l = lengths[c - 'a'];
-                int o = (O[c] % l) + 1;
-                O[c] += 1;
-
-                for (int i = 0; i < V.size(); ++i) {
-                    if (V[i].first == c && V[i].second == o) return i;
-                }
-                V.push_back(pair<int, int>(c, o));
-            }
-            return V.size() - 1;
-        };
+        unordered_set<Vertex, VH> V;
 
         for (int i = 0; i < len; ++i) {
-            int v = push_vertex(Or, rhs_exp[i]);
-            int w = push_vertex(Ol, lhs_exp[i]);
-            E.push_back(pair<int, int>(v, w));
+            char lc = lhs_exp[i];
+            char rc = rhs_exp[i];
+
+            int lo = 0;
+            int ro = 0;
+
+            if (!(lc == '0' || lc == '1')) {
+                int l = lengths[lc - 'a'];
+                lo = (Ol[lc] % l) + 1;
+                Ol[lc] += 1;
+            }
+
+            if (!(rc == '0' || rc == '1')) {
+                int l = lengths[rc - 'a'];
+                ro = (Or[rc] % l) + 1;
+                Or[rc] += 1;
+            }
+
+            auto l = Vertex{lc, lo};
+            auto r = Vertex{rc, ro};
+
+            V.insert(l);
+            V.insert(r);
+            E.push_back(pair<Vertex, Vertex>(l, r));
         }
 
-        // print_dot_graph(V, E);
-
-        vector<int> visited(V.size(), 0);
+        unordered_map<Vertex, bool, VH> visited;
         int cc = 0;
         int ci = 1;
-        for (int i = 0; i < V.size(); ++i) {
-            int r = count(V, E, visited, i, ci);
+
+        for (auto &v: V) {
+            int r = count(E, visited, v, ci);
             if (r < 0) {
                 cout << "0\n";
                 goto next_eq;
