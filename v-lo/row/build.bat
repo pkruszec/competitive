@@ -12,6 +12,7 @@ call :run_test 05.in
 call :run_test 06.in
 call :run_test 07.in
 call :run_test 08.in
+call :run_test 09.in
 call :run_test 10.in
 
 goto:eof

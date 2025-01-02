@@ -178,11 +178,10 @@ int main(void)
         if (k == 0) {
             if (lhs_len != rhs_len || lhs != rhs) {
                 cout << "0\n";
-                continue;
             } else {
                 cout << "1\n";
-                continue;
             }
+            continue;
         }
 
         lhs_len = 0;
@@ -265,8 +264,11 @@ int main(void)
             auto r = Vertex{rc, ro};
 
             V.insert(l);
-            V.insert(r);
-            E.push_back(pair<Vertex, Vertex>(l, r));
+
+            if (l != r) {
+                V.insert(r);
+                E.push_back(pair<Vertex, Vertex>(l, r));
+            }
         }
 
         unordered_map<Vertex, bool, VH> visited;
