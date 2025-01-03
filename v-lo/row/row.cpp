@@ -30,13 +30,13 @@ struct VH {
     }
 };
 
-int count(vector<pair<Vertex, Vertex>> &E, unordered_map<Vertex, bool, VH> &visited, Vertex start_v, int &ci)
+int count(vector<pair<Vertex, Vertex>> &E, unordered_map<Vertex, bool, VH> &visited, Vertex start_v)
 {
     if (visited[start_v]) return 0;
 
     queue<Vertex> Q;
     Q.push(start_v);
-    visited[start_v] = ci;
+    visited[start_v] = true;
 
     bool flag = false;
 
@@ -67,13 +67,11 @@ int count(vector<pair<Vertex, Vertex>> &E, unordered_map<Vertex, bool, VH> &visi
                 w = a;
             } else continue;
             if (visited[w]) continue;
-            visited[w] = ci;
+            visited[w] = true;
 
             Q.push(w);
         }
     }
-
-    ci += 1;
 
     if (has_0 && has_1) {
         return -1;
@@ -273,10 +271,9 @@ int main(void)
 
         unordered_map<Vertex, bool, VH> visited;
         int cc = 0;
-        int ci = 1;
 
         for (auto &v: V) {
-            int r = count(E, visited, v, ci);
+            int r = count(E, visited, v);
             if (r < 0) {
                 cout << "0\n";
                 goto next_eq;
