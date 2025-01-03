@@ -8,6 +8,23 @@
 
 using namespace std;
 
+#if MEASURE
+uint64_t Counter;
+
+#define Measure(s) \
+    do { \
+        if (Counter == 0) { \
+            Counter = __rdtsc(); \
+        } else { \
+            uint64_t old = Counter; \
+            Counter = __rdtsc(); \
+            cout << s << ": "<< ((float)(Counter-old) / 100000.f) << "\n"; \
+        } \
+    } while (0);
+#else
+#define Measure(s)
+#endif
+
 bool is_variable(char c)
 {
     return c >= 'a' && c <= 'z';
@@ -20,7 +37,7 @@ char var(char c)
     return c;
 }
 
-using Vertex = pair<char, int>;
+using Vertex = pair<char, uint16_t>;
 
 struct VH {
     template <typename A, typename B>
@@ -38,8 +55,6 @@ int count(vector<pair<Vertex, Vertex>> &E, unordered_map<Vertex, bool, VH> &visi
     Q.push(start_v);
     visited[start_v] = true;
 
-    bool flag = false;
-
     bool has_0 = false;
     bool has_1 = false;
 
@@ -48,15 +63,9 @@ int count(vector<pair<Vertex, Vertex>> &E, unordered_map<Vertex, bool, VH> &visi
         Q.pop();
 
         if (v.first == '0') {
-            flag = true;
             has_0 = true;
         } else if (v.first == '1') {
-            flag = true;
             has_1 = true;
-        }
-
-        if (has_0 && has_1) {
-            return -1;
         }
 
         for (auto &[a, b]: E) {
@@ -77,7 +86,7 @@ int count(vector<pair<Vertex, Vertex>> &E, unordered_map<Vertex, bool, VH> &visi
         return -1;
     }
 
-    return flag ? 0 : 1;
+    return (has_0||has_1) ? 0 : 1;
 }
 
 void print_pow2(int x)
@@ -148,12 +157,16 @@ void print_dot_graph(vector<pair<char, int>> &V, vector<pair<int, int>> &E)
 
 int main(void)
 {
+    Measure("");
+
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
     int x;
     cin >> x;
+
+    vector<pair<Vertex, Vertex>> E;
 
     while (x--) {
 
@@ -182,6 +195,8 @@ int main(void)
             continue;
         }
 
+        Measure("gather");
+
         lhs_len = 0;
         for (auto c: lhs) {
             if (is_variable(c)) {
@@ -199,6 +214,8 @@ int main(void)
                 rhs_len++;
             }
         }
+
+        Measure("length");
 
         if (lhs_len != rhs_len) {
             cout << "0\n";
@@ -233,9 +250,11 @@ int main(void)
             }
         }
 
+        Measure("expand");
+
         unordered_map<char, int> Ol;
         unordered_map<char, int> Or;
-        vector<pair<Vertex, Vertex>> E;
+        E.clear();
 
         unordered_set<Vertex, VH> V;
 
@@ -246,13 +265,13 @@ int main(void)
             int lo = 0;
             int ro = 0;
 
-            if (!(lc == '0' || lc == '1')) {
+            if (lc != '0' && lc != '1') {
                 int l = lengths[lc - 'a'];
                 lo = (Ol[lc] % l) + 1;
                 Ol[lc] += 1;
             }
 
-            if (!(rc == '0' || rc == '1')) {
+            if (rc != '0' && rc != '1') {
                 int l = lengths[rc - 'a'];
                 ro = (Or[rc] % l) + 1;
                 Or[rc] += 1;
@@ -269,6 +288,8 @@ int main(void)
             }
         }
 
+        Measure("graph");
+
         unordered_map<Vertex, bool, VH> visited;
         int cc = 0;
 
@@ -281,7 +302,11 @@ int main(void)
             cc += r;
         }
 
+        Measure("traverse");
+
         print_pow2(cc);
+
+        Measure("print");
 
         next_eq:;
     }

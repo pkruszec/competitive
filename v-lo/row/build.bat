@@ -1,8 +1,10 @@
 @echo off
 :: setlocal EnableDelayedExpansion
 
-call clang++ -O2 -o row.exe row.cpp
-:: call :run_test 08.in
+call clang++ -DMEASURE=1 -O2 -o row.exe row.cpp
+
+call :run_test 11.in
+goto:eof
 
 call :run_test 01.in
 call :run_test 02.in
