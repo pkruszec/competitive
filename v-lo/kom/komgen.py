@@ -10,7 +10,7 @@ board = [n * ['#'] for i in range(n)]
 checks = []
 
 for y in range(1, n-1):
-    for x in range(1, n-1): 
+    for x in range(1, n-1):
         if random.random() < 0.6:
             board[y][x] = '.'
             checks.append((y, x))
@@ -18,7 +18,7 @@ for y in range(1, n-1):
 random.shuffle(checks)
 checks = checks[:n]
 
-with open("04.in", "w", encoding="utf-8") as f:
+with open("05.in", "w", encoding="utf-8") as f:
     f.write(f"{n}\n")
     print_board(board, f)
     for (a, b) in checks:
