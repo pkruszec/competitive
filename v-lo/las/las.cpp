@@ -1,134 +1,73 @@
 #include <iostream>
 #include <vector>
-#include <cstdint>
 #include <queue>
-#include <algorithm>
 #include <limits.h>
 
 using namespace std;
 
-#ifdef PERF
-uint64_t p0 = 0;
-uint64_t p1 = 0;
+vector<vector<int>> l;
+vector<vector<int>> v;
 
-# define PerfBegin() do {p0 = __rdtsc();} while (0)
-# define PerfEnd()   do {p1 = __rdtsc(); cout << "CycleCount: " << p1-p0 << "\n";} while (0)
-#else
-# define PerfBegin()
-# define PerfEnd()
-#endif
-
-int n, d;
-vector<vector<int>> a;
-
-// things reset
-int iter = 0;
-vector<vector<bool>> vis;
-
-vector<pair<int, int>> dir = {
-    {1, 0},
-    {-1, 0},
-    {0, 1},
-    {0, -1},
-};
-
-void check(int x, int y, int target)
+vector<pair<int, int>> ds = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
+int search(int y, int x, int i)
 {
-    queue<pair<int, int>> q;
-    q.push({x, y});
-    iter++;
-    vis[y][x] = true;
+    int m = l[y][x];
 
-    while (!q.empty()) {
-        auto p = q.front();
-        q.pop();
-
-        for (auto &dd: dir) {
-            int nx = dd.first + p.first;
-            int ny = dd.second + p.second;
-            if (vis[ny][nx]) continue;
-            if (a[ny][nx] <= 0) continue;
-            if (a[ny][nx] > target) continue;
-            if (iter >= d) return;
-
-            q.push({nx, ny});
-            iter++;
-            vis[ny][nx] = true;
-        }
-    }
-}
-
-void clear(int x, int y)
-{
-    if (!vis[y][x]) return;
 
     queue<pair<int, int>> q;
     q.push({x, y});
-
+    v[y][x] = i;
+    int c = 1;
     while (!q.empty()) {
-        auto p = q.front();
+        auto [cx, cy] = q.front();
         q.pop();
-        vis[p.second][p.first] = false;
 
-        for (auto &dd: dir) {
-            int nx = dd.first + p.first;
-            int ny = dd.second + p.second;
-            if (!vis[ny][nx]) continue;
-            if (a[ny][nx] <= 0) continue;
+        for (auto [dx, dy]: ds) {
+            int nx = cx+dx;
+            int ny = cy+dy;
+            // if (x == 3 && y == 2) cout << nx << "," << ny << " -> " << v[ny][nx] << "\n";
+            if (v[ny][nx] >= i) continue;
+            if (l[ny][nx] > m) continue;
+            v[ny][nx] = i;
 
-            vis[ny][nx] = false;
             q.push({nx, ny});
+            c++;
         }
     }
+
+    return c;
 }
 
-int main()
+int main(void)
 {
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
 
-    cin >> n >> d;
-    a.resize(n+2, vector<int>(n+2, INT_MIN));
-    vis.resize(n+2, vector<bool>(n+2, false));
-    vector<pair<int, int>> ps;
+    int s, d;
+    cin >> s >> d;
+    l.resize(s+2, vector<int>(s+2, INT_MAX));
+    v.resize(s+2, vector<int>(s+2, INT_MAX));
 
-    for (int i = 1; i <= n; ++i) {
-        for (int j = 1; j <= n; ++j) {
-            cin >> a[i][j];
-            ps.push_back({j, i});
+    for (int i = 1; i <= s; ++i) {
+        for (int j = 1; j <= s; ++j) {
+            cin >> l[i][j];
+            v[i][j] = 0;
         }
     }
 
-    sort(ps.begin(), ps.end(), [](auto p0, auto p1) {
-        return a[p0.second][p0.first] < a[p1.second][p1.first];
-    });
+    int m = INT_MAX;
+    int it = 1;
+    for (int i = 1; i <= s; ++i) {
+        for (int j = 1; j <= s; ++j) {
+            if (l[i][j] >= m) continue;
+            int c = search(i, j, it++);
+            if (c < d) continue;
 
-    int count = 0;
-
-    for (auto &p: ps) {
-        count++;
-
-        // TODO: reset using bfs?
-        // for (int y = 0; y <= n+1; ++y) {
-        //     for (int x = 0; x <= n+1; ++x) {
-        //         vis[y][x] = false;
-        //     }
-        // }
-
-        iter = 0;
-        int i = p.second;
-        int j = p.first;
-        check(j, i, a[i][j]);
-        if (iter >= d) {
-            cerr << count << "\n";
-            cout << a[i][j] << '\n';
-            return 0;
+            m = l[i][j];
         }
-
-        clear(j, i);
     }
 
-    // cout << "NIE\n";
+    cout << m << "\n";
     return 0;
 }
