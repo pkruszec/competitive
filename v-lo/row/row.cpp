@@ -1,96 +1,19 @@
 #include <iostream>
 #include <string>
-#include <vector>
-#include <queue>
 #include <unordered_map>
 #include <unordered_set>
-#include <stdint.h>
+#include <queue>
+#include <algorithm>
 
 using namespace std;
 
-#if MEASURE
-uint64_t Counter;
-
-#define Measure(s) \
-    do { \
-        if (Counter == 0) { \
-            Counter = __rdtsc(); \
-        } else { \
-            uint64_t old = Counter; \
-            Counter = __rdtsc(); \
-            cout << s << ": "<< ((float)(Counter-old) / 100000.f) << "\n"; \
-        } \
-    } while (0);
-#else
-#define Measure(s)
-#endif
-
-bool is_variable(char c)
-{
-    return c >= 'a' && c <= 'z';
-}
-
-char var(char c)
-{
-    if (c == 0) return '0';
-    if (c == 1) return '1';
-    return c;
-}
-
-using Vertex = pair<char, uint16_t>;
-
-struct VH {
-    template <typename A, typename B>
-    size_t operator () (const pair<A, B> &v) const
-    {
-        return hash<A>()(v.first) ^ hash<B>()(v.second);
-    }
-};
-
-int count(vector<pair<Vertex, Vertex>> &E, unordered_map<Vertex, bool, VH> &visited, Vertex start_v)
-{
-    if (visited[start_v]) return 0;
-
-    queue<Vertex> Q;
-    Q.push(start_v);
-    visited[start_v] = true;
-
-    bool has_0 = false;
-    bool has_1 = false;
-
-    while (!Q.empty()) {
-        auto v = Q.front();
-        Q.pop();
-
-        if (v.first == '0') {
-            has_0 = true;
-        } else if (v.first == '1') {
-            has_1 = true;
-        }
-
-        for (auto &[a, b]: E) {
-            Vertex w;
-            if (a == v) {
-                w = b;
-            } else if (b == v) {
-                w = a;
-            } else continue;
-            if (visited[w]) continue;
-            visited[w] = true;
-
-            Q.push(w);
-        }
-    }
-
-    if (has_0 && has_1) {
-        return -1;
-    }
-
-    return (has_0||has_1) ? 0 : 1;
-}
-
 void print_pow2(int x)
 {
+    if (x < 0) {
+        cout << "0\n";
+        return;
+    }
+
     if (x == 0) {
         cout << "1\n";
         return;
@@ -134,181 +57,130 @@ void print_pow2(int x)
     cout << "\n";
 }
 
-#if 0
-void print_dot_graph(vector<pair<char, int>> &V, vector<pair<int, int>> &E)
+vector<string> expand(string &s, unordered_map<char, int> &len)
 {
-    cout << "graph {\n";
-    for (auto &[a, b]: E) {
-        cout << "\"" << V[a].first;
-        if (V[a].second) cout << V[a].second;
-        cout << "\"";
+    vector<string> n;
+    for (auto c: s) {
+        int count = len[c];
+        string cstr(1, c);
 
-        cout << " -- ";
-
-        cout << "\"" << V[b].first;
-        if (V[b].second) cout << V[b].second;
-        cout << "\"";
-
-        cout << "\n";
+        if (c == '0' || c == '1') {
+            n.push_back(cstr);
+        } else {
+            for (int i = 1; i <= count; ++i)
+                n.push_back(cstr + to_string(i));
+        }
     }
-    cout << "}\n";
+    return n;
 }
-#endif
+
+vector<vector<string>> get_components(unordered_map<string, vector<string>> &graph)
+{
+    unordered_set<string> visited;
+    vector<vector<string>> components;
+
+    for (auto &[v, n]: graph) {
+        if (visited.find(v) != visited.end()) continue;
+        vector<string> component;
+
+        queue<string> q;
+        q.push(v);
+        visited.insert(v);
+        component.push_back(v);
+
+        while (!q.empty()) {
+            string w = q.front();
+            q.pop();
+
+            for (auto u: graph[w]) {
+                if (visited.find(u) != visited.end()) continue;
+                visited.insert(u);
+                q.push(u);
+                component.push_back(u);
+            }
+        }
+
+        components.push_back(component);
+    }
+
+    return components;
+}
+
+int count_bits(string &r, string &l, unordered_map<char, int> &len)
+{
+    vector<string> lhs = expand(l, len);
+    vector<string> rhs = expand(r, len);
+    if (lhs.size() != rhs.size()) return -1;
+    int count = lhs.size();
+
+    unordered_map<string, vector<string>> graph;
+
+    for (int i = 0; i < count; ++i) {
+        string left = lhs[i];
+        string right = rhs[i];
+
+        graph[left].push_back(right);
+        graph[right].push_back(left);
+    }
+
+    vector<vector<string>> components = get_components(graph);
+
+    // for (auto &s: lhs) {
+    //     cout << s << " ";
+    // } cout << "\n";
+    // for (auto &s: rhs) {
+    //     cout << s << " ";
+    // } cout << "\n";
+
+    // for (auto &[k, v]: graph) {
+    //     cout << k << ": ";
+    //     for (auto &s: v) {
+    //         cout << s << " ";
+    //     }
+    //     cout << "\n";
+    // }
+
+    // for (auto &c: components) {
+    //     cout << "-- ";
+    //     for (auto x: c) cout << x << " ";
+    //     cout << "\n";
+    // }
+
+    int result = 0;
+    for (auto &c: components) {
+        bool has_0 = (find(c.begin(), c.end(), "0") != c.end());
+        bool has_1 = (find(c.begin(), c.end(), "1") != c.end());
+        if (has_0 && has_1) return -1;
+        if (has_0 || has_1) continue;
+        result++;
+    }
+
+    return result;
+}
 
 int main(void)
 {
-    Measure("");
+    int n;
+    cin >> n;
 
-    ios_base::sync_with_stdio(false);
-    cin.tie(0);
-    cout.tie(0);
-
-    int x;
-    cin >> x;
-
-    vector<pair<Vertex, Vertex>> E;
-
-    while (x--) {
-
+    while (n--) {
         int k;
         cin >> k;
 
-        int lengths[26] = {};
+        unordered_map<char, int> len;
+        len['0'] = 1;
+        len['1'] = 1;
+
         for (int i = 0; i < k; ++i) {
-            cin >> lengths[i];
+            cin >> len[i + 'a'];
         }
 
-        int lhs_len = 0;
-        string lhs;
-        cin >> lhs_len >> lhs;
+        int ll, rl;
+        string l, r;
+        cin >> ll >> l;
+        cin >> rl >> r;
 
-        int rhs_len = 0;
-        string rhs;
-        cin >> rhs_len >> rhs;
-
-        if (k == 0) {
-            if (lhs_len != rhs_len || lhs != rhs) {
-                cout << "0\n";
-            } else {
-                cout << "1\n";
-            }
-            continue;
-        }
-
-        Measure("gather");
-
-        lhs_len = 0;
-        for (auto c: lhs) {
-            if (is_variable(c)) {
-                lhs_len += lengths[c - 'a'];
-            } else {
-                lhs_len++;
-            }
-        }
-
-        rhs_len = 0;
-        for (auto c: rhs) {
-            if (is_variable(c)) {
-                rhs_len += lengths[c - 'a'];
-            } else {
-                rhs_len++;
-            }
-        }
-
-        Measure("length");
-
-        if (lhs_len != rhs_len) {
-            cout << "0\n";
-            continue;
-        }
-
-        int len = lhs_len = rhs_len;
-
-        string lhs_exp(len, 0);
-        string rhs_exp(len, 0);
-        int pos;
-
-        pos = 0;
-        for (auto c: lhs) {
-            if (is_variable(c)) {
-                for (int i = 0; i < lengths[c - 'a']; ++i) {
-                    lhs_exp[pos++] = c;
-                }
-            } else {
-                lhs_exp[pos++] = c;
-            }
-        }
-
-        pos = 0;
-        for (auto c: rhs) {
-            if (is_variable(c)) {
-                for (int i = 0; i < lengths[c - 'a']; ++i) {
-                    rhs_exp[pos++] = c;
-                }
-            } else {
-                rhs_exp[pos++] = c;
-            }
-        }
-
-        Measure("expand");
-
-        unordered_map<char, int> Ol;
-        unordered_map<char, int> Or;
-        E.clear();
-
-        unordered_set<Vertex, VH> V;
-
-        for (int i = 0; i < len; ++i) {
-            char lc = lhs_exp[i];
-            char rc = rhs_exp[i];
-
-            int lo = 0;
-            int ro = 0;
-
-            if (lc != '0' && lc != '1') {
-                int l = lengths[lc - 'a'];
-                lo = (Ol[lc] % l) + 1;
-                Ol[lc] += 1;
-            }
-
-            if (rc != '0' && rc != '1') {
-                int l = lengths[rc - 'a'];
-                ro = (Or[rc] % l) + 1;
-                Or[rc] += 1;
-            }
-
-            auto l = Vertex{lc, lo};
-            auto r = Vertex{rc, ro};
-
-            V.insert(l);
-
-            if (l != r) {
-                V.insert(r);
-                E.push_back(pair<Vertex, Vertex>(l, r));
-            }
-        }
-
-        Measure("graph");
-
-        unordered_map<Vertex, bool, VH> visited;
-        int cc = 0;
-
-        for (auto &v: V) {
-            int r = count(E, visited, v);
-            if (r < 0) {
-                cout << "0\n";
-                goto next_eq;
-            }
-            cc += r;
-        }
-
-        Measure("traverse");
-
-        print_pow2(cc);
-
-        Measure("print");
-
-        next_eq:;
+        print_pow2(count_bits(l, r, len));
     }
 
     return 0;
