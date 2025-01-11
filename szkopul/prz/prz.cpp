@@ -30,29 +30,9 @@ void pb(Buckets &buckets)
     cout << "}\n";
 }
 
-vector<Buckets> bb;
-
-bool eq(Buckets &a, Buckets &b)
-{
-    if (a.size() != b.size()) return false;
-
-    for (int i = 0; i < a.size(); ++i) {
-        if (a[i] != b[i]) return false;
-    }
-
-    return true;
-}
-
 void f(int j, Buckets buckets)
 {
     if (j > n) {
-        for (auto &bx: bb) {
-            if (eq(buckets, bx)) return;
-        }
-
-        // pb(buckets);
-
-        bb.push_back(buckets);
         t[buckets.size()]++;
         if (buckets.size() > mbs) mbs = buckets.size();
         return;
@@ -69,8 +49,6 @@ void f(int j, Buckets buckets)
             }
 
             if (found) {
-                // pb(buckets);
-                // cout << "FOUND " << x << ", " << j << "\n";
                 break;
             }
         }
