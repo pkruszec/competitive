@@ -7,7 +7,6 @@
 
 using namespace std;
 using Edges = vector<pair<int, int>>;
-using Buckets = vector<vector<int>>;
 using S64 = long long;
 
 S64 mod = 1000000007ll;
@@ -16,19 +15,6 @@ Edges E;
 int mbs = 0;
 unordered_map<int, int> t;
 int n, m, z;
-
-void pb(Buckets &buckets)
-{
-    cout << "bx {\n";
-    for (auto bx: buckets) {
-        cout << "  { ";
-        for (auto b: bx) {
-            cout << b << " ";
-        }
-        cout << "}\n";
-    }
-    cout << "}\n";
-}
 
 bool connected(int x, int j)
 {
@@ -40,32 +26,52 @@ bool connected(int x, int j)
     return false;
 }
 
-void f(int j, Buckets buckets)
+bool has_neighboring_color(int j, int c, vector<int> &colors)
+{
+    for (auto [v, w]: E) {
+        int o;
+        if (v == j) {
+            o = w;
+        } else if (w == j) {
+            o = v;
+        } else continue;
+
+        if (colors[o] == c) return true;
+    }
+    return false;
+}
+
+void pc(vector<int> &colors)
+{
+    cout << "{ ";
+    for (int j = 1; j <= n; ++j) {
+        cout << "[" << j << ": " << colors[j] << "] ";
+    }
+    cout << "}\n";
+}
+
+void f(int j, vector<int> colors, int max_color)
 {
     if (j > n) {
-        t[buckets.size()]++;
-        if (buckets.size() > mbs) mbs = buckets.size();
+        // pc(colors);
+
+        t[max_color]++;
+        if (max_color > mbs) mbs = max_color;
         return;
     }
 
-    for (auto &b: buckets) {
-        bool found = false;
-        for (auto x: b) {
-            if (connected(x, j)) {
-                found = true;
-                break;
-            }
+    if (max_color > 0) {
+        for (int i = 1; i <= max_color; ++i) {
+            if (has_neighboring_color(j, i, colors)) continue;
+            int old = colors[j];
+            colors[j] = i;
+            f(j + 1, colors, max_color);
+            colors[j] = old;
         }
-
-        if (found) continue;
-        b.push_back(j);
-        f(j + 1, buckets);
-        b.pop_back();
     }
 
-    vector<int> b = {j};
-    buckets.push_back(b);
-    f(j + 1, buckets);
+    colors[j] = ++max_color;
+    f(j + 1, colors, max_color);
 }
 
 S64 h(S64 k)
@@ -103,7 +109,7 @@ int main()
         E[i] = {v, w};
     }
 
-    f(1, {});
+    f(1, vector<int>(n+1, 0), 0);
 
     // for (auto [k, v]: t) {
     //     cout << k << ": " << v << "\n";
