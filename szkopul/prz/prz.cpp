@@ -30,6 +30,16 @@ void pb(Buckets &buckets)
     cout << "}\n";
 }
 
+bool connected(int x, int j)
+{
+    for (auto [v, w]: E) {
+        if ((v == j && w == x) || (v == x && w == j)) {
+            return true;
+        }
+    }
+    return false;
+}
+
 void f(int j, Buckets buckets)
 {
     if (j > n) {
@@ -41,22 +51,13 @@ void f(int j, Buckets buckets)
     for (auto &b: buckets) {
         bool found = false;
         for (auto x: b) {
-            for (auto [v, w]: E) {
-                if ((v == j && w == x) || (v == x && w == j)) {
-                    found = true;
-                    break;
-                }
-            }
-
-            if (found) {
+            if (connected(x, j)) {
+                found = true;
                 break;
             }
         }
 
-        if (found) {
-            continue;
-        }
-
+        if (found) continue;
         b.push_back(j);
         f(j + 1, buckets);
         b.pop_back();
