@@ -4,6 +4,7 @@
 #include <queue>
 #include <unordered_map>
 #include <unordered_set>
+#include <limits.h>
 
 using namespace std;
 using Edges = vector<pair<int, int>>;
@@ -52,6 +53,7 @@ void pc(vector<int> &colors)
 
 void f(int j, vector<int> colors, int max_color)
 {
+
     if (j > n) {
         // pc(colors);
 
@@ -109,16 +111,16 @@ int main()
         E[i] = {v, w};
     }
 
-    f(1, vector<int>(n+1, 0), 0);
 
     // for (auto [k, v]: t) {
     //     cout << k << ": " << v << "\n";
     // }
 
-    for (int i = 0; i < z; ++i) {
-        S64 k;
-        cin >> k;
+    f(1, vector<int>(n+1, 0), 0);
 
+    for (int i = 0; i < z; ++i) {
+        int k;
+        cin >> k;
         cout << h(k) << '\n';
     }
 
