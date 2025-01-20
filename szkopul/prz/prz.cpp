@@ -96,6 +96,37 @@ S64 h(S64 k)
     return s;
 }
 
+int s(Edges &e)
+{
+    vector<bool> vis(n+1, false);
+    int c = 0;
+    for (int i = 1; i <= n; ++i) {
+        if (vis[i]) continue;
+        queue<int> q;
+        c++;
+        q.push(i);
+
+        while (!q.empty()) {
+            int v = q.front();
+            q.pop();
+
+            for (auto [a, b]: e) {
+                int w;
+                if (a == v) {
+                    w = b;
+                } else if (b == v) {
+                    w = a;
+                } else continue;
+                if (vis[w]) continue;
+                vis[w] = true;
+
+                q.push(w);
+            }
+        }
+    }
+    return c;
+}
+
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -111,10 +142,8 @@ int main()
         E[i] = {v, w};
     }
 
-
-    // for (auto [k, v]: t) {
-    //     cout << k << ": " << v << "\n";
-    // }
+    // cout << s(E) << "\n";
+    // return 0;
 
     f(1, vector<int>(n+1, 0), 0);
 

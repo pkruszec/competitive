@@ -3,8 +3,8 @@
 :: call clang++ -std=c++17 -o prz.exe prz.cpp
 call cl /nologo /EHsc /std:c++20 /Fe:prz prz.cpp
 
-rem call prz < 01.in
-rem goto :eof
+call prz < 10.in
+goto :eof
 
 call prz < 01.in
 call prz < 02.in

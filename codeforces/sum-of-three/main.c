@@ -1,5 +1,10 @@
+//
 // https://codeforces.com/problemset/problem/1886/A
-// not solved
+// Paweł Kruszec <pakruszec@gmail.com>
+// 
+// Not solved here.
+// Solved in sot.cpp.
+//
 
 #include <stdio.h>
 #include <stdlib.h>
