@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <queue>
-#include <deque>
+#include <iomanip>
 
 using namespace std;
 
@@ -15,13 +15,9 @@ int main()
     cin >> m >> p >> n;
 
     vector<vector<int>> b(m, vector<int>(m, -1));
-    
-    vector<int> eaten;
-    vector<pair<int, int>> pos;
-    pair<int, int> head(0, 0);
-
-    pos.push_back(head);
-    eaten.push_back(0);
+    vector<vector<int>> gw(m, vector<int>(m, -1));
+    queue<pair<int, int>> w;
+    vector<int> colors;
 
     for (int i = 0; i < p; ++i) {
         int w, k, c;
@@ -29,7 +25,10 @@ int main()
         b[w-1][k-1] = c;
     }
 
-    b[0][0] = -999;
+    gw[0][0] = 0;
+    w.push({0, 0});
+    colors.push_back(0);
+    int ip = 1;
 
     for (int i = 0; i < n; ++i) {
         char op;
@@ -57,38 +56,56 @@ int main()
                 w--;
                 k--;
 
-                if (b[w][k] == -1) {
+                if (gw[w][k] == -1) {
                     cout << "-1\n";
-                    continue;
+                } else {
+                    int r = gw[w][k];
+                    int v = ip - r - 1;
+                    cout << colors[colors.size() - 1 - v] << "\n";
+
+                    // int which = ip - gw[w][k];
+                    // cout << colors[(int)colors.size() - 1 - which] << "\n";
+                    // cout << colors[colors.size() - 1 - (ip - gw[w][k])] << "\n";
                 }
-
-                int c = eaten.size();
-                for (int j = 0; j < c; ++j) {
-                    int i = pos.size() - 1 - j;
-                    int h = eaten.size() - 1 - j;
-
-                    if (pos[i].first == k && pos[i].second == w) {
-                        cout << eaten[h] << "\n";
-                        goto cc;
-                    }
-                }
-
-                cout << "-1\n";
-                cc:
                 continue;
             } break;
             default: break;
         }
 
-        head.first += dx;
-        head.second += dy;
-        pos.push_back(head);
+        // cout<<"-- ";for (auto color: colors) {cout << color << " ";}cout << "\n";
 
-        if (b[head.second][head.first] >= 0) {
-            eaten.push_back(b[head.second][head.first]);
+        auto head = w.back();
+        head.first += dy;
+        head.second += dx;
+        w.push(head);
+        int &p = b[head.first][head.second];
+        if (p != -1) {
+            colors.push_back(p);
+            p = -1;
+        } else {
+            auto tail = w.front();
+            w.pop();
+            gw[tail.first][tail.second] = -1;
         }
-        b[head.second][head.first] = -999;
+        gw[head.first][head.second] = ip++;
 
+
+        // cout << "========================================\n";
+        // for (int i = 0; i < m; ++i) {
+        //     for (int j = 0; j < m; ++j) {
+        //         int r = gw[i][j];
+        //         int v = ip - r - 1;
+
+        //         cout << setw(4);
+
+        //         if (r < 0) {
+        //             cout << ".";
+        //         } else {
+        //             cout << colors[colors.size() - 1 - v];
+        //         }
+        //     }   
+        //     cout << "\n";
+        // }
     }
 
     return 0;
