@@ -6,13 +6,23 @@
 
 using namespace std;
 
+// void print_plus(int c)
+// {
+//     if (c < 1) return;
+
+//     cout << "(";
+//     print_plus(c-1);
+//     cout << "-)";
+// }
+
 void print_plus(int c)
 {
     if (c < 1) return;
-
     cout << "(";
-    print_plus(c-1);
-    cout << "-)";
+    for (int i = 0; i < c; ++i) {
+        cout << "-";
+    }
+    cout << ")";
 }
 
 int main()
@@ -72,5 +82,7 @@ a-(b-c)
 
 a-b-c
 --
+
+a+b-c+d-e+f-g+h
 
 */
