@@ -12,7 +12,7 @@ using namespace std;
 uint64_t n;
 vector<uint64_t> P;
 vector<uint64_t> C;
-unordered_map<uint64_t, unordered_map<uint64_t, uint64_t>> D;
+// unordered_map<uint64_t, unordered_map<uint64_t, uint64_t>> D;
 
 uint64_t distance(uint64_t x, uint64_t y)
 {
