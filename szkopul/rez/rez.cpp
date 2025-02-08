@@ -15,52 +15,38 @@ int main()
     int n;
     cin >> n;
 
-    vector<pair<int, int>> in(n);
+    vector<pair<int, int>> in(n+1);
+    vector<int> tm(n+1);
 
-    for (int i = 0; i < n; ++i) {
+    for (int i = 1; i <= n; ++i) {
         cin >> in[i].first >> in[i].second;
     }
 
     sort(in.begin(), in.end(), [](auto a, auto b) {
-        return (a.second - a.first) > (b.second - b.first);
+        return a.second <= b.second;
     });
 
-    vector<int> s;
-    for (int i = 0; i < n; ++i) {
-        auto [l, r] = in[i];
+    for (int i = 1; i <= n; ++i) {
+        auto [p, k] = in[i];
 
-        bool ok = true;
-        for (auto j: s) {
-            auto [l1, r1] = in[j];
+        int t1 = tm[i - 1];
+        int t2 = 0;
 
-            if (l < r1 && l1 <= r) {
-                ok = false;
+        int mx = 0;
+
+        for (int j = i-1; j > 0; --j) {
+            if (in[j].second <= p) {
+                mx = j;
                 break;
             }
         }
 
-        if (ok) {
-            s.push_back(i);
-        }
+        t2 = tm[mx] + k - p;
+        tm[i] = max(t1, t2);
     }
 
-    int sum = 0;
-    for (auto i: s) {
-        auto [l, r] = in[i];
-        sum += r-l;
-    }
-
-    cout << sum << "\n";
-
-    // cout << accumulate(s.begin(), s.end(), 0) << "\n";
+    int result = tm[n];
+    cout << result << "\n";
 
     return 0;
 }
-
-/*
-   -----
-  ------
-----
-      ---
-012345678
-*/
