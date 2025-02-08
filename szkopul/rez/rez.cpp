@@ -34,12 +34,34 @@ int main()
 
         int mx = 0;
 
-        for (int j = i-1; j > 0; --j) {
-            if (in[j].second <= p) {
-                mx = j;
-                break;
+        int l = 0;
+        int r = i;
+        while (l < r) {
+            int j = (l+r)/2;
+            int e = in[j].second;
+
+            if (e <= p && j > mx) mx = j;
+
+            if (e <= p) {
+                l = j+1;
+            } else if (e > p) {
+                r = j;
             }
         }
+
+        // for (int j = i-1; j > 0; --j) {
+        //     if (in[j].second <= p) {
+        //         mx = j;
+        //         break;
+        //     }
+        // }
+
+        // for (int j = 1; j <= i; ++j) {
+        //     if (in[j].second > p) {
+        //         mx = j-1;
+        //         break;
+        //     }
+        // }
 
         t2 = tm[mx] + k - p;
         tm[i] = max(t1, t2);
