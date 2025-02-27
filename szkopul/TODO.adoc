@@ -1,0 +1,8 @@
+= TODO
+:revdate: 2025-02-10
+:author: Paweł Kruszec
+:email: pakruszec@gmail.com
+
+We need to group this folder by edition.
+Names start to collide.
+I'll start to add new problems in the number directories and slowly move the old ones.
