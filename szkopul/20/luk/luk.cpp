@@ -1,27 +1,44 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <limits.h>
 
 using namespace std;
 
 vector<vector<int>> adj;
-vector<bool> vis;
+//vector<int> dp;
 
-int mi(int v)
+// vector<vector<int>> tree;
+// vector<int> parent;
+
+// void mktree(int v, int o = 0)
+// {
+//     parent[v] = o;
+//     for (auto w: adj[v]) {
+//         if (w == o) continue;
+//         tree[v].push_back(w);
+//         mktree(w, v);
+//     }
+// }
+
+// void cf(int v, int o = 0)
+// {
+//     // dp[v] = 0;
+//     for (auto w: adj[v]) {
+//         if (w == o) continue;
+//         dp[v]++;
+//         cf(w, v);
+//     }
+// }
+
+int sp(int v, int k, int o)
 {
-    vis[v] = true;
-
     int r = 0;
     for (auto w: adj[v]) {
-        if (!vis[w]) r++;
+        if (w == o) continue;
+        r += sp(w, k, v) + 1;
     }
-
-    int mx = r;
-    for (auto w: adj[v]) {
-        if (!vis[w]) mx = max(mx, mi(w));
-    }
-
-    return mx;
+    return max(0, r - k);
 }
 
 int main()
@@ -32,9 +49,12 @@ int main()
 
     int n;
     cin >> n;
+    if (n == 1) {
+        cout << "0\n";
+        return 0;
+    }
 
     adj.resize(n + 1, vector<int>());
-    vis.resize(n + 1, false);
 
     for (int i = 1; i < n; ++i) {
         int a, b;
@@ -44,7 +64,45 @@ int main()
         adj[b].push_back(a);
     }
 
-    cout << mi(1) << "\n";
+    int l = 0;
+    int r = n+1;
+    int k = INT_MAX;
+    while (l < r) {
+        int x = (l+r)/2;
+        int d = sp(1, x, 0);
+        if (d == 0) {
+            k = min(k, x);
+            r = x;
+        } else {
+            l = x+1;
+        }
+    }
+
+    cout << k << "\n";
+
+    // for (int i = 1; i <= n; ++i) {
+    //     cout << "dp[" << i << "] = " << dp[i] << "\n";
+    // }
+
+    // mktree(1);
+    // for (int i = 1; i <= n; ++i) {
+    //     if (tree[i].size() == 0) cf(i);
+    // }
+    // int l = 0;
+    // int r = n + 1;
+    // int res = INT_MAX;
+    // while (l < r) {
+    //     int k = (l + r) / 2;
+    //     int s = sp(1, k, 0);
+    //     cout << k << ": "<< s << "\n";
+    //     if (s == 0) {
+    //         l++;
+    //     } else if (s > res) {
+    //         r = k - 1;
+    //     } else {
+    //         res = s;
+    //     }
+    // }
 
     return 0;
 }
