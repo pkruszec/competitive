@@ -74,6 +74,10 @@ int main() {
         while (1) {
             int old = pv;
             pv = Prev[pv];
+            if (pv == INT_MAX) {
+                break;
+            }
+
             // cout << old << ": " << pv << "\n";
             if (pv == 1) {
                 P[i] = old;
@@ -91,7 +95,7 @@ int main() {
             int cost = t.c;
             int sm = D[v] + cost + H[w];
 
-            if (P[v] != P[w] && !(P[v] == v && P[w] == w)) {
+            if ((P[v] != v || P[w] != w) && P[v] != P[w]) {
                 value = min(value, sm);
                 // cout << v << " -> " << w << " (" << P[v] << ", " << P[w] << "): " << D[v] << "+" << cost << "+" << H[w] << " = " << sm << "\n";
             }
