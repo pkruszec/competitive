@@ -3,154 +3,116 @@
 #include <unordered_map>
 #include <algorithm>
 #include <limits.h>
+#include <math.h>
+#include <queue>
 
 using namespace std;
 
-unordered_map<int, int> ft(int x)
+bool is_prime(int n)
 {
-    unordered_map<int, int> t;
-    while (true) {
-        if (x < 2) {
-            t[x]++;
-            break;
-        }
+    if (n <= 3) return true;
 
-        bool ok = false;
-        for (int i = 2; i < x; ++i) {
-            if (x % i == 0) {
-                t[i]++;
-                x /= i;
-                ok = true;
-                break;
-            }
-        }
-
-        if (!ok) {
-            t[x]++;
-            break;
-        }
-    }
-    return t;
-}
-
-int d(int x, int y)
-{
-    if (x % y == 0) {
-        auto fs = ft(x/y);
-        int s = 0;
-        for (auto f: fs) {
-            s += f.second;
-        }
-        return s;
+    int m = ceil(sqrt(n));
+    for (int i = 2; i < m; ++i) {
+        if (n % i == 0) return false;
     }
 
-    if (y % x == 0) {
-        auto fs = ft(y/x);
-        int s = 0;
-        for (auto f: fs) {
-            s += f.second;
-        }
-        return s;
-    }
-
-    unordered_map<int, int> fx = ft(x);
-    unordered_map<int, int> fy = ft(y);
-
-    unordered_map<int, int> fs;
-    for (auto f: fx) {
-        if (fs[f.first] == 0) {
-            fs[f.first] = abs(fx[f.first] - fy[f.first]);
-        }
-    }
-
-    for (auto f: fy) {
-        if (fs[f.first] == 0) {
-            fs[f.first] = abs(fx[f.first] - fy[f.first]);
-        }
-    }
-
-    // for (auto f: fs) {
-    //     cout << f.first << ":" << f.second << " ";
-    // }
-    // cout << "\n";
-    // for (auto f: fx) {
-    //     cout << f.first << ":" << f.second << " ";
-    // }
-    // cout << "\n";
-    // for (auto f: fy) {
-    //     cout << f.first << ":" << f.second << " ";
-    // }
-    // cout << "\n";
-
-    int s = 0;
-    for (auto f: fs) {
-        s += f.second;
-    }
-
-    return s;
+    return true;
 }
 
 int main()
 {
-    cout << d(1000000, 121219) << "\n";
-    return 0;
-
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    // cout << d(42, 69) << "\n";
 
     int n;
     cin >> n;
-    vector<int> xs(n + 1);
-    for (int i = 1; i <= n; ++i) {
-        cin >> xs[i];
-    }
+    vector<int> xs(n+1);
+    unordered_map<int, int> S;
+    int M = 0;
 
     for (int i = 1; i <= n; ++i) {
-        int mi = 0;
-        int md = INT_MAX;
-
-        for (int j = 1; j <= n; ++j) {
-            if (i == j) continue;
-            int di = d(xs[i], xs[j]);
-
-            if (di < md) {
-                mi = j;
-                md = di;
-            }
+        int x;
+        cin >> x;
+        xs[i] = x;
+        M = max(M, x);
+        if (S[x] == 0) {
+            S[x] = i;
         }
-
-        cout << mi << "\n";
     }
+
+    vector<pair<int, int>> E;
+    for (int i = 1; i <= M-1; ++i) {
+        for (int j = 2; j <= M; ++j) {
+            if ((i*j) > M) break;
+            if (!is_prime(j)) continue;
+            E.push_back({i, i*j});
+        }
+    }
+
+    // cout << E.size() << "\n";
 
     // cout << "graph {\n";
-    // for (int i = 1; i <= n - 1; ++i) {
-    //     for (int j = i + 1; j <= n; ++j) {
-    //         cout << "    " << xs[i] << " -- " << xs[j] << " [label=" << d(xs[i], xs[j]) << "]\n";
-    //     }
+    // for (auto &[a, b]: E) {
+    //     cout << "    " << a << " -- " << b << "\n";
     // }
     // cout << "}\n";
 
+    vector<int> ds(M+1, INT_MAX);
+    vector<int> ms(M+1);
+
+    queue<int> q;
+
+    for (auto &[v, i]: S) {
+        if (i == 0) continue;
+        ds[v] = 0;
+        ms[v] = v;
+        q.push(v);
+    }
+
+    while (!q.empty()) {
+        int v = q.front();
+        q.pop();
+        for (auto &[a, b]: E) {
+            int w;
+            if (a == v) w = b;
+            else if (b == v) w = a;
+            else continue;
+
+            if (ds[w] == INT_MAX) {
+                ds[w] = ds[v] + 1;
+                ms[w] = ms[v];
+                q.push(w);
+            } else if (ds[v]+1 == ds[w] && ms[v] < ms[w]) {
+                ms[w] = ms[v];
+            }
+        }
+    }
+
+    vector<int> dv(M+1, INT_MAX);
+    vector<int> mv(M+1, INT_MAX);
+
+    for (auto &[v, w]: E) {
+        // int w;
+        // if (a == v) w = b;
+        // else if (b == v) w = a;
+        // else continue;
+
+        int vv = ms[v];
+        int ww = ms[w];
+        if (vv != ww) {
+            int d = ds[v] + 1 + ds[w];
+            if (d < dv[vv] || (d == dv[vv] && ww < mv[vv])) {
+                dv[vv] = d;
+                mv[vv] = ww;
+            }
+        }
+    }
+
+    for (int i = 1; i <= n; ++i) {
+        cout << mv[xs[i]] << "\n";
+    }
+
     return 0;
 }
-
-/*
-    42, 69
-
-    3*7*2
-    23*3
-
-    x * (23*3)/(3*7*2) = (23)/(7*2)
-
-    5, 6
-    2 * 3
-
-    x * 2*3 / 5
-
-    1,4
-
-    *2*2
-
-    To calculate d, we need to factorize both numbers and cancel out everything we can.
-*/

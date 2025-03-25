@@ -9,5 +9,6 @@ private
 *.rdbg
 *.o
 *.out
-*.ilk
 *.pyc
+*.lib
+*.exp
