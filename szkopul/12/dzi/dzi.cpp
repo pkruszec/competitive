@@ -1,24 +1,53 @@
 #include <iostream>
 #include <vector>
+#include <unordered_map>
 #include <algorithm>
 
 using namespace std;
 
-vector<vector<int>> graph;
-vector<int> colors;
+typedef long long ll;
 
-void color(int v)
+typedef vector<vector<int>> adj;
+typedef vector<bool> vis;
+typedef vector<unordered_map<int, int>> ss;
+typedef vector<int> ssc;
+
+bool trav(ssc &sc, ss &s, vis &t, adj &g, ll v=1, ll p=0, ll cs=-1)
 {
-    if (colors[v] == 0) {
-        colors[v] = 1;
+    if (t[v]) return true;
+    if (p == 0) {
+        s.push_back({});
+        sc.push_back(0);
+        cs = s.size() - 1;
     }
-    int opp = colors[v] == 1 ? 2 : 1;
 
-    for (auto w: graph[v]) {
-        if (colors[w] != 0) continue;
-        colors[w] = opp;
-        color(w);
+    t[v] = true;
+    ll big_w_count = 0;
+    for (auto w: g[v]) {
+        if (t[w]) {
+            if (w != p) return false;
+            continue;
+        }
+        if (!trav(sc, s, t, g, w, v, cs)) return false;
+
+        if (g[w].size() > 1) {
+            big_w_count++;
+        } else {
+            s[cs][v]++;
+        }
     }
+
+    if (g[v].size() > 1) sc[cs]++;
+    return big_w_count <= 2;
+}
+
+ll fact_k(ll x, ll k)
+{
+    ll y = 1;
+    for (ll i = 1; i <= x; ++i) {
+        y = ((y % k)*(i % k)) % k;
+    }
+    return y;
 }
 
 int main() {
@@ -26,49 +55,80 @@ int main() {
     cin.tie(0);
     cout.tie(0);
 
-    int n, m, k;
+    ll n, m, k;
     cin >> n >> m >> k;
+    if (m >= n) {
+        cout << "0\n";
+        return 0;
+    }
+    adj graph(n + 1);
+    vis visited(n + 1, false);
+    ss s;
+    ssc sc;
 
-    graph.resize(n + 1);
-    colors.resize(n + 1);
-
-    for (int i = 0; i < m; ++i) {
-        int v, w;
+    for (ll i = 0; i < m; ++i) {
+        ll v, w;
         cin >> v >> w;
 
         graph[v].push_back(w);
         graph[w].push_back(v);
     }
 
-    color(1);
+    // for (ll v = 1; v <= n; ++v) {
+    //     cout << v << ": ";
+    //     for (auto w: graph[v]) {
+    //         cout << w << " ";
+    //     }
+    //     cout << "\n";
+    // }
 
-    for (int v = 1; v <= n; ++v) {
-        if (colors[v] == 0) {
+    for (ll v = 1; v <= n; ++v) {
+        if (!trav(sc, s, visited, graph, v)) {
             cout << "0\n";
             return 0;
         }
+    }
 
-        for (auto w: graph[v]) {
-            if (colors[v] == colors[w]) {
-                cout << "0\n";
-                return 0;
-            }
+    // for (ll i = 0; i < s.size(); ++i) {
+    //     cout << i << " (" << sc[i] << ")\n";
+    //     for (auto &[k, v]: s[i]) {
+    //         cout << "  " << k << " => " << v << "\n";
+    //     }
+    // }
+
+    ll S = 0;
+    for (auto x: sc) {
+        if (x == 0) S++;
+    }
+    ll P = s.size() - S;
+    ll w = (n - S) % k;
+
+    ll W = 1;
+    for (ll i = 0; i < S; ++i) {
+        W = ((W%k) * (w+i)%k) % k;
+    }
+
+    ll L = 1;
+    for (ll i = 0; i < s.size(); ++i) {
+        if (sc[i] == 0) continue;
+
+        ll ct = sc[i] > 2 ? 4 : 2;
+        ll ls = 1;
+        for (auto pr: s[i]) {
+            ls = ((ls%k) * fact_k(pr.second, k)) % k;
         }
+
+        L = ((((L%k) * (ct%k)) % k) * (ls%k)) % k;
     }
 
-    for (int i = 1; i <= n; ++i) {
-        cout << i << ": " << colors[i] << "\n";
-    }
+    ll r = ((((L%k) * fact_k(P, k)) % k) * W) % k;
+
+    // cout << "S=" << S << "\n";
+    // cout << "P=" << P << "\n";
+    // cout << "w=" << w << "\n\n";
+    // cout << "W=" << W << "\n";
+
+    cout << r << "\n";
 
     return 0;
 }
-
-/*
- - Always multiply solution by 2, because we can flip.
-
- If we had no connections, the number of possible states would be
- r! * b!
-
- But we need to take into account that connections cannot cross.
-
-*/
