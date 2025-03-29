@@ -7,12 +7,12 @@ using namespace std;
 
 typedef long long ll;
 
-typedef vector<vector<int>> adj;
+typedef vector<pair<int, int>> edg;
 typedef vector<bool> vis;
 typedef vector<unordered_map<int, int>> ss;
 typedef vector<int> ssc;
 
-bool trav(ssc &sc, ss &s, vis &t, adj &g, ll v=1, ll p=0, ll cs=-1)
+bool trav(ssc &sz, ssc &sc, ss &s, vis &t, edg &g, ll v=1, ll p=0, ll cs=-1)
 {
     if (t[v]) return true;
     if (p == 0) {
@@ -23,21 +23,26 @@ bool trav(ssc &sc, ss &s, vis &t, adj &g, ll v=1, ll p=0, ll cs=-1)
 
     t[v] = true;
     ll big_w_count = 0;
-    for (auto w: g[v]) {
+    for (auto &[a, b]: g) {
+        int w;
+        if (a == v) w = b;
+        else if (b == v) w = a;
+        else continue;
+
         if (t[w]) {
             if (w != p) return false;
             continue;
         }
-        if (!trav(sc, s, t, g, w, v, cs)) return false;
+        if (!trav(sz, sc, s, t, g, w, v, cs)) return false;
 
-        if (g[w].size() > 1) {
+        if (sz[w] > 1) {
             big_w_count++;
         } else {
             s[cs][v]++;
         }
     }
 
-    if (g[v].size() > 1) sc[cs]++;
+    if (sz[v] > 1) sc[cs]++;
     return big_w_count <= 2;
 }
 
@@ -61,17 +66,19 @@ int main() {
         cout << "0\n";
         return 0;
     }
-    adj graph(n + 1);
+    edg graph(m);
     vis visited(n + 1, false);
     ss s;
     ssc sc;
+    ssc sz(n + 1);
 
     for (ll i = 0; i < m; ++i) {
         ll v, w;
         cin >> v >> w;
 
-        graph[v].push_back(w);
-        graph[w].push_back(v);
+        graph[i] = {v, w};
+        sz[v]++;
+        sz[w]++;
     }
 
     // for (ll v = 1; v <= n; ++v) {
@@ -83,7 +90,7 @@ int main() {
     // }
 
     for (ll v = 1; v <= n; ++v) {
-        if (!trav(sc, s, visited, graph, v)) {
+        if (!trav(sz, sc, s, visited, graph, v)) {
             cout << "0\n";
             return 0;
         }
