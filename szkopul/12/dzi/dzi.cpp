@@ -37,6 +37,7 @@ bool trav(ssc &sz, ssc &sc, ss &s, vis &t, edg &g, ll v=1, ll p=0, ll cs=-1)
 
         if (sz[w] > 1) {
             big_w_count++;
+            if (big_w_count > 2) return false;
         } else {
             s[cs][v]++;
         }
@@ -50,7 +51,7 @@ ll fact_k(ll x, ll k)
 {
     ll y = 1;
     for (ll i = 1; i <= x; ++i) {
-        y = ((y % k)*(i % k)) % k;
+        y = ((y)*(i % k)) % k;
     }
     return y;
 }
@@ -112,7 +113,7 @@ int main() {
 
     ll W = 1;
     for (ll i = 0; i < S; ++i) {
-        W = ((W%k) * (w+i)%k) % k;
+        W = (W * ((w+(i)%k)%k)) % k;
     }
 
     ll L = 1;
@@ -122,13 +123,13 @@ int main() {
         ll ct = sc[i] > 2 ? 4 : 2;
         ll ls = 1;
         for (auto pr: s[i]) {
-            ls = ((ls%k) * fact_k(pr.second, k)) % k;
+            ls = (ls * fact_k(pr.second, k)) % k;
         }
 
-        L = ((((L%k) * (ct%k)) % k) * (ls%k)) % k;
+        L = (((L * (ct%k)) % k) * (ls%k)) % k;
     }
 
-    ll r = ((((L%k) * fact_k(P, k)) % k) * W) % k;
+    ll r = (((L * fact_k(P, k)) % k) * W) % k;
 
     // cout << "S=" << S << "\n";
     // cout << "P=" << P << "\n";

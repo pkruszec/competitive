@@ -11,6 +11,10 @@ struct T {
     int c;
 };
 
+struct X {
+    int v, w, vw, wv;
+};
+
 void dijkstra(vector<vector<T>> &adj, vector<int> &dist, vector<int> &prv)
 {
     priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> q;
@@ -51,6 +55,9 @@ int main() {
     vector<int> Verp(n + 1, INT_MAX);
     vector<int> P(n + 1);
 
+    vector<X> E(m);
+
+
     for (int i = 0; i < m; ++i) {
         int v, w, vw, wv;
         cin >> v >> w >> vw >> wv;
@@ -60,6 +67,11 @@ int main() {
 
         Odw[v].push_back({w, wv});
         Odw[w].push_back({v, vw});
+
+        E[i].v = v;
+        E[i].w = w;
+        E[i].vw = vw;
+        E[i].wv = wv;
     }
 
     dijkstra(Adj, D, Prev);
@@ -85,10 +97,24 @@ int main() {
             }
         }
     }
-
     P[1] = 1;
 
     int value = INT_MAX;
+
+    // for (auto &x: E) {
+
+    //     int v = x.v;
+    //     int w = x.w;
+    //     // cout << v << " " <<w <<"\n";
+    //     // int cost = min(x.vw, x.wv);
+    //     int cost = x.wv;
+    //     int sm = D[v] + cost + H[w];
+    //     if ((P[v] != v || P[w] != w) && P[v] != P[w]) {
+    //     // if (P[v] != P[w]) {
+    //         value = min(value, sm);
+    //     }
+    // }
+
     for (int v = 1; v <= n; ++v) {
         for (auto &t: Adj[v]) {
             int w = t.v;
@@ -101,6 +127,7 @@ int main() {
             }
         }
     }
+
     cout << value << "\n";
 
     // for (int i = 2; i <= n; ++i) {
