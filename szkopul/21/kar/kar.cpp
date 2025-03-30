@@ -9,6 +9,7 @@ using namespace std;
 
 typedef vector<pair<int, int>> Cards;
 
+
 struct Node {
     Node *parent = NULL;
     Node *left = NULL;
@@ -18,6 +19,8 @@ struct Node {
     int l=-1;
     int r=-1;
 };
+
+vector<Node*> leaves;
 
 Node *construct(Cards &cards, int l, int r, Node *parent = NULL)
 {
@@ -30,6 +33,7 @@ Node *construct(Cards &cards, int l, int r, Node *parent = NULL)
     if (l >= r) {
         // cout << l << "\n";
         node->leaf = l;
+        leaves[node->leaf] = node;
 
         auto &a = cards[node->leaf*2];
         auto &b = cards[node->leaf*2 + 1];
@@ -124,6 +128,56 @@ void compute(Node *node, Cards &cards)
     }
 }
 
+void compute_up(Node *node, Cards &cards)
+{
+    if (node->left == NULL) {
+        auto &a = cards[node->leaf*2];
+        auto &b = cards[node->leaf*2 + 1];
+        node->xx = a.first <= b.first;
+        node->xy = a.first <= b.second;
+        node->yx = a.second <= b.first;
+        node->yy = a.second <= b.second;
+    } else {
+
+        int l = node->left->l;
+        int r = node->right->r;
+        int i = (l+r)/2;
+        int xi = cards[i*2+1].first;
+        int yi = cards[i*2+1].second;
+        int xj = cards[(i+1)*2].first;
+        int yj = cards[(i+1)*2].second;
+
+        //cout << xi << "," << yi << "  " << xj<<","<<yj<<"\n";
+
+        auto tl = node->left;
+        auto tp = node->right;
+
+        node->xx = (tl->xx && tp->xx && xi <= xj) ||
+                   (tl->xx && tp->yx && xi <= yj) ||
+                   (tl->xy && tp->xx && yi <= xj) ||
+                   (tl->xy && tp->yx && yi <= yj);
+
+        node->xy = (tl->xx && tp->xy && xi <= xj) ||
+                   (tl->xx && tp->yy && xi <= yj) ||
+                   (tl->xy && tp->xy && yi <= xj) ||
+                   (tl->xy && tp->yy && yi <= yj);
+
+        node->yx = (tl->yx && tp->xx && xi <= xj) ||
+                   (tl->yx && tp->yx && xi <= yj) ||
+                   (tl->yy && tp->xx && yi <= xj) ||
+                   (tl->yy && tp->yx && yi <= yj);
+        
+        node->yy = (tl->yx && tp->xy && xi <= xj) ||
+                   (tl->yx && tp->yy && xi <= yj) ||
+                   (tl->yy && tp->xy && yi <= xj) ||
+                   (tl->yy && tp->yy && yi <= yj);
+    }
+
+    if (node->parent != NULL) {
+        compute_up(node->parent, cards);
+    }
+}
+
 void print(Cards &cards, Node *node, int indent=0)
 {
     if (node->left == NULL) {
@@ -165,12 +219,18 @@ int main()
     unsigned int n;
     cin >> n;
 
+    leaves.resize(n);
+
     Cards cards(2*n, {INF, INF});
     rep(n, i) {
         cin >> cards[i].first >> cards[i].second;
     }
 
     Node *node = construct(cards, 0, n - 1);
+
+    // for (auto l: leaves) {
+    //     cout << l << "\n";
+    // }
 
     // print(cards, node);
     // cout << "\n\n\n";
@@ -189,7 +249,10 @@ int main()
             cards[b] = t;
         }
 
-        compute(node, cards);
+        // compute(node, cards);
+
+        compute_up(leaves[a/2], cards);
+        compute_up(leaves[b/2], cards);
 
         // print(cards, node);
         // cout << "\n\n\n";
