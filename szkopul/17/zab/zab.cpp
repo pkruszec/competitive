@@ -46,14 +46,20 @@ int main()
     cin >> n >> k >> m;
     dist.resize(n);
     
+    vector<int> cache(n);
+
     rep(n, i) {
         cin >> dist[i];
     }
 
     rep(n, i) {
+        cache[i] = next(i);
+    }
+
+    rep(n, i) {
         int j = i;
         rep(m, x) {
-            j = next(j);
+            j = cache[j];
         }
         cout << (j+1) << " ";
     }
