@@ -10,8 +10,10 @@ using namespace std;
 
 s64 n, k, m;
 vector<s64> dist;
+vector<s64> cache;
 
-s64 next(int i)
+#if 0
+s64 next(s64 i)
 {
     rep(n, j) {
         if (i==j) continue;
@@ -36,6 +38,23 @@ s64 next(int i)
     }
     return -1;
 }
+#endif
+
+void next2()
+{
+    s64 a=1;
+    cache[1] = k + 1;
+    for (int i = 2; i <= n; ++i) {
+        while (a+k+1 <= n && dist[a+k+1] - dist[i] < dist[i] - dist[a]) {
+            a++;
+        }
+        if (dist[i] - dist[a] >= dist[a+k] - dist[i]) {
+            cache[i] = a;
+        } else {
+            cache[i] = a+k;
+        }
+    }
+}
 
 int main()
 {
@@ -44,24 +63,24 @@ int main()
     cout.tie(0);
 
     cin >> n >> k >> m;
-    dist.resize(n);
-    
-    vector<int> cache(n);
+    dist.resize(n+1);
+    cache.resize(n+1);
 
-    rep(n, i) {
+    for(int i = 1; i <= n; ++i) {
         cin >> dist[i];
     }
 
-    rep(n, i) {
-        cache[i] = next(i);
-    }
+    next2();
+    // rep(n, i) {
+    //     cache[i] = next(i);
+    // }
 
-    rep(n, i) {
+    for (int i = 1; i <= n; ++i) {
         int j = i;
-        rep(m, x) {
+        for (int x = 0; x < m; ++x) {
             j = cache[j];
         }
-        cout << (j+1) << " ";
+        cout << (j) << " ";
     }
     cout << "\n";
 
