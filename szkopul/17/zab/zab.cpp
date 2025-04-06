@@ -56,6 +56,11 @@ void next2()
     }
 }
 
+s64 f(s64 i)
+{
+    
+}
+
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -76,11 +81,7 @@ int main()
     // }
 
     for (int i = 1; i <= n; ++i) {
-        int j = i;
-        for (int x = 0; x < m; ++x) {
-            j = cache[j];
-        }
-        cout << (j) << " ";
+        cout << f(j) << " ";
     }
     cout << "\n";
 
