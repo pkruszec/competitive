@@ -4,38 +4,25 @@
 #include <climits>
 using namespace std;
 
-#define INF INT_MAX
+#define INF LLONG_MAX
+#define ll long long
 
-struct Edge{
-    int v, w, c;
-};
+vector<ll> r;
+vector<vector<pair<ll, ll>>> g;
+ll n;
 
-vector<int> r;
-vector<Edge> e;
-int n;
-
-vector<int> dijkstra(int src)
+vector<ll> dijkstra(ll src)
 {
-    vector<int> dist(n+1, INF);
+    vector<ll> dist(n+1, INF);
     dist[src] = 0;
-    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> q;
+    priority_queue<pair<ll, ll>, vector<pair<ll, ll>>, greater<pair<ll, ll>>> q;
     q.push({src, INF});
     
     while (!q.empty()) {
         auto [u, unused] = q.top();
         q.pop();
-        for (auto &edge: e) {
-            int v;
-            if (edge.v == u) {
-                v = edge.w;
-            } else if (edge.w == u) {
-                v = edge.v;
-            } else {
-                continue;
-            }
-            int c = edge.c;
-            
-            int alt = dist[u] + c;
+        for (auto &[v, c]: g[u]) {
+            ll alt = dist[u] + c;
             if (alt < dist[v]) {
                 dist[v] = alt;
                 q.push({v, alt});
@@ -46,13 +33,13 @@ vector<int> dijkstra(int src)
     return dist;
 }
 
-int cost(int a, int b, int c)
+ll cost(ll a, ll b, ll c)
 {
-    vector<int> d1 = dijkstra(a);
-    vector<int> d2 = dijkstra(b);
+    vector<ll> d1 = dijkstra(a);
+    vector<ll> d2 = dijkstra(b);
     
-    int best = INF;
-    for (int i = 1; i <= n; ++i) {
+    ll best = INF;
+    for (ll i = 1; i <= n; ++i) {
         if (r[i] != c) continue;
         if (d1[i] == INF) continue;
         if (d2[i] == INF) continue;
@@ -72,24 +59,25 @@ int main()
     cin.tie(0);
     cout.tie(0);
     
-    int m;
+    ll m;
     cin >> n >> m;
     r.resize(n+1, 0);
-    e.resize(n-1);
-    for (int i = 1; i <= n; ++i) {
+    g.resize(n+1);
+    for (ll i = 1; i <= n; ++i) {
         cin >> r[i];
     }
     
-    for (int i = 0; i < n-1; ++i) {
-        int a, b, c;
+    for (ll i = 0; i < n-1; ++i) {
+        ll a, b, c;
         cin >> a >> b >> c;
-        e[i] = {a, b, c};
+        g[a].push_back({b, c});
+        g[b].push_back({a, c});
     }
     
-    int q;
+    ll q;
     cin >> q;
-    for (int i = 0; i < q; ++i) {
-        int a, b, c;
+    for (ll i = 0; i < q; ++i) {
+        ll a, b, c;
         cin >> a >> b >> c;
         cout << cost(a, b, c) << "\n";
     }
