@@ -12,3 +12,4 @@ private
 *.pyc
 *.lib
 *.exp
+prog
