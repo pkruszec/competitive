@@ -10,6 +10,7 @@ using namespace std;
 vector<ll> r;
 vector<vector<pair<ll, ll>>> g;
 ll n;
+vector<vector<ll>> dij;
 
 vector<ll> dijkstra(ll src)
 {
@@ -35,9 +36,11 @@ vector<ll> dijkstra(ll src)
 
 ll cost(ll a, ll b, ll c)
 {
-    vector<ll> d1 = dijkstra(a);
-    vector<ll> d2 = dijkstra(b);
-    
+    //vector<ll> d1 = dijkstra(a);
+    //vector<ll> d2 = dijkstra(b);
+    auto &d1 = dij[a];
+    auto &d2 = dij[b];
+
     ll best = INF;
     for (ll i = 1; i <= n; ++i) {
         if (r[i] != c) continue;
@@ -63,6 +66,7 @@ int main()
     cin >> n >> m;
     r.resize(n+1, 0);
     g.resize(n+1);
+    dij.resize(n+1);
     for (ll i = 1; i <= n; ++i) {
         cin >> r[i];
     }
@@ -74,6 +78,10 @@ int main()
         g[b].push_back({a, c});
     }
     
+    for (ll i = 1; i <= n; ++i) {
+        dij[i] = dijkstra(i);
+    }
+
     ll q;
     cin >> q;
     for (ll i = 0; i < q; ++i) {
