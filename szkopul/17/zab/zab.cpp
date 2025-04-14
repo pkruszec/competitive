@@ -12,34 +12,6 @@ s64 n, k, m;
 vector<s64> dist;
 vector<s64> cache;
 
-#if 0
-s64 next(s64 i)
-{
-    rep(n, j) {
-        if (i==j) continue;
-
-        s64 d = abs(dist[i]-dist[j]);
-        s64 count = 0;
-        s64 count_eq = 0;
-        rep(n, a) {
-            s64 d2 = abs(dist[i]-dist[a]);
-            if (d2 <= d) {
-                count++;
-            }
-            if (d2 == d) {
-                count_eq++;
-            }
-        }
-        s64 count_less = count - count_eq;
-
-        if (count_less <= k && count > k) {
-            return j;
-        }
-    }
-    return -1;
-}
-#endif
-
 void next2()
 {
     s64 a=1;
@@ -56,9 +28,28 @@ void next2()
     }
 }
 
-s64 f(s64 i)
+vector<int> r;
+
+void f()
 {
-    
+    for (int i = 1; i <= n; ++i) {
+        r[i] = i;
+    }
+
+    auto g = cache;
+    while (m > 0) {
+        if (m%2 == 1) {
+            auto h = r;
+            for (int i = 1; i <= n; ++i) {
+                r[i] = h[g[i]];
+            }
+        }
+        m /= 2;
+        auto h = g;
+        for (int i = 1; i <= n; ++i) {
+            g[i] = h[h[i]];
+        }
+    }
 }
 
 int main()
@@ -70,6 +61,7 @@ int main()
     cin >> n >> k >> m;
     dist.resize(n+1);
     cache.resize(n+1);
+    r.resize(n+1);
 
     for(int i = 1; i <= n; ++i) {
         cin >> dist[i];
@@ -80,8 +72,9 @@ int main()
     //     cache[i] = next(i);
     // }
 
+    f();
     for (int i = 1; i <= n; ++i) {
-        cout << f(j) << " ";
+        cout << r[i] << " ";
     }
     cout << "\n";
 
