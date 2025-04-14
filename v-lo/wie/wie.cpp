@@ -1,112 +1,105 @@
 #include <iostream>
-#include <algorithm>
 #include <vector>
-#include <string>
-#include <queue>
 #include <unordered_set>
-
+#include <queue>
+#include <limits.h>
+#include <algorithm>
 using namespace std;
 
-struct Edge {
-    int v, w, c;
-};
+#define INF (1000000000)
 
 int n, m;
-vector<Edge> edg;
-vector<bool> vis;
-unordered_set<int> vv;
+vector<vector<pair<int, int>>> g;
 
-int dij(int s)
-{
-    vector<int> dist(n+1, -1);
-    vector<int> prev(n+1, -1);
-
-    int cnt = 0;
-
-    using P = pair<int, int>;
-    priority_queue<P, vector<P>, greater<P>> q;
-    dist[s] = 0;
-    q.push({s, 0});
-
+vector<int> search() {
+    priority_queue<pair<int, int>, vector<pair<int, int>>, greater<pair<int, int>>> q;
+    vector<int> dist(n+1, INF);
+    q.push({1, 0});
+    dist[1] = 0;
     while (!q.empty()) {
-        auto [v, d] = q.top();
+        auto [u, p] = q.top();
         q.pop();
-        if (d > dist[v]) continue;
-        
-        for (auto &[a, b, c]: edg) {
-            int w;
-            if (a == v) {
-                w = b;
-            } else if (b == v) {
-                w = a;
-            } else continue;
-
-            if (dist[w] < 0 || dist[w] > dist[v] + c) {
-                dist[w] = dist[v] + c;
-                prev[w] = v;
-                q.push({w, dist[w]});
+        for (auto [v, c]: g[u]) {
+            int alt = dist[u] + c;
+            if (alt < dist[v]) {
+                dist[v] = alt;
+                q.push({v, alt});
             }
         }
     }
-
-    // for (int i = 1; i <= n; ++i) {
-    //     cout << prev[i] << "\n";
-    // }
-
-    return dist[n];
+    return dist;
 }
 
-void dfs(int v, int max, vector<int> p, int cs=0)
-{
-    vis[v] = true;
-    p.push_back(v);
-    if (cs > max) return;
+typedef pair<vector<bool>, int> PP;
 
-    if (v == n) {
-        for (auto x: p) vv.insert(x);
-        return;
-    }
+vector<int> bfs(int mc) {
+    queue<pair<vector<int>, PP>> q;
 
-    for (auto &[x, y, c]: edg) {
-        int u;
-        if (x == v) {
-            u = y;
-        } else if (y == v) {
-            u = x;
-        } else {
+    vector<bool> is(n+1, false);
+    is[1] = true;
+    q.push({{1}, {is, 0}});
+
+    unordered_set<int> s;
+
+    while (!q.empty()) {
+        auto [path, pair] = q.front();
+        auto [vis, uc] = pair;
+        int u = path[path.size()-1];
+        q.pop();
+
+#if 0
+        for (auto x: path) {
+            cout << x << " ";
+        }
+        cout << "\n";
+#endif
+#if 1
+        if (u == n) {
+            for (auto x: path) {
+                s.insert(x);
+            }
             continue;
         }
+#endif
+        for (auto [v, c]: g[u]) {
+            
+            //if (u==8) {
+            //    cout << v << "\n";
+            //}
 
-        if (u != n && vis[u]) continue;
-        dfs(u, max, p, cs + c);
+            if (vis[v]) continue;
+            vis[v] = true;
+            if (uc+c > mc) continue;
+            path.push_back(v);
+            q.push({path, {vis, uc+c}});
+            path.pop_back();
+        }
     }
+
+    vector<int> res;
+    for (auto x: s) res.push_back(x);
+    return res;
 }
 
-int main()
-{
+int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
     cin >> n >> m;
-    edg.resize(m);
-    vis.resize(n+1);
-
+    g.resize(n+1);
     for (int i = 0; i < m; ++i) {
-        auto &e = edg[i];
-        cin >> e.v >> e.w >> e.c;
+        int v,w,c;
+        cin >> v >> w >> c;
+        g[v].push_back({w, c});
+        g[w].push_back({v, c});
     }
 
-    int max = dij(1);
-    dfs(1, max, {});
+    auto d = search();
+    auto p = bfs(d[n]);
+    sort(p.begin(), p.end());
 
-    vector<int> tmp;
-    for (auto x: vv) {
-        tmp.push_back(x);
-    }
-    sort(tmp.begin(), tmp.end());
-    for (auto x: tmp) {
+    for (auto x: p) {
         cout << x << "\n";
     }
-
     return 0;
 }
