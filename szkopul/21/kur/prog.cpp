@@ -1,62 +1,18 @@
 #include <iostream>
 #include <vector>
-#include <unordered_map>
+#include <unordered_set>
 #include <algorithm>
 using namespace std;
 
-struct Node {
-    int v;
-    int k;
-};
-
 int n, m;
 vector<int> p;
-unordered_map<int, unordered_map<int, Node>> tree;
-
-Node compute(int l, int r) {
-    unordered_map<int, int> h;
-    for (int k = l; k <= r; ++k) h[p[k]]++;
-    for (auto [k, v]: h) {
-        if (v*2 > (r-l+1)) return Node{k, v};
-    }
-    return Node{0, 0};
-
-    /*
-    vector<int> c;
-    for (int k = l; k <= r; ++k) c.push_back(p[k]);
-    sort(c.begin(), c.end());
-
-    Node n = {};
-    for (auto x: c) {
-        if (n.k == 0) {
-            n.k = 1;
-            n.v = x;
-        } else {
-            if (n.v != x) {
-                n.k--;
-            } else {
-                n.k++;
-            }
-        }
-    }
-    return n;
-    */
-}
-
-Node query(int l, int r) {
-    if (tree[l].find(r) != tree[l].end()) {
-        return tree[l][r];
-    }
-
-    Node c = compute(l, r);
-
-    return c;
-}
 
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+    srand(time(0));
     cin >> n >> m;
     p.resize(n);
     for (int i = 0; i < n; ++i) {
@@ -68,11 +24,32 @@ int main() {
         cin >> l >> r;
         l--;
         r--;
-        auto n = query(l, r);
-        //cout << l << "," << r << "->" << n.v << "\n";
-        cout << (n.k>0 ? n.v : 0) << "\n";
+
+        int res = 0;
+
+        unordered_set<int> had;
+        for (int it = 0; it < 100; ++it) {
+            int candidate = (rand()%n)+1;
+            if (had.find(candidate) != had.end()) {
+                it--;
+                continue;
+            }
+
+            int count = 0;
+            for (int i = l; i <= r; i++) {
+                if (p[i] == candidate) {
+                    count++;
+                    if (count > (r-l+1) / 2) break;
+                }
+            }
+            if (count > (r-l+1) / 2) {
+                res = candidate;
+                break;
+            }
+        }
+
+        cout << res << "\n";
     }
 
     return 0;
 }
-
