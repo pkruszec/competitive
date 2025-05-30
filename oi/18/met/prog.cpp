@@ -4,6 +4,10 @@
 
 using namespace std;
 
+void update(int l, int r, int a)
+{
+}
+
 int main()
 {
     ios_base::sync_with_stdio(false);
@@ -23,44 +27,31 @@ int main()
         cin >> p[i];
     }
 
-    vector<int> c(n + 1, 0);
-    vector<int> d(n + 1, -1);
+    vector<int> ans(n+1, -1);
 
     int k;
     cin >> k;
     for (int i = 0; i < k; ++i) {
-        int l, r, a;
+        int l,r,a;
         cin >> l >> r >> a;
 
         if (l <= r) {
-            for (int j = l; j <= r; ++j) {
-                c[o[j]] += a;
-                if (d[o[j]] < 0 && c[o[j]] >= p[o[j]]) {
-                    d[o[j]] = i+1;
-                }
-            }
+            update(l, r, a);
         } else {
-            for (int j = l; j <= m; ++j) {
-                c[o[j]] += a;
-                if (d[o[j]] < 0 && c[o[j]] >= p[o[j]]) {
-                    d[o[j]] = i+1;
-                }
-            }
-            for (int j = 1; j <= r; ++j) {
-                c[o[j]] += a;
-                if (d[o[j]] < 0 && c[o[j]] >= p[o[j]]) {
-                    d[o[j]] = i+1;
-                }
-            }
+            update(l, m, a);
+            update(1, r, a);
         }
 
+        for (int j = 1; j <= m; ++j) {
+            query(j);
+        }
     }
 
     for (int i = 1; i <= n; ++i) {
-        if (d[i] >= 0) {
-            cout << d[i] << "\n";
-        } else {
+        if (ans[i] < 0) {
             cout << "NIE\n";
+        } else {
+            cout << ans[i] << "\n";
         }
     }
 
