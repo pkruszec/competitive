@@ -1,0 +1,4 @@
+= segment
+:revdate: 2025-06-10
+
+Implementacja drzewa przedziałowego punkt-przedział dla operacji max.
