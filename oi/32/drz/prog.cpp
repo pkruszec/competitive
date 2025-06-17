@@ -24,8 +24,8 @@ long long pw(long long a, long long n)
     return x;
 }
 
-long long p = 5;
-long long m = 1'000'000'000'000'000;
+long long p = 7;
+long long m = 1'000'000'000'000'000'000;
 
 long long hsh(long long x, long long y, long long k2)
 {
