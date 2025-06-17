@@ -2,62 +2,60 @@
 #include <vector>
 #include <string>
 #include <string_view>
-#include <unordered_set>
+#include <unordered_map>
 #include <algorithm>
 #include <cassert>
 
 using namespace std;
 
-int n, q;
+int N, q;
 string src, dst;
 
 vector<long long> h0, h1;
 
-/*long long hash0(string_view s)
-{
-	if (s.size() == 2) {
-		long long h0 = s[0];
-		long long h1 = s[1];
-		long long result = h0*h1 - h0 - h1;
-		return result;
-	}
-	
-	int m = s.size()/2;
-	long long h0 = hash0(s.substr(0, m));
-	long long h1 = hash0(s.substr(m));
-	
-	long long result = h0 * h1 - h0 - h1;
-	return result;
-}*/
+unordered_map<long long, long long> P;
 
-long long hsh(long long x, long long y)
+long long pw(long long a, long long n)
 {
-	return (x+y)*(x+y+1)/ 2 *(x+y-2);
-	//return x*y - x - y;
+    long long x = 1;
+    for (long long i = 0; i < n; ++i) {
+        x *= a;
+    }
+    return x;
+}
+
+long long p = 5;
+long long m = 1'000'000'000'000'000;
+
+long long hsh(long long x, long long y, long long k2)
+{
+	return (min(x, y)*P[k2]+ max(x, y)) % m;
 }
 
 void build(int l=0, int r=src.size()-1, int n=0)
 {
-	if (r == l+1) {
-		h0[n] = hsh(src[l], src[r]);
-		h1[n] = hsh(dst[l], dst[r]);
+	if (r == l) {
+        h0[n] = src[l];
+        h1[n] = dst[l];
 		return;
 	}
-	
+
 	int m = (l+r)/2;
 	int nl = n*2+1;
 	int nr = n*2+2;
 	build(l, m, nl);
 	build(m+1, r, nr);
 	
-	h0[n] = hsh(h0[nl], h0[nr]);
-	h1[n] = hsh(h1[nl], h1[nr]);
+    int k = r-l+1;
+
+	h0[n] = hsh(h0[nl], h0[nr], k);
+	h1[n] = hsh(h1[nl], h1[nr], k);
 }
 
 void update(string &s, vector<long long> &h, int b, int l=0, int r=src.size()-1, int n=0)
 {
-	if (r == l+1) {
-		h[n] = hsh(s[l], s[r]);
+	if (r == l) {
+		h[n] = s[l];
 		return;
 	}
 	
@@ -65,13 +63,15 @@ void update(string &s, vector<long long> &h, int b, int l=0, int r=src.size()-1,
 	int nl = n*2+1;
 	int nr = n*2+2;
 	
+    int k = r-l+1;
+
 	if (b <= m) {
 		update(s, h, b, l, m, nl);
 	} else {
 		update(s, h, b, m+1, r, nr);
 	}
 	
-	h[n] = hsh(h[nl], h[nr]);
+	h[n] = hsh(h[nl], h[nr], k);
 }
 
 int main()
@@ -79,12 +79,21 @@ int main()
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
-    cin >> n >> q;
+    cin >> N >> q;
     cin >> src >> dst;
 	
 	h0.resize(2*src.size());
 	h1.resize(2*dst.size());
 	
+    for (long long x = src.size(); x; x /= 2) {
+        P[x] = pw(p, x);
+    }
+
+    // for(auto [x, y]: P){
+    //     cout << p << "^"<< x << " = " << y << "\n";
+    // }
+    // return 0;
+
 	build();
     if (h0[0] == h1[0]) {
         cout << "TAK\n";
