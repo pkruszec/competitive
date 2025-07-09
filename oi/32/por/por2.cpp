@@ -11,23 +11,11 @@ int main()
     srand(time(0));
 
     int n = DajN();
-    int p = Zamiana(1, 1);
 
-    while(1)
+    for(int i = 1; i <= n; ++i)
     {
-        int i = 1 + rand()%(n);
-        int j = 1 + rand()%(n);
-
-        int z = Zamiana(i, j);
-        if(z == 0) break;
-        if(z > p)
-        {
-            Zamiana(i, j);
-        }
-        else
-        {
-            p = z;
-        }
+        int z = Zamiana(1, i);
+        Zamiana(1, i);
     }
 
     return 0;
