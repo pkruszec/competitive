@@ -6,34 +6,42 @@
 
 using namespace std;
 
-vector<pair<int, int>> e;
+int n;
+vector<vector<int>> g;
+vector<int> we, wy;
 
-void dfs(int v, unordered_set<int> &ev, vector<int> &path, int ec)
+bool cond()
 {
-    bool found = false;
-    for (int i = 0; i < (int)e.size(); ++i) {
-        if (ev.count(i)) continue;
-        auto &[c, w] = e[i];
+    if (we[1] != wy[1] - 1) return false;
+    if (we[n] != wy[n] + 1) return false;
 
-        if (c != v) continue;
-        found = true;
-
-        //cout << v << "->" << w << "\n";
-
-        auto ev1 = ev;
-        auto path1 = path;
-
-        ev1.insert(i);
-        path1.push_back(w);
-        dfs(w, ev1, path1, ec - 1);
+    for (int v = 2; v < n; ++v) {
+        if (we[v] != wy[v]) return false;
     }
-    
-    if (ec > 0 && !found) {
-        for (auto x: path) {
-            cout << x << " ";
+
+    return true;
+}
+
+vector<bool> vis;
+void cycle(vector<int> &path, int v = 1, int p = 0)
+{
+    if (vis[v]) return;
+    vis[v] = true;
+    for (auto w: g[v]) {
+        if (vis[w]) {
+            if (w != p) {
+                cout << "cycle ";
+                for (auto x: path) {
+                    cout << x << " ";
+                }
+                cout << "\n";
+            }
+            continue;
         }
-        cout << "0\n";
-        exit(0);
+
+        auto p1 = path;
+        p1.push_back(w);
+        cycle(path, w, v);
     }
 }
 
@@ -43,8 +51,11 @@ int main()
     cin.tie(nullptr);
     cout.tie(nullptr);
 
-    int n;
     cin >> n;
+    g.resize(n+1, vector<int>());
+    we.resize(n+1);
+    wy.resize(n+1);
+    vis.resize(n+1, false);
 
     for (int i = 1; i <= n; ++i) {
         int k;
@@ -52,16 +63,22 @@ int main()
         for (int j = 0; j < k; ++j) {
             int x;
             cin >> x;
-            e.push_back({i, x});
+            g[i].push_back(x);
+            we[x]++;
+            wy[i]++;
         }
     }
-    
-    unordered_set<int> ev;
-    vector<int> path;
-    dfs(1, ev, path, e.size());
 
-    cout << "NIE\n";
-    return 0;
+    /*for (int i = 1; i <= n; ++i) {
+        cout << i << " we=" << we[i] << " wy=" << wy[i] << "\n";
+    }*/
+
+    bool c = cond();
+
+    if (c) {
+        vector<int> path;
+        cycle(path);
+    }
 }
 
 //
