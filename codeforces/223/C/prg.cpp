@@ -18,6 +18,7 @@ void put(T &&...args) {
 # define put(...)
 #endif
 
+//vector<pair<int, int>> ps;
 string b;
 int n;
 
@@ -57,6 +58,42 @@ int Q(int l, int r) {
     return s;
 }
 
+/*
+void P() {
+    int k = 0;
+    int d = 0;
+    int g = 0;
+
+    for (int i = 0; i < b.size(); ++i) {
+        if (b[i] == '(') {
+            k++;
+        } else if (b[i] == ')') {
+            k--;
+        }
+
+        if (k < 0) {
+            k = 0;
+            d = 0;
+        } else {
+            d++;
+        }
+
+        if (k == 0) {
+            // put(g, d, b.substr(g, d));
+
+            if (d > 0) ps.push_back({g, g+d-1});
+
+            g = i+1;
+            d = 0;
+        }
+    }
+
+    if (d-k > 0) ps.push_back({g, g+d-k-1});
+
+    // put(g, d-k, b.substr(g, d-k));
+}
+    */
+
 int main() {
     ios_base::sync_with_stdio(false);
     cin.tie(nullptr);
@@ -64,10 +101,23 @@ int main() {
 
     cin >> b >> n;
 
+    // P();
+
+    // REP(i, ps.size()) {
+    //     put(ps[i].first, ps[i].second);
+    // }
+
     REP(i, n) {
         int l,r;
         cin >> l >> r;
-        cout << Q(l-1,r-1) << "\n";
+
+        l--;
+        r--;
+
+        int m = (l+r)/2;
+
+        //cout << Q(l,r) << "\n";
+        cout << Q(l, m) + Q(m, r) << "\n";
         put("-----------------------------");
     }
 }
