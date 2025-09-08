@@ -11,7 +11,7 @@ using s64 = long long;
 
 s64 n;
 vector<vector<s64>> bd;
-vector<vector<s64>> dp;
+vector<vector<pair<s64, s64>>> dp;
 vector<vector<bool>> pv;
 
 /*
@@ -27,7 +27,7 @@ s64 tz(s64 x)
 }
 */
 
-s64 tz(s64 x)
+s64 tz(s64 x, s64 &mm)
 {
     s64 cnt = 0;
     s64 m = 10;
@@ -35,29 +35,44 @@ s64 tz(s64 x)
         if (x % m != 0) break;
         cnt++;
         m *= 10;
-    } 
+    }
+
+    mm = m / 10;
     return cnt;
 }
 
-bool better(s64 a, s64 b)
-{
-    return tz(a) <= tz(b);
-}
+// bool better(s64 a, s64 b)
+// {
+//     return tz(a) <= tz(b);
+// }
 
 void f(s64 i, s64 j)
 {
     if (i > n || j > n) return;
 
-    s64 down  = dp[i][j] * bd[i+1][j];
-    s64 right = dp[i][j] * bd[i][j+1];
+    s64 nz = dp[i][j].first;
+    s64 base = dp[i][j].second;
 
-    if (better(down, dp[i+1][j])) {
-        dp[i+1][j] = down;
+    s64 dv = bd[i+1][j];
+    s64 rv = bd[i][j+1];
+
+    s64 dt = base * dv;
+    s64 dm = 0;
+    s64 dz = nz + tz(dt, dm);
+    s64 dr = (dt / dm) % 1000;
+
+    s64 rt = base * rv;
+    s64 rm = 0;
+    s64 rz = nz + tz(rt, rm);
+    s64 rr = (rt / rm) % 1000;
+
+    if (dz <= dp[i+1][j].first) {
+        dp[i+1][j] = {dz, dr};
         pv[i+1][j] = true;
     }
 
-    if (better(right, dp[i][j+1])) {
-        dp[i][j+1] = right;
+    if (rz <= dp[i][j+1].first) {
+        dp[i][j+1] = {rz, rr};
         pv[i][j+1] = false;
     }
 
@@ -67,16 +82,19 @@ void f(s64 i, s64 j)
 
 int main()
 {
-
-    // cout << tz() << "\n";
-    // return 0;
-
     ios_base::sync_with_stdio(false);
     cin.tie(0);
     cout.tie(0);
+
+
+    // s64 mm = -1;
+    // cout << tz(13000000, mm) << " " << mm << "\n";
+    // return 0;
+
+#if 1
     cin >> n;
     bd.resize(n+2, vector<s64>(n+2, 1000000000));
-    dp.resize(n+2, vector<s64>(n+2, 1000000000));
+    dp.resize(n+2, vector<pair<s64, s64>>(n+2, {1000, 1}));
     pv.resize(n+2, vector<bool>(n+2, false));
 
     for (s64 i = 1; i <= n; ++i) {
@@ -85,7 +103,12 @@ int main()
         }
     }
 
-    dp[1][1] = bd[1][1];
+    // dp[1][1] = bd[1][1];
+
+    s64 mm = 0;
+    s64 nz = tz(bd[1][1], mm);
+
+    dp[1][1] = {nz, bd[1][1] / mm};
 
     f(1, 1);
 
@@ -102,7 +125,7 @@ int main()
     #if 1
     for (s64 i = 1; i <= n; ++i) {
         for (s64 j = 1; j <= n; ++j) {
-            cerr << dp[i][j] << " ";
+            cerr << dp[i][j].second << "e" << dp[i][j].first << " ";
         }
         cerr << "\n";
     }
@@ -137,11 +160,12 @@ int main()
         path.push_back(x);
     }
 
-    cout << tz(dp[n][n]) << "\n";
+    cout << dp[n][n].first << "\n";
     for (s64 i = path.size() - 1; i >= 0; --i) {
         cout << (path[i]?'D':'R');
     }
     cout << "\n";
+#endif
 
     return 0;
 }
