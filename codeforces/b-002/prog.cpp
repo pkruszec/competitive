@@ -67,6 +67,8 @@ void f(s64 i, s64 j)
     s64 rr = (rt / rm) % 1000;
 
     if (dz <= dp[i+1][j].first) {
+        // cout << dz << " < " << dp[i+1][j].first << "\n";
+
         dp[i+1][j] = {dz, dr};
         pv[i+1][j] = true;
     }
@@ -93,8 +95,8 @@ int main()
 
 #if 1
     cin >> n;
-    bd.resize(n+2, vector<s64>(n+2, 1000000000));
-    dp.resize(n+2, vector<pair<s64, s64>>(n+2, {1000, 1}));
+    bd.resize(n+2, vector<s64>(n+2, 1));
+    dp.resize(n+2, vector<pair<s64, s64>>(n+2, {0, 1}));
     pv.resize(n+2, vector<bool>(n+2, false));
 
     for (s64 i = 1; i <= n; ++i) {
@@ -112,15 +114,70 @@ int main()
 
     f(1, 1);
 
-    // for (s64 i = 1; i <= n; ++i) {
-    //     for (s64 j = 1; j <= n; ++j) {
-    //         s64 up =   dp[i - 1][j];
-    //         s64 left = dp[i][j - 1];
-    //         dp[i][j] = bd[i][j] + min(up, left);
-    //         if (up < left)
-    //             pv[i][j] = true;
-    //     }
-    // }
+    /*
+    for (s64 i = 1; i <= n; ++i) {
+        for (s64 j = 1; j <= n; ++j) {
+
+            s64 base = bd[i][j];
+
+            pair<s64, s64> up =   dp[i - 1][j];
+            pair<s64, s64> left = dp[i][j - 1];
+
+            if (up.first > left.first) {
+                s64 r = base * up.second;
+                s64 m = 0;
+                s64 cnt = up.first + tz(r, m);
+                s64 res = (r / m) % 1000;
+                dp[i][j] = {cnt, res};
+
+                pv[i][j] = true;
+            } else if (up.first < left.first) {
+                s64 r = base * left.second;
+                s64 m = 0;
+                s64 cnt = left.first + tz(r, m);
+                s64 res = (r / m) % 1000;
+                dp[i][j] = {cnt, res};
+
+                pv[i][j] = false;
+            } else {
+                if (up.second > left.second) {
+                    s64 r = base * up.second;
+                    s64 m = 0;
+                    s64 cnt = up.first + tz(r, m);
+                    s64 res = (r / m) % 1000;
+                    dp[i][j] = {cnt, res};
+
+                    pv[i][j] = true;
+                } else {
+                    s64 r = base * left.second;
+                    s64 m = 0;
+                    s64 cnt = left.first + tz(r, m);
+                    s64 res = (r / m) % 1000;
+                    dp[i][j] = {cnt, res};
+
+                    pv[i][j] = false;
+                }
+            }
+
+            // s64 dt = base * dv;
+            // s64 dm = 0;
+            // s64 dz = nz + tz(dt, dm);
+            // s64 dr = (dt / dm) % 1000;
+
+            // s64 rt = base * rv;
+            // s64 rm = 0;
+            // s64 rz = nz + tz(rt, rm);
+            // s64 rr = (rt / rm) % 1000;
+
+
+
+            // dp[i][j] = {cnt, res};
+
+            // if (up < left)
+            //     pv[i][j] = true;
+        }
+    }
+        */
 
     #if 1
     for (s64 i = 1; i <= n; ++i) {

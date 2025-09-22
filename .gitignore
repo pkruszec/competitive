@@ -1,4 +1,5 @@
 /.vscode
+.cp
 build
 private
 *.exe
