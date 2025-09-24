@@ -85,8 +85,10 @@ def build_file(source, compiler=None, output=None, fast=False, incremental=True)
 def run_with_file(prog, infile):
     cmd = [prog]
     logger.info(f"Running task: {' '.join(cmd)} with input {infile}")
-    # process = subprocess.run(cmd)
+    with open(infile, "rb") as f:
+        process = subprocess.run(cmd, stdin=f)
+        return process.returncode == 0
 
 clean_folder()
-build_file("haz.cpp")
-run_with_file("haz", "in/haz/01.in")
+if build_file("haz.cpp"):
+    run_with_file("haz", "in/haz/03.in")
