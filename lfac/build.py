@@ -91,4 +91,4 @@ def run_with_file(prog, infile):
 
 clean_folder()
 if build_file("her.cpp"):
-    run_with_file("her", "in/her/01.in")
+    run_with_file("her", "in/her/02.in")

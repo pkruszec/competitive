@@ -14,46 +14,34 @@ int main()
 
     vector<bool> h(n, false);
 
+    int nh = 0;
+    int nm = 0;
+
     for (int i = 0; i < n; ++i) {
         char c;
         cin >> c;
 
         if (c == 'H') {
             h[i] = true;
-        }
-    }
-
-    double mh = 0.0;
-    double md = 0.0;
-
-    double ch = 0.5;
-    double cd = 0.5;
-
-    for (auto x: h) {
-        double dh = ch * 0.5;
-        double dd = cd * 0.5;
-
-        mh += dh;
-        md += dd;
-        ch -= dh;
-        cd -= dd;
-
-        if (x) {
-            ch += 1.0 - (ch+cd);
+            if (i != (n-1)) nh++;
         } else {
-            cd += 1.0 - (ch+cd);
+            if (i != (n-1)) nm++;
         }
     }
 
-    if (abs(mh - md) < 0.1) {
-        cout << "HM\n";
-    } else if (mh > md) {
+    if (n == 1) {
+            cout << "HM\n";
+    } else if (nh > nm) {
         cout << "H\n";
-    } else {
+    } else if (nh < nm) {
         cout << "M\n";
+    } else {
+        if (h[n-2]) {
+            cout << "M\n";
+        } else {
+            cout << "H\n";
+        }
     }
-
-    // cout << "drank: " << mh << " h, " << md << " d\n";
 
     return 0;
 }
