@@ -90,5 +90,5 @@ def run_with_file(prog, infile):
         return process.returncode == 0
 
 clean_folder()
-if build_file("czy.cpp"):
-    run_with_file("czy", "in/czy/01.in")
+if build_file("her.cpp"):
+    run_with_file("her", "in/her/01.in")
