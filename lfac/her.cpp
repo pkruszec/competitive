@@ -30,7 +30,7 @@ int main()
     }
 
     if (n == 1) {
-            cout << "HM\n";
+        cout << "HM\n";
     } else if (nh > nm) {
         cout << "H\n";
     } else if (nh < nm) {

@@ -13,4 +13,6 @@ private
 *.pyc
 *.lib
 *.exp
+*.egg-info
+__pycache__
 prog
