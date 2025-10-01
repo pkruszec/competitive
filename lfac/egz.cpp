@@ -10,46 +10,29 @@ int main()
     cin.tie(0);
     cout.tie(0);
     
-    int n, m;
-    cin >> n >> m;
+    int n, k;
+    cin >> n >> k;
 
-    vector<int> path;
-
-    int o = 1;
-
-    while (path.size() < n) {
-        int p = o;
-        int last = p;
-        while (1) {
-            path.push_back(p);
-            last = p;
-            if (p + m <= n) {
-                p += m;
-            } else {
-                break;
-            }
-        }
-
-        if (m == 1) {
-            break;
-        }
-
-        if (path.size() >= n) {
-            break;
-        }
-
-        o++;
-        if (abs(last - o) < m) {
-            cout << "NIE\n";
-            return 0;
-        }
+    if (k > n/2) {
+        cout << "NIE\n";
+        return 0;
     }
 
-    for (int x: path) {
-        cout << x << " ";
+    int m = (n+1) / 2;
+
+    if (n % 2 == 0) {
+        for (int i = 0; i < n/2; ++i) {
+            cout << m+1+i << " ";
+            cout << 1+i << " ";
+        }
+        cout << "\n";
+    } else {
+        for (int i = 0; i <= n/2; ++i) {
+            cout << 1+i << " ";
+            if (i < n/2)
+                cout << m+1+i << " ";
+        }
+        cout << "\n";
     }
-    cout << "\n";
-    
-    return 0;
 }
 
