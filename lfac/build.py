@@ -2,6 +2,6 @@
 from cp import *
 
 clean_folder()
-if build_file("egz.cpp"):
-    run_with_file("./egz", "in/egz/02.in")
+if build_file("inw.cpp"):
+    run_with_file("./inw", "in/inw/01.in")
 

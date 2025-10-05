@@ -84,9 +84,9 @@ def build_file(source, compiler=None, output=None, fast=False, incremental=True)
 
     return success
 
-def run_with_file(prog, infile):
+def run_with_file(prog, infile, timeout=5.0):
     cmd = [prog]
     logger.info(f"Running task: {' '.join(cmd)} with input {infile}")
     with open(infile, "rb") as f:
-        process = subprocess.run(cmd, stdin=f)
+        process = subprocess.run(cmd, stdin=f, timeout=timeout)
         return process.returncode == 0
