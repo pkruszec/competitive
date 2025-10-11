@@ -90,3 +90,12 @@ def run_with_file(prog, infile, timeout=5.0):
     with open(infile, "rb") as f:
         process = subprocess.run(cmd, stdin=f, timeout=timeout)
         return process.returncode == 0
+
+def sio2jail_with_file(prog, infile, timeout=5.0):
+    us = int(timeout * 1_000_000)
+    cmd = ["sio2jail", "--ustimelimit", f"{us}u", "-o", "human", "--mount-namespace", "off", prog]
+    logger.info(f"Running {' '.join(cmd)} with input {infile}")
+    with open(infile, "rb") as f:
+        process = subprocess.run(cmd, stdin=f)
+        return process.returncode == 0
+    

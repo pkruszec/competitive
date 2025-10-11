@@ -27,6 +27,7 @@ from .cp import (
     source_filename_to_exe,
     build_file,
     run_with_file,
+    sio2jail_with_file,
     clean_folder,
 )
 
