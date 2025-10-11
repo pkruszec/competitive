@@ -28,6 +28,7 @@ from .cp import (
     build_file,
     run_with_file,
     sio2jail_with_file,
+    sio2jail_run_tests,
     clean_folder,
 )
 
